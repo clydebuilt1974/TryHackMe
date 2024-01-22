@@ -9,6 +9,7 @@
 * Allows interaction with a computer without using a GUI.
 ### 2. Find hidden website pages
 * GoBuster scans the website with each word in the wordlist and displays pages that exist on the site. 
+
 `gobuster -u http://fakebank.com -w wordlist.txt dir`
      * -u states the website to scan
      *  -w takes a wordlist to iterate through to find hidden pages.
