@@ -5,13 +5,11 @@
 * Brute-force a fake bank's website using **GoBuster** to find hidden directories and pages. 
 * GoBuster takes a list of potential page or directory names and brute forces the website with each of them, advising if the page exists.
 ### 1. Open a Terminal
-* AKA the command line.
-* Allows interaction with a computer without using a GUI.
 ### 2. Find hidden website pages
-* GoBuster scans the website with each word in the wordlist and displays pages that exist on the site. 
+* Scan the website using GoBuster with a wordlist and display all pages that exist on the site: 
 
 `gobuster -u http://fakebank.com -w wordlist.txt dir`
 
-     * -u states the website to scan
-     *  -w takes a wordlist to iterate through to find hidden pages.
+* -u states the website to scan
+*  -w takes a wordlist to iterate through to find hidden pages.
 * GoBuster advises the pages it found in the list of page/directory names indicated by Status: 200:
