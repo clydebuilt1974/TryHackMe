@@ -526,12 +526,13 @@ You can now repeat the enumeration process from the Boolean based SQL Injection,
 If you're struggling to find the table name the below query should help you on your way:
 referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--
 ## Out-of-Band SQLi
-Out-of-Band SQL Injection isn't as common as it either depends on specific features being enabled on the database server or the web application's business logic, which makes some kind of external network call based on the results from an SQL query.
-An Out-Of-Band attack is classified by having two different communication channels, one to launch the attack and the other to gather the results. 
-For example, the attack channel could be a web request, and the data gathering channel could be monitoring HTTP/DNS requests made to a service you control.
-An attacker makes a request to a website vulnerable to SQL Injection with an injection payload.
-The Website makes an SQL query to the database which also passes the hacker's payload.
-The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.
+* Not as common as it either depends on specific features being enabled on the database server or the web application's business logic, which makes some kind of external network call based on the results from an SQL query.
+* Classified by having two different communication channels, one to launch the attack and the other to gather the results. 
+  * For example, the attack channel could be a web request, and the data gathering channel could be monitoring HTTP/DNS requests made to a service you control.
+### Out-of-Band SQLi Example
+1. An attacker makes a request to a website vulnerable to SQL Injection with an injection payload.
+2. The Website makes an SQL query to the database which also passes the hacker's payload.
+3. The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.
 
 ## Remediation
 * As impactful as SQL Injection vulnerabilities are, developers do have a way to protect their web applications from them by following the below advice:
