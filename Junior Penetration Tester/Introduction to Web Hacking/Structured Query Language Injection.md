@@ -335,25 +335,27 @@ SELECT * from blog where id=2;--
 ```
 0 UNION SELECT 1,2,group_concat(username,':',password SEPARATOR '<br>') FROM staff_users
 ```
-* Again we use the group_concat method to return all of the rows into one string and to make it easier to read.
-* We've also added ,':', to split the username and password from each other.
-* Instead of being separated by a comma, we've chosen the HTML <br> tag that forces each result to be on a separate line to make for easier reading.
-
+* Use the `group_concat` method to return all of the rows into one string and to make it easier to read.
+* Add `,':',` to split the username and password from each other.
+* Use the HTML `<br` tag that forces each result to be on a separate line to make for easier reading instead of being separated by a comma.
 
 ### Union-Based SQL Injection
 * Utilises the SQL `UNION` operator alongside a `SELECT` statement to return additional results to the page.
 * This method is the most common way of extracting large amounts of data via an SQL Injection vulnerability.
 
 ## Blind SQLi - Authentication Bypass
-* Unlike In-Band SQL injection, where we can see the results of our attack directly on the screen, blind SQLi is when we get little to no feedback to confirm whether our injected queries were, in fact, successful or not, this is because the error messages have been disabled, but the injection still works regardless.
-* It might surprise you that all we need is that little bit of feedback to successfully enumerate a whole database.
+* Blind SQLi is when there is little to no feedback to confirm whether injected queries were successful or not.
+* This is because the error messages have been disabled, but the injection still works regardless.
+* All is need is that little bit of feedback to successfully enumerate a whole database.
+
 ### Authentication Bypass
 * One of the most straightforward Blind SQL Injection techniques is when bypassing authentication methods such as login forms.
-* In this instance, we aren't that interested in retrieving data from the database; We just want to get past the login.
-* Login forms that are connected to a database of users are often developed in such a way that the web application isn't interested in the content of the username and password but more whether the two make a matching pair in the users table.
-* In basic terms, the web application is asking the database "do you have a user with the username bob and the password bob123?", and the database replies with either yes or no (true/false) and, depending on that answer, dictates whether the web application lets you proceed or not.
+  * Not interested in retrieving data from the database; just want to get past the login.
+* Login forms that are connected to a database of users are often developed in such a way that the web application isn't interested in the content of the username and password but more whether the two make a matching pair in the `users` table.
+* The web application is asking the database "do you have a user with the username `bob` and the password `bob123?`", and the database replies with either yes or no (true/false) and, depending on that answer, dictates whether the web application lets you proceed or not.
 * Taking the above information into account, it's unnecessary to enumerate a valid username/password pair.
-* We just need to create a database query that replies with a yes/true.
+* Just need to create a database query that replies with a yes/true.
+
 #### Practical:
 We can see in the box labelled "SQL Query" that the query to the database is the following:
 ```
