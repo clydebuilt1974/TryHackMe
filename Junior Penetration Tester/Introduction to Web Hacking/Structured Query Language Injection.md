@@ -37,11 +37,12 @@
     * A key field has to be unique for every row of data which can be used to find that exact row in SQL queries.
 
 ### Rows
-* Rows (or records) are what contains the individual lines of data.
+* AKA records.
+* What actually contain the individual lines of data.
 * A new row/record is created when data is added to the table.
 * A row/record is removed when data is deleted.
 
-### Relational Vs Non-Relational Databases
+### Relational vs Non-Relational Databases
 * Relational databases:
   * Store information in tables.
     * Often the tables have shared information between them.
@@ -58,7 +59,7 @@
     * Can give more flexibility over a relational database.
   * Some popular databases of this type are MongoDB, Cassandra and ElasticSearch.
 
-## What is SQL?
+## What is Structured Query Language?
 * Feature rich language used for querying databases.
 * SQL queries are better referred to as statements.
 * Simplest of the commands are used to retrieve (select), update, insert and delete data.
@@ -346,7 +347,7 @@ SELECT * from blog where id=2;--
 ## Blind SQL Injection - Authentication Bypass
 * Blind SQLi is when there is little to no feedback to confirm whether injected queries were successful or not.
 * This is because the error messages have been disabled, but the injection still works regardless.
-* All is need is that little bit of feedback to successfully enumerate a whole database.
+* All is needed is that little bit of feedback to successfully enumerate a whole database.
 
 ### Authentication Bypass
 * One of the most straightforward Blind SQL Injection techniques is when bypassing authentication methods such as login forms.
@@ -357,20 +358,21 @@ SELECT * from blog where id=2;--
 * Just need to create a database query that replies with a yes/true.
 
 #### Blind SQL Injection - Authentication Bypass Example
-We can see in the box labelled "SQL Query" that the query to the database is the following:
+* A website displays a login form
+* The SQL query for the login form shows the following:
 ```
 select * from users where username='%username%' and password='%password%' LIMIT 1;
 ```
-* N.B The %username% and %password% values are taken from the login form fields, the initial values in the SQL Query box will be blank as these fields are currently empty.
-* To make this into a query that always returns as true, we can enter the following into the password field:
+* The %username% and %password% values are taken from the login form fields, the initial values are blank as these fields are currently empty.
+* To make this into a query that always returns as true, enter the following into the password field:
 ```
 ' OR 1=1;--
 ```
-* Which turns the SQL query into the following:
+* Which turns the SQL query into:
 ```
 select * from users where username='' and password='' OR 1=1;
 ```
-* Because 1=1 is a true statement and we've used an OR operator, this will always cause the query to return as true, which satisfies the web applications logic that the database found a valid username/password combination and that access should be allowed.
+* Because `1=1` is a true statement and an OR operator is being used, this will always cause the query to return as true, which satisfies the web applications logic that the database found a valid username/password combination and that access should be allowed.
   
 ## Blind SQL Injection - Boolean Based
 * Boolean based SQL Injection refers to the response we receive back from our injection attempts which could be a true/false, yes/no, on/off, 1/0 or any response which can only ever have two outcomes.
