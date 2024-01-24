@@ -246,30 +246,31 @@ delete from users;
 * Because no `WHERE` clause was being used in the query, all the data is deleted in the table.
 
 ## What is SQL Injection?
-* The point wherein a web application using SQL can turn into SQL Injection is when user-provided data gets included in the SQL query.
-* Take the following scenario where you've come across an online blog, and each blog entry has a unique id number.
+* When user-provided data gets included in the SQL query.
+### SQL Inection Example
+* An online blog where each blog entry has a unique `id` number.
 * The blog entries may be either set to public or private depending on whether they're ready for public release.
-* The URL for each blog entry may look something like this: `https://website.thm/blog?id=1`
-* From the URL above, you can see that the blog entry being selected comes from the id parameter in the query string.
-* The web application needs to retrieve the article from the database and may use an SQL statement that looks something like the following:
+* The URL for each blog entry looks like `https://website.thm/blog?id=1`
+* Rhe blog entry being selected comes from the `id` parameter in the query string.
+* The web application needs to retrieve the article from the database and may use an SQL statement that looks like the following:
 ```
 SELECT * from blog where id=1 and private=0 LIMIT 1;
 ```
-* The SQL statement above is looking in the blog table for an article with the id number of 1 and the private column set to 0, which means it's able to be viewed by the public and limits the results to only one match.
-* As was mentioned at the start of this task, SQL Injection is introduced when user input is introduced into the database query.
-* In this instance, the id parameter from the query string is used directly in the SQL query.
-* Let's pretend article id 2 is still locked as private, so it cannot be viewed on the website. We could now instead call the URL: `https://website.thm/blog?id=2;--`
-* Which would then, in turn, produce the SQL statement:
+* The SQL statement is looking in the `blog` table for an article with the `id` number of `1` and the `private` column set to `0`, which means it's able to be viewed by the public and limits the results to only one match.
+* The `id` parameter from the query string is used directly in the SQL query.
+* Article id 2 is still locked as private, so it cannot be viewed on the website.
+* Instead, call the URL: `https://website.thm/blog?id=2;--`
+* This would produce the SQL statement:
 ```
 SELECT * from blog where id=2;-- and private=0 LIMIT 1;
 ```
 * The semicolon in the URL signifies the end of the SQL statement, and the two dashes cause everything afterwards to be treated as a comment.
-* By doing this, you're just, in fact, running the query:
+* Doing this runs the query:
 ```
 SELECT * from blog where id=2;--
 ```
-* Which will return the article with an id of 2 whether it is set to public or not.
-* This was just one example of an SQL Injection vulnerability of a type called In-Band SQL Injection; there are 3 types in total In-Band, Blind and Out Of Band.
+* Which will return the article with an `id` of 2 whether it is set to public or not.
+* This was an example of an in-band SQL Injection vulnerability.
 
 ## In-Band SQLi
 * In-Band SQL Injection is the easiest type to detect and exploit; In-Band just refers to the same method of communication being used to exploit the vulnerability and also receive the results, for example, discovering an
