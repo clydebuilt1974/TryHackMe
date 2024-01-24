@@ -182,6 +182,7 @@ select * from users where username like '%mi%';
 * And another called `suppliers` with the following contents:
 
 | id | company | address | city | postcode
+| --- | --- | --- | --- | ---
 | 1 | Widgets Ltd | Unit 1a, Newby Estate | Bristol | BS19 4RT
 | 2 | The Tool Company | 75 Industrial Road | Norwich | N22 3DR
 | 3 | Axe Makers Ltd | 2b Makers Unit, Market Road | London | SE9 1KK
@@ -216,28 +217,19 @@ insert into users (username,password) values ('bob','password123');
 | 4 | bob | password123
 
 ### UPDATE
-The UPDATE statement tells the database we wish to update one or more rows of data within a table. 
-You specify the table you wish to update using "update %tablename% SET" and then select the field or fields you wish to update as a comma-separated list such as "username='root',password='pass123'" then finally similar to the SELECT statement, you can specify exactly which rows to update using the where clause such as "where username='admin;".
-
+* This statement tells the database to update one or more rows of data within a table.
+* Specify the table to update using `update %tablename% SET` and then select the field or fields to update as a comma-separated list such as `username='root',password='pass123'` then finally specify exactly which rows to update using the `where` clause such as `where username='admin;`.
+```
 update users SET username='root',password='pass123' where username='admin';
+```
+|  id | username | password
+| --- | --- | ---
+| 1 | jon | pass123
+| 2 | root | pass123
+| 3 | martin | secret123
+| 4 | bob | password123
 
-id
-username
-password
-1
-jon
-pass123
-2
-root
-pass123
-3
-martin
-secret123
-4
-bob
-password123
-
-DELETE
+## DELETE
 The DELETE statement tells the database we wish to delete one or more rows of data. 
 Apart from missing the columns you wish to be returned, the format of this query is very similar to the SELECT. 
 You can specify precisely which data to delete using the where clause and the number of rows to be deleted using the LIMIT clause.
