@@ -273,71 +273,76 @@ SELECT * from blog where id=2;--
 * This was an example of an in-band SQL Injection vulnerability.
 
 ## In-Band SQLi
-* In-Band SQL Injection is the easiest type to detect and exploit; In-Band just refers to the same method of communication being used to exploit the vulnerability and also receive the results, for example, discovering an
-* SQL Injection vulnerability on a website page and then being able to extract data from the database to the same page.
+* The easiest type to detect and exploit.
+  * The same method of communication is being used to exploit the vulnerability and also receive the results.
+  * For example, discovering an SQL Injection vulnerability on a website page and then being able to extract data from the database to the same page.
 ### Error-Based SQL Injection
-* This type of SQL Injection is the most useful for easily obtaining information about the database structure as error messages from the database are printed directly to the browser screen.
+* Most useful for easily obtaining information about the database structure as error messages from the database are printed directly to the browser screen.
 * This can often be used to enumerate a whole database. 
-### Union-Based SQL Injection
-* This type of Injection utilises the SQL UNION operator alongside a SELECT statement to return additional results to the page.
-* This method is the most common way of extracting large amounts of data via an SQL Injection vulnerability.
-### Practical
-* The key to discovering error-based SQL Injection is to break the code's SQL query by trying certain characters until an error message is produced; these are most commonly single apostrophes ( ' ) or a quotation mark ( " ).
-* Try typing an apostrophe ( ' ) after the id=1 and press enter.
-* And you'll see this returns an SQL error informing you of an error in your syntax.
-* The fact that you've received this error message confirms the existence of an SQL Injection vulnerability.
-* We can now exploit this vulnerability and use the error messages to learn more about the database structure.
-* The first thing we need to do is return data to the browser without displaying an error message.
-* Firstly we'll try the UNION operator so we can receive an extra result of our choosing. Try setting the mock browsers id parameter to:
+
+### Error-Based SQL Injection Example
+* The key to discovering error-based SQL Injection is to break the code's SQL query by trying certain characters until an error message is produced.
+* These are most commonly single apostrophes `'` or a quotation mark `"`.
+* Type an apostrophe `'` after the `id=1` and press enter.
+* This returns an SQL error informing of an error in the syntax.
+* The fact that this error message has been received confirms the existence of an SQL Injection vulnerability.
+* Can now exploit this vulnerability and use the error messages to learn more about the database structure.
+* The first thing to do is return data to the browser without displaying an error message.
+* Try the `UNION` operator to receive an extra result. Try setting the browsers `id` parameter to:
 ```
 1 UNION SELECT 1
 ```
-* This statement should produce an error message informing you that the UNION SELECT statement has a different number of columns than the original SELECT query.
-* So let's try again but add another column:
+* This statement produces an error message informingu that the `UNION SELECT` statement has a different number of columns than the original `SELECT` query.
+* Try again but add another column:
 ```
 1 UNION SELECT 1,2
 ```
-* Same error again, so let's repeat by adding another column:
+* Same error.
+* Repeat by adding another column:
 ```
 1 UNION SELECT 1,2,3
 ```
-* Success, the error message has gone, and the article is being displayed, but now we want to display our data instead of the article.
+* Success, the error message has gone, and the article is being displayed.
+* Nnow the goal is to display data instead of the article.
 * The article is being displayed because it takes the first returned result somewhere in the web site's code and shows that.
-* To get around that, we need the first query to produce no results.
-* This can simply be done by changing the article id from 1 to 0.
+* To get around this the first query must produce no results.
+* This can simply be done by changing the article `id` from `1` to `0`.
 ```
 0 UNION SELECT 1,2,3
 ```
-* You'll now see the article is just made up of the result from the UNION select returning the column values 1, 2, and 3.
-* We can start using these returned values to retrieve more useful information.
-* First, we'll get the database name that we have access to:
+* The article is just made up of the result from the `UNION` select returning the column values 1, 2, and 3.
+* Start using these returned values to retrieve more useful information.
+* Get the database name:
 ```
 0 UNION SELECT 1,2,database()
 ```
-* You'll now see where the number 3 was previously displayed; it now shows the name of the database, which is sqli_one.
-* Our next query will gather a list of tables that are in this database.
+* Where the number 3 was previously displayed; it now shows the name of the database, which is `sqli_one`.
+* Next query will gather a list of tables that are in this database.
 ```
 0 UNION SELECT 1,2,group_concat(table_name) FROM information_schema.tables WHERE table_schema = 'sqli_one'
 ```
-* There are a couple of new things to learn in this query.
-* Firstly, the method group_concat() gets the specified column (in our case, table_name) from multiple returned rows and puts it into one string separated by commas.
-* The next thing is the information_schema database; every user of the database has access to this, and it contains information about all the databases and tables the user has access to.
-* In this particular query, we're interested in listing all the tables in the sqli_one database, which is article and staff_users.
-* As the first level aims to discover Martin's password, the staff_users table is what is of interest to us.
-* We can utilise the information_schema database again to find the structure of this table using the below query.
+* The method `group_concat()` gets the specified column (in this case, `table_name`) from multiple returned rows and puts it into one string separated by commas.
+* Every user of the database has access to the `information_schema` database and it contains information about all the databases and tables the user has access to.
+* In this particular query, the goal is to list all the tables in the `sqli_one` database, which are `article` and `staff_users`.
+* As the first level aims to discover Martin's password, the `staff_users` table is what is of interest.
+* Utilise the `information_schema` database again to find the structure of this table using the query:
 ```
 0 UNION SELECT 1,2,group_concat(column_name) FROM information_schema.columns WHERE table_name = 'staff_users'
 ```
-* This is similar to the previous SQL query.
-* However, the information we want to retrieve has changed from table_name to column_name, the table we are querying in the information_schema database has changed from tables to columns, and we're searching for any rows where the table_name column has a value of staff_users.
-* The query results provide three columns for the staff_users table: id, password, and username.
-* We can use the username and password columns for our following query to retrieve the user's information.
+* The information to retrieve has changed from `table_name` to `column_name`, the table being queried in the `information_schema` database has changed from `tables` to `columns`, and rows are being searched where the `table_name` column has a value of `staff_users`.
+* The query results provide three columns for the `staff_users` table: `id`, `password`, and `username`.
+* Use the `username` and `password` columns for our following query to retrieve the user's information.
 ```
 0 UNION SELECT 1,2,group_concat(username,':',password SEPARATOR '<br>') FROM staff_users
 ```
 * Again we use the group_concat method to return all of the rows into one string and to make it easier to read.
 * We've also added ,':', to split the username and password from each other.
 * Instead of being separated by a comma, we've chosen the HTML <br> tag that forces each result to be on a separate line to make for easier reading.
+
+
+### Union-Based SQL Injection
+* Utilises the SQL `UNION` operator alongside a `SELECT` statement to return additional results to the page.
+* This method is the most common way of extracting large amounts of data via an SQL Injection vulnerability.
 
 ## Blind SQLi - Authentication Bypass
 * Unlike In-Band SQL injection, where we can see the results of our attack directly on the screen, blind SQLi is when we get little to no feedback to confirm whether our injected queries were, in fact, successful or not, this is because the error messages have been disabled, but the injection still works regardless.
