@@ -534,14 +534,14 @@ The Website makes an SQL query to the database which also passes the hacker's pa
 The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.
 
 ## Remediation
-As impactful as SQL Injection vulnerabilities are, developers do have a way to protect their web applications from them by following the below advice:
-Prepared Statements (With Parameterised Queries)
-In a prepared query, the first thing a developer writes is the SQL query and then any user inputs are added as a parameter afterwards. 
-Writing prepared statements ensures that the SQL code structure doesn't change and the database can distinguish between the query and the data. 
-As a benefit, it also makes your code look a lot cleaner and easier to read.
-Input Validation
-Input validation can go a long way to protecting what gets put into an SQL query.
-Employing an allow list can restrict input to only certain strings, or a string replacement method in the programming language can filter the characters you wish to allow or disallow. 
-Escaping User Input
-Allowing user input containing characters such as ' " $ \ can cause SQL Queries to break or, even worse, as we've learnt, open them up for injection attacks. 
-Escaping user input is the method of prepending a backslash (\) to these characters, which then causes them to be parsed just as a regular string and not a special character.
+* As impactful as SQL Injection vulnerabilities are, developers do have a way to protect their web applications from them by following the below advice:
+### Prepared Statements (With Parameterised Queries)
+* First thing a developer should write is the SQL query and then any user inputs are added as a parameter afterwards. 
+* Ensures that the SQL code structure doesn't change and the database can distinguish between the query and the data. 
+* Also makes code look a lot cleaner and easier to read.
+### Input Validation
+* Can go a long way to protecting what gets put into an SQL query.
+* Employing an allow list can restrict input to only certain strings, or a string replacement method in the programming language can filter the characters you wish to allow or disallow. 
+### Escaping User Input
+* Allowing user input containing characters such as `' " $ \` can cause SQL Queries to break or, even worse, open them up for injection attacks. 
+* Escaping user input is the method of prepending a backslash `\` to these characters, which then causes them to be parsed just as a regular string and not a special character.
