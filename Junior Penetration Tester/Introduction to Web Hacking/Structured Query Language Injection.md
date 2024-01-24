@@ -229,35 +229,21 @@ update users SET username='root',password='pass123' where username='admin';
 | 3 | martin | secret123
 | 4 | bob | password123
 
-## DELETE
-The DELETE statement tells the database we wish to delete one or more rows of data. 
-Apart from missing the columns you wish to be returned, the format of this query is very similar to the SELECT. 
-You can specify precisely which data to delete using the where clause and the number of rows to be deleted using the LIMIT clause.
-
+### DELETE
+* This statement tells the database we wish to delete one or more rows of data.
+* Precisely which data to delete can be specified using the where clause and the number of rows to be deleted using the `LIMIT `clause.
+```
 delete from users where username='martin';
-
-id
-username
-password
-1
-jon
-pass123
-2
-root
-pass123
-4
-bob
-password123
-
-
+```
+| id | username | password
+| --- | --- | ---
+| 1 | jon | pass123
+| 2 | root | pass123
+| 4 | bob | password123
+```
 delete from users;
-
-Because no WHERE clause was being used in the query, all the data is deleted in the table.
-
-id
-username
-password
-
+```
+* Because no `WHERE` clause was being used in the query, all the data is deleted in the table.
 
 ## What is SQL Injection?
 The point wherein a web application using SQL can turn into SQL Injection is when user-provided data gets included in the SQL query.
