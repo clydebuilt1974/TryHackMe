@@ -379,7 +379,7 @@ select * from users where username='' and password='' OR 1=1;
   * That outcome confirms that the SQL Injection payload was either successful or not.
 * With just these two responses, it's possible to enumerate a whole database structure and contents.
 
-### Blind SQL Injection - Boolean Based Examples
+### Blind SQL Injection - Boolean Based Example
 * Presented with a browser with the following URL: `https://website.thm/checkuser?username=admin`
 * The browser body contains the contents of {`"taken":true}`.
   * This API endpoint replicates a common feature found on many signup forms, which checks whether a username has already been registered to prompt the user to choose a different username.
