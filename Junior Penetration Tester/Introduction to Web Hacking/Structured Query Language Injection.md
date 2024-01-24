@@ -508,23 +508,26 @@ The payload below shows you how to find the password:
 admin123' UNION SELECT 1,2,3 from users where username='admin' and password like 'a%
 
 Cycling through all the characters, you'll discover the password is 3845.
+
 ## Blind SQLi - Time Based
-A time-based blind SQL Injection is very similar to the above Boolean based, in that the same requests are sent, but there is no visual indicator of your queries being wrong or right this time. 
-Instead, your indicator of a correct query is based on the time the query takes to complete. 
-This time delay is introduced by using built-in methods such as SLEEP(x) alongside the UNION statement. 
-The SLEEP() method will only ever get executed upon a successful UNION SELECT statement. 
-So, for example, when trying to establish the number of columns in a table, you would use the following query:
-
+* Very similar to Boolean based as same requests are sent.
+* No visual indicator of queries being wrong or right.
+* Indicator of a correct query is based on the time the query takes to complete.
+* Time delay is introduced by using built-in methods such as `SLEEP(x)` alongside the `UNION` statement.
+* `SLEEP()` method will only ever get executed upon a successful `UNION SELECT` statement.
+* Use the following querywhen trying to establish the number of columns in a table:
+```
 admin123' UNION SELECT SLEEP(5);--
-
-If there was no pause in the response time, we know that the query was unsuccessful, so like on previous tasks, we add another column:
-
+```
+* Query was unsuccessful if there was no pause in the response time.
+* Add another column and try again:
+```
 admin123' UNION SELECT SLEEP(5),2;--
+```
+* This payload produces a 5-second time delay, which confirms the successful execution of the `UNION` statement and that there are two columns.
+* Repeat the enumeration process from the Boolean based SQL Injection, adding the `SLEEP()` method into the `UNION SELECT` statement.
+  * E.g. to find the table name the query would be: `referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--`
 
-This payload should have produced a 5-second time delay, which confirms the successful execution of the UNION statement and that there are two columns.
-You can now repeat the enumeration process from the Boolean based SQL Injection, adding the SLEEP() method into the UNION SELECT statement.
-If you're struggling to find the table name the below query should help you on your way:
-referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--
 ## Out-of-Band SQLi
 * Not as common as it either depends on specific features being enabled on the database server or the web application's business logic, which makes some kind of external network call based on the results from an SQL query.
 * Classified by having two different communication channels, one to launch the attack and the other to gather the results. 
@@ -533,7 +536,6 @@ referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--
 1. An attacker makes a request to a website vulnerable to SQL Injection with an injection payload.
 2. The Website makes an SQL query to the database which also passes the hacker's payload.
 3. The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.
-
 ## Remediation
 * As impactful as SQL Injection vulnerabilities are, developers do have a way to protect their web applications from them by following the below advice:
 ### Prepared Statements (With Parameterised Queries)
