@@ -343,7 +343,7 @@ SELECT * from blog where id=2;--
 * Utilises the SQL `UNION` operator alongside a `SELECT` statement to return additional results to the page.
 * This method is the most common way of extracting large amounts of data via an SQL Injection vulnerability.
 
-## Blind SQLi - Authentication Bypass
+## Blind SQL Injection - Authentication Bypass
 * Blind SQLi is when there is little to no feedback to confirm whether injected queries were successful or not.
 * This is because the error messages have been disabled, but the injection still works regardless.
 * All is need is that little bit of feedback to successfully enumerate a whole database.
@@ -356,7 +356,7 @@ SELECT * from blog where id=2;--
 * Taking the above information into account, it's unnecessary to enumerate a valid username/password pair.
 * Just need to create a database query that replies with a yes/true.
 
-#### Practical:
+#### Blind SQL Injection - Authentication Bypass Example
 We can see in the box labelled "SQL Query" that the query to the database is the following:
 ```
 select * from users where username='%username%' and password='%password%' LIMIT 1;
@@ -372,12 +372,13 @@ select * from users where username='' and password='' OR 1=1;
 ```
 * Because 1=1 is a true statement and we've used an OR operator, this will always cause the query to return as true, which satisfies the web applications logic that the database found a valid username/password combination and that access should be allowed.
   
-## Blind SQLi - Boolean Based
+## Blind SQL Injection - Boolean Based
 * Boolean based SQL Injection refers to the response we receive back from our injection attempts which could be a true/false, yes/no, on/off, 1/0 or any response which can only ever have two outcomes.
 * That outcome confirms to us that our SQL Injection payload was either successful or not.
 * On the first inspection, you may feel like this limited response can't provide much information.
 * Still, in fact, with just these two responses, it's possible to enumerate a whole database structure and contents.
-### Practical
+
+### Blind SQL Injection - Boolean Based Examples
 * You're presented with a mock browser with the following URL: https://website.thm/checkuser?username=admin
 * The browser body contains the contents of {"taken":true}.
 * This API endpoint replicates a common feature found on many signup forms, which checks whether a username has already been registered to prompt the user to choose a different username.
@@ -455,7 +456,7 @@ admin123' UNION SELECT 1,2,3 from users where username='admin' and password like
 ```
 * Cycling through all the characters, you'll discover the password is 3845.
 
-## Blind SQLi - Time Based
+## Blind SQL Injection - Time Based
 * Very similar to Boolean based as same requests are sent.
 * No visual indicator of queries being wrong or right.
 * Indicator of a correct query is based on the time the query takes to complete.
@@ -474,11 +475,11 @@ admin123' UNION SELECT SLEEP(5),2;--
 * Repeat the enumeration process from the Boolean based SQL Injection, adding the `SLEEP()` method into the `UNION SELECT` statement.
   * E.g. to find the table name the query would be: `referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--`
 
-## Out-of-Band SQLi
+## Out-of-Band SQL Injection
 * Not as common as it either depends on specific features being enabled on the database server or the web application's business logic, which makes some kind of external network call based on the results from an SQL query.
 * Classified by having two different communication channels, one to launch the attack and the other to gather the results. 
   * For example, the attack channel could be a web request, and the data gathering channel could be monitoring HTTP/DNS requests made to a service you control.
-### Out-of-Band SQLi Example
+### Out-of-Band SQL Injection Example
 1. An attacker makes a request to a website vulnerable to SQL Injection with an injection payload.
 2. The Website makes an SQL query to the database which also passes the hacker's payload.
 3. The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.
