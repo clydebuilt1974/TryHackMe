@@ -21,11 +21,6 @@
   * It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
   * Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
 ## Features of Burp Suite Community Edition
-* Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality.
-  * These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter).
-* The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules.
-* While certain extensions may require a professional licence for integration, there are still a considerable number of extensions available for Burp Community.
-  * For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
 ### Proxy
 * Enables interception and modification of requests and responses while interacting with web applications.
 ### Repeater
@@ -44,6 +39,12 @@
 ### Sequencer
 * Typically employed when assessing the randomness of tokens, such as session cookie values or other supposedly randomly generated data.
 * If the algorithm used for generating these values lacks secure randomness, it can expose avenues for devastating attacks.
+
+* Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality.
+  * These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter).
+* The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules.
+* While certain extensions may require a professional licence for integration, there are still a considerable number of extensions available for Burp Community.
+  * For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
 ## Installation
 ### Downloads
 * To download the latest version of Burp Suite for other systems, you may click [this](https://portswigger.net/burp/releases/) button to go to their download page.
