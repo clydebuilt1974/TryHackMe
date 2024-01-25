@@ -18,9 +18,9 @@
        * Tables are identified with a unique name for each one.
 * A business might have other separate databases to store staff information or the accounts team.
 
-### What are Tables?
-* A table is made up of columns and rows.
-* A useful way to imagine a table is like a grid with the columns going across the top from left to right containing the name of the cell and the rows going from top to bottom with each one having the actual data.
+### Tables
+* Made up of columns and rows.
+* A useful way to imagine a table is a grid with the columns going across the top from left to right containing the name of the cell and the rows going from top to bottom with each one having the actual data.
 
 ### Columns
 * Each column has a unique name per table.
@@ -45,7 +45,7 @@
 ### Relational vs Non-Relational Databases
 * Relational databases:
   * Store information in tables.
-    * Often the tables have shared information between them.
+  * Often the tables have shared information between them.
   * Use columns to specify and define the data being stored.
   * Use rows to actually store the data.
   * The tables will often contain a column that has a unique ID (primary key).
@@ -59,7 +59,7 @@
     * Can give more flexibility over a relational database.
   * Some popular databases of this type are MongoDB, Cassandra and ElasticSearch.
 
-## What is Structured Query Language?
+## What is Structured Query Language (SQL)?
 * Feature rich language used for querying databases.
 * SQL queries are better referred to as statements.
 * Simplest of the commands are used to retrieve (select), update, insert and delete data.
@@ -249,29 +249,31 @@ delete from users;
 ## What is SQL Injection?
 * When user-provided data gets included in the SQL query.
 ### SQL Inection Example
-* An online blog where each blog entry has a unique `id` number.
-* The blog entries may be either set to public or private depending on whether they're ready for public release.
-* The URL for each blog entry looks like `https://website.thm/blog?id=1`
-* Rhe blog entry being selected comes from the `id` parameter in the query string.
-* The web application needs to retrieve the article from the database and may use an SQL statement that looks like the following:
+* Online blog where each blog entry has a unique `id` number.
+* Blog entries may be either set to public or private depending on whether they're ready for public release.
+* URL for each blog entry is `https://website.thm/blog?id=1`
+* Blog entry being selected comes from the `id` parameter in the query string.
+* Web application needs to retrieve the article from the database and uses the SQL statement below:
 ```
 SELECT * from blog where id=1 and private=0 LIMIT 1;
 ```
-* The SQL statement is looking in the `blog` table for an article with the `id` number of `1` and the `private` column set to `0`, which means it's able to be viewed by the public and limits the results to only one match.
+* SQL statement is looking in the `blog` table for an article with the `id` number of `1` and the `private` column set to `0`.
+  * This means it is able to be viewed by the public and limits the results to only one match.
 * The `id` parameter from the query string is used directly in the SQL query.
-* Article id 2 is still locked as private, so it cannot be viewed on the website.
-* Instead, call the URL: `https://website.thm/blog?id=2;--`
+* Assume that article id 2 is still locked as private, so it cannot be viewed on the website.
+* Instead, call the URL directly: `https://website.thm/blog?id=2;--`
 * This would produce the SQL statement:
 ```
 SELECT * from blog where id=2;-- and private=0 LIMIT 1;
 ```
-* The semicolon in the URL signifies the end of the SQL statement, and the two dashes cause everything afterwards to be treated as a comment.
-* Doing this runs the query:
+* Semicolon in the URL signifies the end of the SQL statement.
+* Two dashes cause everything afterwards to be treated as a comment.
+* Doing this actually runs the query:
 ```
 SELECT * from blog where id=2;--
 ```
-* Which will return the article with an `id` of 2 whether it is set to public or not.
-* This was an example of an in-band SQL Injection vulnerability.
+* This returns the article with an `id` of 2 whether it is set to public or not.
+* This was an example of an in-band SQLi vulnerability.
 
 ## In-Band SQLi
 * The easiest type to detect and exploit.
@@ -281,7 +283,8 @@ SELECT * from blog where id=2;--
 * Most useful for easily obtaining information about the database structure as error messages from the database are printed directly to the browser screen.
 * This can often be used to enumerate a whole database. 
 
-### Error-Based SQL Injection Example
+### Error-Based SQLi Example
+* 
 * The key to discovering error-based SQL Injection is to break the code's SQL query by trying certain characters until an error message is produced.
 * These are most commonly single apostrophes `'` or a quotation mark `"`.
 * Type an apostrophe `'` after the `id=1` and press enter.
