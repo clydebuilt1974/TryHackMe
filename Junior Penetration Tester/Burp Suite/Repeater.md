@@ -4,8 +4,8 @@
 * Allows requests captured in the Burp Proxy to be manipulated, sending them repeatedly as needed.
 * Can manually create requests from scratch, similar to using a command-line tool like cURL.
 * The ability to edit and resend requests multiple times makes Repeater invaluable for manual exploration and testing of endpoints.
-* It provides a user-friendly graphical interface for crafting request payloads and offers various views of the response, including a rendering engine for a graphical representation.
-* The Repeater interface consists of six main sections:
+* Provides a user-friendly graphical interface for crafting request payloads and offers various views of the response, including a rendering engine for a graphical representation.
+* Interface consists of six main sections:
   * **Request List**: Located at the top left of the tab, it displays the list of Repeater requests.
     * Multiple requests can be managed simultaneously, and each new request sent to Repeater will appear here.
   * **Request Controls**: Positioned directly beneath the request list, these controls allow a request to be sent, a hanging request to be cancelled, and navigation through the request history.
@@ -16,18 +16,17 @@
   * **Inspector**: Positioned on the right-hand side, the Inspector allows the analysis and modification of requests in a more intuitive manner than using the raw editor.
   * **Target**: Situated above the Inspector, the Target field specifies the IP address or domain to which the requests are sent.
     * When requests are sent to Repeater from other Burp Suite components, this field is automatically populated.
-
 ## Basic Usage
-While manual request crafting is an option, it is more common to capture a request using the Proxy module and subsequently transmit it to Repeater for further editing and resending.
-Once a request has been captured in the Proxy module, we can send it to Repeater by either right-clicking on the request and selecting Send to Repeater, or by utilising the keyboard shortcut Ctrl + R.
-Shifting our focus back to Repeater, we can observe that our captured request is now accessible in the Request view:
-
-Both the Target and Inspector sections now display relevant information, albeit we are currently lacking a response. Upon clicking the Send button, the Response view swiftly populates:
-
-Should we wish to modify any aspect of the request, we can simply type within the Request view and press Send once again. This action will update the Response view on the right accordingly. For instance, altering the Connection header to "open" instead of "close" yields a response with a Connection header containing the value "keep-alive":
-
-Furthermore, we can utilise the history buttons situated to the right of the Send button to navigate through our modification history, allowing us to move forward or backwards as needed.
-Message Analysis Toolbar
+* While manual request crafting is an option, it is more common to capture a request using the Proxy module and subsequently transmit it to Repeater for further editing and resending.
+* Once a request has been captured in the Proxy module, it can be sent to Repeater by either right-clicking on the request and selecting Send to Repeater, or by utilising the keyboard shortcut Ctrl + R.
+* The captured request is now accessible in the Request view.
+* Both the Target and Inspector sections display relevant information, albeit a response is currently lacking.
+* Upon clicking the Send button, the Response view populates.
+* Should any aspect of the request need to be modified, simply type within the Request view and press Send once again.
+* This action will update the Response view on the right accordingly.
+  * For instance, altering the Connection header to "open" instead of "close" yields a response with a Connection header containing the value "keep-alive":
+* The history buttons situated to the right of the Send button can be used to navigate through the modification history, allowing movement forward or backwards as needed.
+## Message Analysis Toolbar
 Repeater provides us with various request and response presentation options, ranging from hexadecimal output to a fully rendered page.
 To explore these options, we can refer to the section located above the response box, where the following four view buttons are available:
 
