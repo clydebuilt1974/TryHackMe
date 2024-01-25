@@ -39,7 +39,7 @@
 ### Sequencer
 * Typically employed when assessing the randomness of tokens, such as session cookie values or other supposedly randomly generated data.
 * If the algorithm used for generating these values lacks secure randomness, it can expose avenues for devastating attacks.
-
+### Extensions
 * Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality.
   * These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter).
 * The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules.
@@ -54,25 +54,23 @@
 * Choose your operating system from the dropdown menu and select **Burp Suite Community Edition**.
 * Then, click the **Download** button to initiate the download.
 ### Installation
-Install Burp Suite using the appropriate method for your operating system. 
-On Windows, run the executable file, while on Linux, execute the script from the terminal (with or without sudo). 
-If you choose not to use sudo during installation on Linux, Burp Suite will be installed in your home directory at ~/BurpSuiteCommunity/BurpSuiteCommunity and will not be added to your PATH.
-The installation wizard provides clear instructions, and it is generally safe to accept the default settings. 
-However, it is always recommended to review the installer carefully.
+* Install Burp Suite using the appropriate method for the OS.
+* On Windows, run the executable file, while on Linux, execute the script from the terminal (with or without `sudo`).
+  * If `sudo` is not used during installation on Linux, Burp Suite will be installed in the home directory at `~/BurpSuiteCommunity/BurpSuiteCommunity` and will not be added to the `PATH`.
+* The installation wizard provides clear instructions, and it is generally safe to accept the default settings.
 ## The Dashboard
-Once you launch Burp Suite and accept the terms and conditions, you will be prompted to select a project type. 
-In Burp Suite Community, the options are limited, and you can simply click Next to proceed.
-The next window allows you to choose the configuration for Burp Suite. 
-It is generally recommended to keep the default settings, which are suitable for most situations. 
-Click Start Burp to open the main Burp Suite interface.
-Upon opening Burp Suite for the first time, you might encounter a screen with training options. 
-It is highly recommended to go through these training materials when you have the time.
-If you don't see the training screen (or in subsequent sessions), you will be presented with the Burp Dashboard, which may seem overwhelming at first. 
-However, it will soon become familiar.
-Throughout the various tabs and windows of Burp Suite, you will notice question mark icons ().
-Clicking on these icons opens a new window with helpful information specific to that section. 
-These help icons are invaluable when you need assistance or clarification on a particular feature, so make sure to utilise them effectively.
-The Burp Dashboard is divided into four quadrants, as labelled in counter-clockwise order starting from the top left.
+* Once Burp Suite is launched and the terms and conditions are accepted, a project type will need to be selected.
+  * In Burp Suite Community, the options are limited, so click **Next** to proceed.
+* The next window allows the configuration for Burp Suite to be chosen.
+  * It is generally recommended to keep the default settings, which are suitable for most situations.
+* Click **Start Burp** to open the main Burp Suite interface.
+  * Upon opening Burp Suite for the first time, a screen with training options may be encountered.
+    * It is highly recommended to go through these training materials.
+* If the training screen is not displayed (or in subsequent sessions), the Burp Dashboard will be presented.
+* There are question mark icons yhroughout the various tabs and windows of Burp Suite.
+  * Clicking on these opens a new window with helpful information specific to that section.
+  * These are invaluable when assistance or clarification is needed on a particular feature, so make sure to utilise them effectively.
+* The Burp Dashboard is divided into four quadrants, as labelled in counter-clockwise order starting from the top left.
 
 ### Tasks
 The Tasks menu allows you to define background tasks that Burp Suite will perform while you use the application. 
