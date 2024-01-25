@@ -199,22 +199,34 @@
         * However, this option is disabled by default for security reasons.
           * Exercise caution if it is enabled, as compromising the browser could grant an attacker access to the entire machine. 
 ## Scoping and Targeting
-* Finally, we come to one of the most important aspects of using the Burp Proxy: Scoping.
-* Capturing and logging all of the traffic can quickly become overwhelming and inconvenient, especially when we only want to focus on specific web applications. This is where scoping comes in.
-* By setting a scope for the project, we can define what gets proxied and logged in Burp Suite. We can restrict Burp Suite to target only the specific web application(s) we want to test. The easiest way to do this is by switching to the Target tab, right-clicking on our target from the list on the left, and selecting Add To Scope. Burp will then prompt us to choose whether we want to stop logging anything that is not in scope, and in most cases, we want to select yes.
-* To check our scope, we can switch to the Scope settings sub-tab within the Target tab.
-* The Scope settings window allows us to control our target scope by including or excluding domains/IPs. This section is powerful and worth spending time getting familiar with.
-* However, even if we disabled logging for out-of-scope traffic, the proxy will still intercept everything. To prevent this, we need to go to the Proxy settings sub-tab and select And URL Is in target scope from the "Intercept Client Requests" section.
-* Enabling this option ensures that the proxy completely ignores any traffic that is not within the defined scope, resulting in a cleaner traffic view in Burp Suite.
+* One of the most important aspects of using the Burp Proxy.
+* Capturing and logging all of the traffic can quickly become overwhelming and inconvenient, especially when the focus is on specific web applications.
+* By setting a scope for the project, we can define what gets proxied and logged in Burp Suite.
+* Burp Suite can be restricted to target only the specific web application(s) to test:
+  * Switch to the Target tab, right-click on the target from the list on the left, and select Add To Scope.
+  * Burp will then prompt to choose whether to stop logging anything that is not in scope.
+    * In most cases select yes.
+* To check the scope, switch to the **Scope** settings sub-tab within the **Target** tab.
+  * The Scope settings window allows control over the target scope by including or excluding domains/IPs.
+  * This section is powerful.
+* Even if logging is disabled for out-of-scope traffic, the proxy will still intercept everything.
+  * To prevent this, go to the **Proxy settings** sub-tab and select **And URL Is in target scope** from the **Intercept Client Requests** section.
+    * Enabling this option ensures that the proxy completely ignores any traffic that is not within the defined scope, resulting in a cleaner traffic view in Burp Suite.
 ## Proxying HTTPS
-* When intercepting HTTP traffic, we may encounter an issue when navigating to sites with TLS enabled. For example, when accessing a site like https://google.com/, we may receive an error indicating that the PortSwigger Certificate Authority (CA) is not authorised to secure the connection. This happens because the browser does not trust the certificate presented by Burp Suite.
-* To overcome this issue, we can manually add the PortSwigger CA certificate to our browser's list of trusted certificate authorities. Here's how to do it:
-* Download the CA Certificate: With the Burp Proxy activated, navigate to http://burp/cert. This will download a file called cacert.der. Save this file somewhere on your machine.
-* Access Firefox Certificate Settings: Type about:preferences into your Firefox URL bar and press Enter. This will take you to the Firefox settings page. Search the page for "certificates" and click on the View Certificates button.
-* Import the CA Certificate: In the Certificate Manager window, click on the Import button. Select the cacert.der file that you downloaded in the previous step.
+* When intercepting HTTP traffic, we may encounter an issue when navigating to sites with TLS enabled.
+* For example, when accessing a site like https://google.com/, we may receive an error indicating that the PortSwigger Certificate Authority (CA) is not authorised to secure the connection.
+* This happens because the browser does not trust the certificate presented by Burp Suite.
+* To overcome this issue, we can manually add the PortSwigger CA certificate to our browser's list of trusted certificate authorities.
+* Here's how to do it:
+* Download the CA Certificate: With the Burp Proxy activated, navigate to http://burp/cert.
+* This will download a file called cacert.der. Save this file somewhere on your machine.
+* Access Firefox Certificate Settings: Type about:preferences into your Firefox URL bar and press Enter.
+* This will take you to the Firefox settings page. Search the page for "certificates" and click on the View Certificates button.
+* Import the CA Certificate: In the Certificate Manager window, click on the Import button.
+* Select the cacert.der file that you downloaded in the previous step.
 * Set Trust for the CA Certificate: In the subsequent window that appears, check the box that says "Trust this CA to identify websites" and click OK.
-* By completing these steps, we have added the PortSwigger CA certificate to our list of trusted certificate authorities. Now, we should be able to visit any TLS-enabled site without encountering the certificate error.
-* You can watch the following video for a visual demonstration of the full certificate import process:
+* By completing these steps, we have added the PortSwigger CA certificate to our list of trusted certificate authorities.
+* Now, we should be able to visit any TLS-enabled site without encountering the certificate error.
 * By following these instructions, you can ensure that your browser trusts the PortSwigger CA certificate and securely communicates with TLS-enabled websites through the Burp Suite Proxy.
 ## Example Attack
 * Having looked at how to set up and configure our proxy, let's go through a simplified real-world example.
