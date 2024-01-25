@@ -158,34 +158,46 @@
       * This will open a new browser tab with the FoxyProxy configurations.
       * Click the **Add** button to create a new proxy configuration.
 * **Add Proxy Details**: On the **Add Proxy** page, fill in the following values:
-> Title: Burp (or any preferred name)
-> Proxy IP: 127.0.0.1
-> Port: 8080
+    * Title: Burp (or any preferred name)
+    * Proxy IP: 127.0.0.1
+    * Port: 8080
 * **Save Configuration**: Click **Save** to save the Burp Proxy configuration.
 * **Activate Proxy Configuration**: Click on the FoxyProxy icon at the top-right of the Firefox browser and select the Burp configuration.
     * This will redirect your browser traffic through 127.0.0.1:8080.
 * **Enable Proxy Intercept in Burp Suite**: Switch to Burp Suite and ensure that Intercept is turned on in the **Proxy** tab.
 * **Test the Proxy**: Open Firefox and try accessing a website.
     * The browser will hang, and the proxy will populate with the HTTP request.
-## Remember the following:
-* When the proxy configuration is active, and the intercept is switched on in Burp Suite, your browser will hang whenever you make a request.
-* Be cautious not to leave the intercept switched on unintentionally, as it can prevent your browser from making any requests.
-* Right-clicking on a request in Burp Suite allows you to perform various actions, such as forwarding, dropping, sending to other tools, or selecting options from the right-click menu.
-* Take note of these details as you begin using the Burp Suite Proxy.
+
+**Remember the following**:
+* When the proxy configuration is active, and the intercept is switched on in Burp Suite, the browser will hang whenever a request is made.
+* Be cautious not to leave the intercept switched on unintentionally, as it can prevent the browser from making any requests.
+* Right-clicking on a request in Burp Suite performs various actions, such as forwarding, dropping, sending to other tools, or selecting options from the right-click menu.
 ## Site Map and Issue Definitions
-* The Target tab in Burp Suite provides more than just control over the scope of our testing. It consists of three sub-tabs:
-* Site map: This sub-tab allows us to map out the web applications we are targeting in a tree structure. Every page that we visit while the proxy is active will be displayed on the site map. This feature enables us to automatically generate a site map by simply browsing the web application. In Burp Suite Professional, we can also use the site map to perform automated crawling of the target, exploring links between pages and mapping out as much of the site as possible. Even with Burp Suite Community, we can still utilise the site map to accumulate data during our initial enumeration steps. It is particularly useful for mapping out APIs, as any API endpoints accessed by the web application will be captured in the site map.
-* Issue definitions: Although Burp Community does not include the full vulnerability scanning functionality available in Burp Suite Professional, we still have access to a list of all the vulnerabilities that the scanner looks for. The Issue definitions section provides an extensive list of web vulnerabilities, complete with descriptions and references. This resource can be valuable for referencing vulnerabilities in reports or assisting in describing a particular vulnerability that may have been identified during manual testing.
-* Scope settings: This setting allows us to control the target scope in Burp Suite. It enables us to include or exclude specific domains/IPs to define the scope of our testing. By managing the scope, we can focus on the web applications we are specifically targeting and avoid capturing unnecessary traffic.
-* Overall, the Target tab offers features beyond scoping, allowing us to map out web applications, fine-tune our target scope, and access a comprehensive list of web vulnerabilities for reference purposes.
+* The **Target** tab in Burp Suite provides more than just control over the scope of our testing. It consists of three sub-tabs:
+  * **Site map**: This sub-tab maps out the targeted web applications in a tree structure.
+    * Every page visited while the proxy is active will be displayed on the site map.
+    * This feature enables us to automatically generate a site map by simply browsing the web application.
+    * In Burp Suite Professional, the site map can also be used to perform automated crawling of the target, exploring links between pages and mapping out as much of the site as possible.
+      * Even with Burp Suite Community, the site map ca nstill be utilised to accumulate data during the initial enumeration steps.
+    * It is particularly useful for mapping out APIs, as any API endpoints accessed by the web application will be captured in the site map.
+  * **Issue definitions**: Although Burp Community does not include the full vulnerability scanning functionality available in Burp Suite Professional, there is still access to a list of all the vulnerabilities that the scanner looks for.
+    * This section provides an extensive list of web vulnerabilities, complete with descriptions and references.
+    * This resource can be valuable for referencing vulnerabilities in reports or assisting in describing a particular vulnerability that may have been identified during manual testing.
+  * **Scope settings**: This setting allows control over the target scope in Burp Suite.
+    * It enables the inclusion or exclusion of specific domains/IPs to define the scope of the testing.
+    * By managing the scope, the focus is on the web applications being specifically targeting and avoids capturing unnecessary traffic.
 ## The Burp Suite Browser
-* In addition to modifying our regular web browser to work with the proxy, Burp Suite also includes a built-in Chromium browser that is pre-configured to use the proxy without any of the modifications we just had to do.
-* To start the Burp Browser, click the Open Browser button in the proxy tab. A Chromium window will pop up, and any requests made in this browser will go through the proxy.
-* Note: There are many settings related to the Burp Browser in the project options and user options settings. Make sure to explore and customise them as needed.
-* However, if you are running Burp Suite on Linux as the root user, you may encounter an error preventing the Burp Browser from starting due to the inability to create a sandbox environment.
-* There are two simple solutions to this:
-* Smart option: Create a new user and run Burp Suite under a low-privilege account to allow the Burp Browser to run without issues.
-* Easy option: Go to Settings -> Tools -> Burp's browser and check the Allow Burp's browser to run without a sandbox option. Enabling this option will allow the browser to start without a sandbox. However, please be aware that this option is disabled by default for security reasons. If you choose to enable it, exercise caution, as compromising the browser could grant an attacker access to your entire machine. 
+* In addition to modifying the local web browser to work with the proxy, Burp Suite also includes a built-in Chromium browser that is pre-configured to use the proxy without any of the modifications we just had to do.
+  * To start the Burp Browser, click the Open Browser button in the proxy tab.
+  * A Chromium window will pop up, and any requests made in this browser will go through the proxy.
+  * There are many settings related to the Burp Browser in the project options and user options settings.
+* If Burp Suite is being run on Linux as the root user, an error preventing the Burp Browser from starting due to the inability to create a sandbox environment may be encountered.
+  * There are two simple solutions to this:
+    * **Smart option**: Create a new user and run Burp Suite under a low-privilege account to allow the Burp Browser to run without issues.
+    * **Easy option**: Go to Settings -> Tools -> Burp's browser and check the Allow Burp's browser to run without a sandbox option.
+        * Enabling this option will allow the browser to start without a sandbox.
+        * However, this option is disabled by default for security reasons.
+          * Exercise caution if it is enabled, as compromising the browser could grant an attacker access to the entire machine. 
 ## Scoping and Targeting
 * Finally, we come to one of the most important aspects of using the Burp Proxy: Scoping.
 * Capturing and logging all of the traffic can quickly become overwhelming and inconvenient, especially when we only want to focus on specific web applications. This is where scoping comes in.
