@@ -71,50 +71,41 @@
   * Clicking on these opens a new window with helpful information specific to that section.
   * These are invaluable when assistance or clarification is needed on a particular feature, so make sure to utilise them effectively.
 * The Burp Dashboard is divided into four quadrants, as labelled in counter-clockwise order starting from the top left.
-
-### Tasks
-The Tasks menu allows you to define background tasks that Burp Suite will perform while you use the application. 
-In Burp Suite Community, the default “Live Passive Crawl” task, which automatically logs the pages visited, is sufficient for our purposes in this module. 
-Burp Suite Professional offers additional features like on-demand scans.
-### Event log
-The Event log provides information about the actions performed by Burp Suite, such as starting the proxy, as well as details about connections made through Burp.
-### Issue Activity
-This section is specific to Burp Suite Professional. 
-It displays the vulnerabilities identified by the automated scanner, ranked by severity and filterable based on the certainty of the vulnerability.
-### Advisory
-The Advisory section provides more detailed information about the identified vulnerabilities, including references and suggested remediations. 
-This information can be exported into a report. 
-In Burp Suite Community, this section may not show any vulnerabilities.
+### Tasks Section
+* Allows the definition of background tasks that Burp Suite will perform while the application is used. 
+* Burp Suite Professional offers additional features like on-demand scans.
+### Event log Section
+* Provides information about the actions performed by Burp Suite, such as starting the proxy, as well as details about connections made through Burp.
+### Issue Activity Section
+* Specific to Burp Suite Professional. 
+* Displays the vulnerabilities identified by the automated scanner, ranked by severity and filterable based on the certainty of the vulnerability.
+### Advisory Section
+* Provides more detailed information about the identified vulnerabilities, including references and suggested remediations. 
+* This information can be exported into a report. 
+* In Burp Suite Community, this section may not show any vulnerabilities.
 ## Navigation
-In Burp Suite, the default navigation is primarily done through the top menu bars, which allow you to switch between modules and access various sub-tabs within each module. 
-The sub-tabs appear in a second menu bar directly below the main menu bar.
-## Module Selection
-The top row of the menu bar displays the available modules in Burp Suite. 
-You can click on each module to switch between them. 
-For example, the Burp Proxy module is selected in the image below.
-## Sub-Tabs
-If a selected module has multiple sub-tabs, they can be accessed through the second menu bar that appears directly below the main menu bar. 
-These sub-tabs often contain module-specific settings and options. 
-For example, in the image above, the Proxy Intercept sub-tab is selected within the Burp Proxy module.
-## Detaching Tabs
-If you prefer to view multiple tabs separately, you can detach them into separate windows. 
-To do this, go to the Window option in the application menu above the Module Selection bar. 
-From there, choose the "Detach" option, and the selected tab will open in a separate window. 
-The detached tabs can be reattached using the same method.
- 
-Burp Suite also provides keyboard shortcuts for quick navigation to key tabs. By default, the following shortcuts are available:
-Shortcut
-Tab
-Ctrl + Shift + D
-Dashboard
-Ctrl + Shift + T
-Target tab
-Ctrl + Shift + P
-Proxy tab
-Ctrl + Shift + I
-Intruder tab
-Ctrl + Shift + R
-Repeater tab
+* Default navigation is primarily done through the top menu bars, which allow you to switch between modules and access various sub-tabs within each module. 
+* The sub-tabs appear in a second menu bar directly below the main menu bar.
+### Module Selection
+* Top row of the menu bar displays the available modules in Burp Suite. 
+* Each module can be clicked on to switch between them.
+### Sub-Tabs
+* If a selected module has multiple sub-tabs, they can be accessed through the second menu bar that appears directly below the main menu bar.
+* These sub-tabs often contain module-specific settings and options.
+### Detaching Tabs
+* To view multiple tabs separately, detach them into separate windows.
+  * To do this, go to the Window option in the application menu above the Module Selection bar.
+    * From there, choose the "Detach" option, and the selected tab will open in a separate window.
+* The detached tabs can be reattached using the same method.
+* Burp Suite also provides keyboard shortcuts for quick navigation to key tabs. By default, the following shortcuts are available:
+
+| Shortcut | Tab
+| --- | ---
+| Ctrl + Shift + D | Dashboard
+| Ctrl + Shift + T | Target tab
+| Ctrl + Shift + P | Proxy tab
+| Ctrl + Shift + I | Intruder tab
+| Ctrl + Shift + R | Repeater tab
 
 ## Options
 Before diving into the Burp Proxy, let's explore the available options for configuring Burp Suite. 
