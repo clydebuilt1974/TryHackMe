@@ -1,24 +1,24 @@
 # Burp Suite: The Basics
 ## What is Burp Suite?
-Burp Suite is a Java-based framework designed to serve as a comprehensive solution for conducting web application penetration testing. 
-It has become the industry standard tool for hands-on security assessments of web and mobile applications, including those that rely on application programming interfaces (APIs).
-Burp Suite captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server. 
-This fundamental capability forms the backbone of the framework. 
-By intercepting requests, users have the flexibility to route them to various components within the Burp Suite framework. 
-The ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
-We will focus on the Burp Suite Community Edition, which is freely accessible for non-commercial use within legal boundaries. 
-It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
-Burp Suite Professional is an unrestricted version of Burp Suite Community. It comes with features such as
-An automated vulnerability scanner.
-A fuzzer/brute-forcer that isn't rate limited.
-Saving projects for future use and report generation.
-A built-in API to allow integration with other tools.
-Unrestricted access to add new extensions for greater functionality.
-Access to the Burp Suite Collaborator (effectively providing a unique request catcher self-hosted or running on a Portswigger-owned server).
-Burp Suite Professional is a highly potent tool, making it a preferred choice for professionals in the field.
-Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning. 
-It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning. 
-Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
+* Burp Suite is a Java-based framework designed to serve as a comprehensive solution for conducting web application penetration testing.
+* It has become the industry standard tool for hands-on security assessments of web and mobile applications, including those that rely on application programming interfaces (APIs).
+* Burp Suite captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server.
+* This fundamental capability forms the backbone of the framework.
+* By intercepting requests, users have the flexibility to route them to various components within the Burp Suite framework.
+* The ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
+* The focus will be on the Burp Suite Community Edition, which is freely accessible for non-commercial use within legal boundaries.
+* It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
+* Burp Suite Professional is an unrestricted version of Burp Suite Community. It comes with features such as:
+  * An automated vulnerability scanner.
+  * A fuzzer/brute-forcer that isn't rate limited.
+  * Saving projects for future use and report generation.
+  * A built-in API to allow integration with other tools.
+  * Unrestricted access to add new extensions for greater functionality.
+  * Access to the Burp Suite Collaborator (effectively providing a unique request catcher self-hosted or running on a Portswigger-owned server).
+* Burp Suite Professional is a highly potent tool, making it a preferred choice for professionals in the field.
+* Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning.
+  * It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
+  * Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
 ## Features of Burp Community
 Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality. 
 These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter). 
