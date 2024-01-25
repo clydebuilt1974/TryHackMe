@@ -516,7 +516,7 @@ admin123' UNION SELECT 1,2,3 from users where username='admin' and password like
 * Indicator of a correct query is based on the time the query takes to complete.
 * Time delay is introduced by using built-in methods such as `SLEEP(x)` alongside the `UNION` statement.
 * `SLEEP()` method will only ever get executed upon a successful `UNION SELECT` statement.
-* Use the following querywhen trying to establish the number of columns in a table:
+* Use the following query when trying to establish the number of columns in a table:
 ```
 admin123' UNION SELECT SLEEP(5);--
 ```
