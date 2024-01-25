@@ -1,5 +1,5 @@
 # Burp Suite: The Basics
-What is Burp Suite
+## What is Burp Suite?
 Burp Suite is a Java-based framework designed to serve as a comprehensive solution for conducting web application penetration testing. 
 It has become the industry standard tool for hands-on security assessments of web and mobile applications, including those that rely on application programming interfaces (APIs).
 Burp Suite captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server. 
@@ -19,32 +19,32 @@ Burp Suite Professional is a highly potent tool, making it a preferred choice fo
 Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning. 
 It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning. 
 Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
-Features of Burp Community
+## Features of Burp Community
 Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality. 
 These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter). 
 The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules. 
 While certain extensions may require a professional licence for integration, there are still a considerable number of extensions available for Burp Community. 
 For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
-Proxy
+### Proxy
 It enables interception and modification of requests and responses while interacting with web applications.
-Repeater
+### Repeater
 Repeater allows for capturing, modifying, and resending the same request multiple times. 
 This functionality is particularly useful when crafting payloads through trial and error (e.g., in SQLi - Structured Query Language Injection) or testing the functionality of an endpoint for vulnerabilities.
-Intruder
+### Intruder
 Despite rate limitations in Burp Suite Community, Intruder allows for spraying endpoints with requests. 
 It is commonly utilised for brute-force attacks or fuzzing endpoints.
-Decoder
+### Decoder
 Decoder offers a valuable service for data transformation. 
 It can decode captured information or encode payloads before sending them to the target. 
 While alternative services exist for this purpose, leveraging Decoder within Burp Suite can be highly efficient.
-Comparer
+### Comparer
 Comparer enables the comparison of two pieces of data at either the word or byte level. 
 While not exclusive to Burp Suite, the ability to send potentially large data segments directly to a comparison tool with a single keyboard shortcut significantly accelerates the process.
-Sequencer
+### Sequencer
 Sequencer is typically employed when assessing the randomness of tokens, such as session cookie values or other supposedly randomly generated data. 
 If the algorithm used for generating these values lacks secure randomness, it can expose avenues for devastating attacks.
-Installation
-Downloads
+## Installation
+### Downloads
 To download the latest version of Burp Suite for other systems, you may click this button to go to their download page.
 Kali Linux: Burp Suite comes pre-installed with Kali Linux. 
 In case it is missing on your Kali installation, you can easily install it from the Kali apt repositories.
@@ -52,13 +52,13 @@ Linux, macOS, and Windows: For other operating systems, PortSwigger provides ded
 Choose your operating system from the dropdown menu and select Burp Suite Community Edition. 
 Then, click the Download button to initiate the download.
 
-Installation
+### Installation
 Install Burp Suite using the appropriate method for your operating system. 
 On Windows, run the executable file, while on Linux, execute the script from the terminal (with or without sudo). 
 If you choose not to use sudo during installation on Linux, Burp Suite will be installed in your home directory at ~/BurpSuiteCommunity/BurpSuiteCommunity and will not be added to your PATH.
 The installation wizard provides clear instructions, and it is generally safe to accept the default settings. 
 However, it is always recommended to review the installer carefully.
-The Dashboard
+## The Dashboard
 Once you launch Burp Suite and accept the terms and conditions, you will be prompted to select a project type. 
 In Burp Suite Community, the options are limited, and you can simply click Next to proceed.
 The next window allows you to choose the configuration for Burp Suite. 
@@ -73,38 +73,35 @@ Clicking on these icons opens a new window with helpful information specific to 
 These help icons are invaluable when you need assistance or clarification on a particular feature, so make sure to utilise them effectively.
 The Burp Dashboard is divided into four quadrants, as labelled in counter-clockwise order starting from the top left.
 
-Tasks
+### Tasks
 The Tasks menu allows you to define background tasks that Burp Suite will perform while you use the application. 
 In Burp Suite Community, the default “Live Passive Crawl” task, which automatically logs the pages visited, is sufficient for our purposes in this module. 
 Burp Suite Professional offers additional features like on-demand scans.
-Event log
+### Event log
 The Event log provides information about the actions performed by Burp Suite, such as starting the proxy, as well as details about connections made through Burp.
-Issue Activity
+### Issue Activity
 This section is specific to Burp Suite Professional. 
 It displays the vulnerabilities identified by the automated scanner, ranked by severity and filterable based on the certainty of the vulnerability.
-Advisory
+### Advisory
 The Advisory section provides more detailed information about the identified vulnerabilities, including references and suggested remediations. 
 This information can be exported into a report. 
 In Burp Suite Community, this section may not show any vulnerabilities.
-Navigation
+## Navigation
 In Burp Suite, the default navigation is primarily done through the top menu bars, which allow you to switch between modules and access various sub-tabs within each module. 
 The sub-tabs appear in a second menu bar directly below the main menu bar.
-Module Selection
+## Module Selection
 The top row of the menu bar displays the available modules in Burp Suite. 
 You can click on each module to switch between them. 
 For example, the Burp Proxy module is selected in the image below.
-
-
-Sub-Tabs
+## Sub-Tabs
 If a selected module has multiple sub-tabs, they can be accessed through the second menu bar that appears directly below the main menu bar. 
 These sub-tabs often contain module-specific settings and options. 
 For example, in the image above, the Proxy Intercept sub-tab is selected within the Burp Proxy module.
-Detaching Tabs
+## Detaching Tabs
 If you prefer to view multiple tabs separately, you can detach them into separate windows. 
 To do this, go to the Window option in the application menu above the Module Selection bar. 
 From there, choose the "Detach" option, and the selected tab will open in a separate window. 
 The detached tabs can be reattached using the same method.
-
  
 Burp Suite also provides keyboard shortcuts for quick navigation to key tabs. By default, the following shortcuts are available:
 Shortcut
@@ -120,12 +117,12 @@ Intruder tab
 Ctrl + Shift + R
 Repeater tab
 
-Options
+## Options
 Before diving into the Burp Proxy, let's explore the available options for configuring Burp Suite. 
-Global Settings
+### Global Settings
 These settings affect the entire Burp Suite installation and are applied every time you start the application. 
 They provide a baseline configuration for your Burp Suite environment.
-Project Settings
+### Project Settings
 These settings are specific to the current project and apply only during the session.
 However, please note that Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
 To access the settings, click on the Settings button in the top navigation bar. This will open a separate settings window.
@@ -145,7 +142,7 @@ Categories: Allows selecting settings by category.
 It's worth noting that many tools within Burp Suite provide shortcuts to specific categories of settings. For example, the Proxy module includes a Proxy settings button that opens the settings window directly to the relevant proxy section.
 
 The search feature on the settings page is a valuable addition, allowing you to quickly search for settings using keywords.
-Introduction to the Burp Proxy
+## Introduction to the Burp Proxy
 The Burp Proxy is a fundamental and crucial tool within Burp Suite. It enables the capture of requests and responses between the user and the target web server. This intercepted traffic can be manipulated, sent to other tools for further processing, or explicitly allowed to continue to its destination.
 Key Points to Understand About the Burp Proxy
 Intercepting Requests: When requests are made through the Burp Proxy, they are intercepted and held back from reaching the target server. The requests appear in the Proxy tab, allowing for further actions such as forwarding, dropping, editing, or sending them to other Burp modules. To disable the intercept and allow requests to pass through the proxy without interruption, click the Intercept is on button.
@@ -162,7 +159,7 @@ Some Notable Features in the Proxy Settings
 Response Interception: By default, the proxy does not intercept server responses unless explicitly requested on a per-request basis. The "Intercept responses based on the following rules" checkbox, along with the defined rules, allows for a more flexible response interception.
  
 Match and Replace: The "Match and Replace" section in the Proxy settings enables the use of regular expressions (regex) to modify incoming and outgoing requests. This feature allows for dynamic changes, such as modifying the user agent or manipulating cookies.
-Connecting through the Proxy (FoxyProxy)
+## Connecting through the Proxy (FoxyProxy)
 To use the Burp Suite Proxy, we need to configure our local web browser to redirect traffic through Burp Suite. In this task, we will focus on configuring the proxy using the FoxyProxy extension in Firefox.
 Please note that the instructions provided are specific to Firefox. If you are using a different browser, you may need to find alternative methods.
 Here are the steps to configure the Burp Suite Proxy with FoxyProxy:
@@ -189,18 +186,18 @@ Activate Proxy Configuration: Click on the FoxyProxy icon at the top-right of th
 Enable Proxy Intercept in Burp Suite: Switch to Burp Suite and ensure that Intercept is turned on in the Proxy tab.
  
 Test the Proxy: Open Firefox and try accessing a website, such as the homepage for http://MACHINE_IP/. Your browser will hang, and the proxy will populate with the HTTP request. Congratulations, you have successfully intercepted your first request!
-Remember the following:
+## Remember the following:
 When the proxy configuration is active, and the intercept is switched on in Burp Suite, your browser will hang whenever you make a request.
 Be cautious not to leave the intercept switched on unintentionally, as it can prevent your browser from making any requests.
 Right-clicking on a request in Burp Suite allows you to perform various actions, such as forwarding, dropping, sending to other tools, or selecting options from the right-click menu.
 Take note of these details as you begin using the Burp Suite Proxy.
-Site Map and Issue Definitions
+## Site Map and Issue Definitions
 The Target tab in Burp Suite provides more than just control over the scope of our testing. It consists of three sub-tabs:
 Site map: This sub-tab allows us to map out the web applications we are targeting in a tree structure. Every page that we visit while the proxy is active will be displayed on the site map. This feature enables us to automatically generate a site map by simply browsing the web application. In Burp Suite Professional, we can also use the site map to perform automated crawling of the target, exploring links between pages and mapping out as much of the site as possible. Even with Burp Suite Community, we can still utilise the site map to accumulate data during our initial enumeration steps. It is particularly useful for mapping out APIs, as any API endpoints accessed by the web application will be captured in the site map.
 Issue definitions: Although Burp Community does not include the full vulnerability scanning functionality available in Burp Suite Professional, we still have access to a list of all the vulnerabilities that the scanner looks for. The Issue definitions section provides an extensive list of web vulnerabilities, complete with descriptions and references. This resource can be valuable for referencing vulnerabilities in reports or assisting in describing a particular vulnerability that may have been identified during manual testing.
 Scope settings: This setting allows us to control the target scope in Burp Suite. It enables us to include or exclude specific domains/IPs to define the scope of our testing. By managing the scope, we can focus on the web applications we are specifically targeting and avoid capturing unnecessary traffic.
 Overall, the Target tab offers features beyond scoping, allowing us to map out web applications, fine-tune our target scope, and access a comprehensive list of web vulnerabilities for reference purposes.
-The Burp Suite Browser
+## The Burp Suite Browser
 In addition to modifying our regular web browser to work with the proxy, Burp Suite also includes a built-in Chromium browser that is pre-configured to use the proxy without any of the modifications we just had to do.
 To start the Burp Browser, click the Open Browser button in the proxy tab. A Chromium window will pop up, and any requests made in this browser will go through the proxy.
 
@@ -209,7 +206,7 @@ However, if you are running Burp Suite on Linux as the root user, you may encoun
 There are two simple solutions to this:
 Smart option: Create a new user and run Burp Suite under a low-privilege account to allow the Burp Browser to run without issues.
 Easy option: Go to Settings -> Tools -> Burp's browser and check the Allow Burp's browser to run without a sandbox option. Enabling this option will allow the browser to start without a sandbox. However, please be aware that this option is disabled by default for security reasons. If you choose to enable it, exercise caution, as compromising the browser could grant an attacker access to your entire machine. 
-Scoping and Targeting
+## Scoping and Targeting
 Finally, we come to one of the most important aspects of using the Burp Proxy: Scoping.
 Capturing and logging all of the traffic can quickly become overwhelming and inconvenient, especially when we only want to focus on specific web applications. This is where scoping comes in.
 By setting a scope for the project, we can define what gets proxied and logged in Burp Suite. We can restrict Burp Suite to target only the specific web application(s) we want to test. The easiest way to do this is by switching to the Target tab, right-clicking on our target from the list on the left, and selecting Add To Scope. Burp will then prompt us to choose whether we want to stop logging anything that is not in scope, and in most cases, we want to select yes.
