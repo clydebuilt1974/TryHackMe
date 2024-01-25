@@ -213,33 +213,38 @@
   * To prevent this, go to the **Proxy settings** sub-tab and select **And URL Is in target scope** from the **Intercept Client Requests** section.
     * Enabling this option ensures that the proxy completely ignores any traffic that is not within the defined scope, resulting in a cleaner traffic view in Burp Suite.
 ## Proxying HTTPS
-* When intercepting HTTP traffic, we may encounter an issue when navigating to sites with TLS enabled.
-* For example, when accessing a site like https://google.com/, we may receive an error indicating that the PortSwigger Certificate Authority (CA) is not authorised to secure the connection.
-* This happens because the browser does not trust the certificate presented by Burp Suite.
-* To overcome this issue, we can manually add the PortSwigger CA certificate to our browser's list of trusted certificate authorities.
-* Here's how to do it:
-* Download the CA Certificate: With the Burp Proxy activated, navigate to http://burp/cert.
-* This will download a file called cacert.der. Save this file somewhere on your machine.
-* Access Firefox Certificate Settings: Type about:preferences into your Firefox URL bar and press Enter.
-* This will take you to the Firefox settings page. Search the page for "certificates" and click on the View Certificates button.
-* Import the CA Certificate: In the Certificate Manager window, click on the Import button.
-* Select the cacert.der file that you downloaded in the previous step.
-* Set Trust for the CA Certificate: In the subsequent window that appears, check the box that says "Trust this CA to identify websites" and click OK.
-* By completing these steps, we have added the PortSwigger CA certificate to our list of trusted certificate authorities.
-* Now, we should be able to visit any TLS-enabled site without encountering the certificate error.
-* By following these instructions, you can ensure that your browser trusts the PortSwigger CA certificate and securely communicates with TLS-enabled websites through the Burp Suite Proxy.
+* When intercepting HTTP traffic, an issue may be encountered when navigating to sites with TLS enabled.
+  * For example, when accessing a site like `https://google.com/`, an error will be received indicating that the PortSwigger Certificate Authority (CA) is not authorised to secure the connection.
+  * This happens because the browser does not trust the certificate presented by Burp Suite.
+  * To overcome this issue, manually add the PortSwigger CA certificate to the local browser's list of trusted certificate authorities:
+    * **Download the CA Certificate**: With the Burp Proxy activated, navigate to `http://burp/cert`.
+    * This will download a file called `cacert.der`.
+      * Save this file locally.
+    * **Access Firefox Certificate Settings**: Type `about:preferences` into the Firefox URL bar and press Enter.
+      * This will go to the Firefox settings page.
+      * Search the page for 'certificates' and click on the **View Certificates** button.
+    * **Import the CA Certificate**: In the Certificate Manager window, click on the **Import** button.
+        * Select the cacert.der file that you downloaded in the previous step.
+    * **Set Trust for the CA Certificate**: In the subsequent window that appears, check the box that says 'Trust this CA to identify websites' and click OK.
+* By completing these steps, the PortSwigger CA certificate has been added to the list of trusted certificate authorities.
+* Now visits to any TLS-enabled site will not present the certificate error.
+  * The browser now trusts the PortSwigger CA certificate and securely communicates with TLS-enabled websites through the Burp Suite Proxy.
 ## Example Attack
-* Having looked at how to set up and configure our proxy, let's go through a simplified real-world example.
-* We will start by taking a look at the support form at http://10.10.109.31/ticket/:
-* In a real-world web app pentest, we would test this for a variety of things, one of which would be Cross-Site Scripting (or XSS). If you have not yet encountered XSS, it can be thought of as injecting a client-side script (usually in Javascript) into a webpage in such a way that it executes. There are various kinds of XSS – the type that we are using here is referred to as "Reflected" XSS, as it only affects the person making the web request.
+* A support form is found on a website with 'Contact email' and 'Type your query here' text fields.
+* In a real-world web app pentest, this would be tested for a variety of things, one of which would be Cross-Site Scripting (or XSS).
+  * XSS can be thought of as injecting a client-side script (usually in Javascript) into a webpage in such a way that it executes.
+  * There are various kinds of XSS – the type used here is referred to as "Reflected" XSS, as it only affects the person making the web request.
 ### Walkthrough
-* Try typing: <script>alert("Succ3ssful XSS")</script>, into the "Contact Email" field. You should find that there is a client-side filter in place which prevents you from adding any special characters that aren't allowed in email addresses:
-* Fortunately for us, client-side filters are absurdly easy to bypass. There are a variety of ways we could disable the script or just prevent it from loading in the first place.
-* Let's focus on simply bypassing the filter for now.
-* First, make sure that your Burp Proxy is active and that intercept is on.
-* Now, enter some legitimate data into the support form. For example: "pentester@example.thm" as an email address, and "Test Attack" as a query.
-* Submit the form — the request should be intercepted by the proxy.
-* With the request captured in the proxy, we can now change the email field to be our very simple payload from above: <script>alert("Succ3ssful XSS")</script>. After pasting in the payload, we need to select it, then URL encode it with the Ctrl + U shortcut
-* to make it safe to send. This process is shown in the GIF below:
-* Finally, press the "Forward" button to send the request.
-* You should find an alert box from the site indicating a successful XSS attack!
+* Type `<script>alert("Succ3ssful XSS")</script>` into the 'Contact Email' field.
+* There is a client-side filter in place which prevents adding any special characters that aren't allowed in email addresses.
+* Client-side filters are absurdly easy to bypass.
+* There are a variety of ways to disable the script or just prevent it from loading in the first place.
+* Focus on bypassing the filter.
+* Make sure that the Burp Proxy is active and that intercept is on.
+* Enter some legitimate data into the support form.
+  * For example: `pentester@example.thm` as an email address, and `Test Attack` as a query.
+* Submit the form — the request will be intercepted by the proxy.
+* With the request captured in the proxy, change the email field to be the very simple payload from above: `<script>alert("Succ3ssful XSS")</script>`.
+* After pasting in the payload, select it, then URL encode it with the Ctrl + U shortcut to make it safe to send.
+* Finally, press the 'Forward"' button to send the request.
+* An alert box will be received from the site indicating a successful XSS attack.
