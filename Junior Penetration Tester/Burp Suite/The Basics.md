@@ -5,12 +5,9 @@
 * Captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server.
   * This fundamental capability forms the backbone of the framework.
 * By intercepting requests, users have the flexibility to route them to various components within the Burp Suite framework.
-* The ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
-* The focus will be on Burp Suite Community Edition.
-  * Freely accessible for non-commercial use within legal boundaries.
-* It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
-* Burp Suite Professional is an unrestricted version of Burp Suite Community.
-  * Comes with features such as:
+* Having the ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
+* Burp Suite Community Edition id freely accessible for non-commercial use within legal boundaries.
+* Burp Suite Professional is an unrestricted version of Burp Suite Community that comes with features such as:
     * An automated vulnerability scanner.
     * A fuzzer/brute-forcer that isn't rate limited.
     * Saving projects for future use and report generation.
@@ -18,17 +15,17 @@
     * Unrestricted access to add new extensions for greater functionality.
     * Access to the Burp Suite Collaborator (effectively providing a unique request catcher self-hosted or running on a Portswigger-owned server).
   * Highly potent tool, making it a preferred choice for professionals in the field.
-* Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning.
-  * It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
-  * Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
+* Burp Suite Enterprise in contrast to the community and professional editions is primarily utilised for continuous scanning.
+  * Features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
+  * Unlike the other editions, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
 ## Features of Burp Suite Community Edition
 ### Proxy
 * Enables interception and modification of requests and responses while interacting with web applications.
 ### Repeater
 * Allows for capturing, modifying, and resending the same request multiple times.
-* This functionality is particularly useful when crafting payloads through trial and error (e.g., in SQLi - Structured Query Language Injection) or testing the functionality of an endpoint for vulnerabilities.
+* Functionality is particularly useful when crafting payloads through trial and error (e.g., in SQLi - Structured Query Language Injection) or testing the functionality of an endpoint for vulnerabilities.
 ### Intruder
-* Despite rate limitations in Burp Suite Community, Intruder allows for spraying endpoints with requests.
+* Allows for spraying endpoints with requests despite rate limitations.
 * Commonly utilised for brute-force attacks or fuzzing endpoints.
 ### Decoder
 * Offers a valuable service for data transformation.
@@ -48,26 +45,25 @@
   * For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
 ## Installation
 ### Downloads
-* To download the latest version of Burp Suite for other systems, you may click [this](https://portswigger.net/burp/releases/) button to go to their download page.
+* To download the latest version of Burp Suite for other systems, click [this](https://portswigger.net/burp/releases/) button to go to the download page.
 * Burp Suite comes pre-installed with **Kali Linux**.
-* In case it is missing on the Kali installation, it can easily be installed from the Kali apt repositories.
+  * In case it is missing on the Kali installation, it can easily be installed from the Kali apt repositories.
 * **Linux, macOS, and Windows**: PortSwigger provides dedicated installers for Burp Suite Community and Burp Suite Professional on the Burp Suite downloads page.
-* Choose your operating system from the dropdown menu and select **Burp Suite Community Edition**.
-* Then, click the **Download** button to initiate the download.
+    * Choose your operating system from the dropdown menu and select **Burp Suite Community Edition**.
+    * Click the **Download** button to initiate the download.
 ### Installation
-* Install Burp Suite using the appropriate method for the OS.
 * On Windows, run the executable file, while on Linux, execute the script from the terminal (with or without `sudo`).
   * If `sudo` is not used during installation on Linux, Burp Suite will be installed in the home directory at `~/BurpSuiteCommunity/BurpSuiteCommunity` and will not be added to the `PATH`.
-* The installation wizard provides clear instructions, and it is generally safe to accept the default settings.
+* The installation wizard provides clear instructions and it is generally safe to accept the default settings.
 ## The Dashboard
 * Once Burp Suite is launched and the terms and conditions are accepted, a project type will need to be selected.
-  * In Burp Suite Community, the options are limited, so click **Next** to proceed.
+  * In Burp Suite Community, the options are limited so click **Next** to proceed.
 * The next window allows the configuration for Burp Suite to be chosen.
   * It is generally recommended to keep the default settings, which are suitable for most situations.
 * Click **Start Burp** to open the main Burp Suite interface.
   * Upon opening Burp Suite for the first time, a screen with training options may be encountered.
     * It is highly recommended to go through these training materials.
-* If the training screen is not displayed (or in subsequent sessions), the Burp Dashboard will be presented.
+* If the training screen is not displayed (or in subsequent sessions) the **Burp Dashboard** will be presented.
 * There are question mark icons yhroughout the various tabs and windows of Burp Suite.
   * Clicking on these opens a new window with helpful information specific to that section.
   * These are invaluable when assistance or clarification is needed on a particular feature, so make sure to utilise them effectively.
@@ -79,27 +75,26 @@
 * Provides information about the actions performed by Burp Suite, such as starting the proxy, as well as details about connections made through Burp.
 ### Issue Activity Section
 * Specific to Burp Suite Professional. 
-* Displays the vulnerabilities identified by the automated scanner, ranked by severity and filterable based on the certainty of the vulnerability.
+* Displays vulnerabilities identified by the automated scanner, ranked by severity and filterable based on the certainty of the vulnerability.
 ### Advisory Section
 * Provides more detailed information about the identified vulnerabilities, including references and suggested remediations. 
 * This information can be exported into a report. 
 * In Burp Suite Community, this section may not show any vulnerabilities.
 ## Navigation
-* Default navigation is primarily done through the top menu bars, which allow you to switch between modules and access various sub-tabs within each module. 
-* The sub-tabs appear in a second menu bar directly below the main menu bar.
+* Primarily done through the top menu bars, which allow switching between modules and access various sub-tabs within each module. 
+* Sub-tabs appear in a second menu bar directly below the main menu bar.
 ### Module Selection
 * Top row of the menu bar displays the available modules in Burp Suite. 
 * Each module can be clicked on to switch between them.
 ### Sub-Tabs
 * If a selected module has multiple sub-tabs, they can be accessed through the second menu bar that appears directly below the main menu bar.
-* These sub-tabs often contain module-specific settings and options.
+* Sub-tabs often contain module-specific settings and options.
 ### Detaching Tabs
 * To view multiple tabs separately, detach them into separate windows.
   * To do this, go to the Window option in the application menu above the Module Selection bar.
     * From there, choose the "Detach" option, and the selected tab will open in a separate window.
-* The detached tabs can be reattached using the same method.
-* Keyboard shortcuts are provided for quick navigation to key tabs.
-  * By default, the following shortcuts are available:
+* Detached tabs can be reattached using the same method.
+* Keyboard shortcuts are provided for quick navigation to key tabs:
 
 | Shortcut | Tab
 | --- | ---
@@ -111,10 +106,10 @@
 
 ## Options
 ### Global Settings
-* These affect the entire Burp Suite installation and are applied every time you start the application. 
-* They provide a baseline configuration for your Burp Suite environment.
+* Affect the entire Burp Suite installation and are applied every time you start the application. 
+* Provide a baseline configuration for your Burp Suite environment.
 ### Project Settings
-* These are specific to the current project and apply only during the session.
+* Specific to the current project and apply only during the session.
 * Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
 * To access the settings, click on the **Settings** button in the top navigation bar.
 * This will open a separate settings window.
@@ -131,7 +126,7 @@
 ## Introduction to the Burp Proxy
 * Fundamental and crucial tool within Burp Suite.
 * Enables the capture of requests and responses between the user and the target web server.
-* This intercepted traffic can be manipulated, sent to other tools for further processing, or explicitly allowed to continue to its destination.
+* Intercepted traffic can be manipulated, sent to other tools for further processing, or explicitly allowed to continue to its destination.
 ### Key Points to Understand About the Burp Proxy
 * **Intercepting Requests**: When requests are made through the Burp Proxy, they are intercepted and held back from reaching the target server.
   * The requests appear in the Proxy tab, allowing for further actions such as forwarding, dropping, editing, or sending them to other Burp modules.
@@ -173,21 +168,21 @@
 * Be cautious not to leave the intercept switched on unintentionally, as it can prevent the browser from making any requests.
 * Right-clicking on a request in Burp Suite performs various actions, such as forwarding, dropping, sending to other tools, or selecting options from the right-click menu.
 ## Site Map and Issue Definitions
-* The **Target** tab in Burp Suite provides more than just control over the scope of our testing. It consists of three sub-tabs:
-  * **Site map**: This sub-tab maps out the targeted web applications in a tree structure.
-    * Every page visited while the proxy is active will be displayed on the site map.
-    * This feature enables us to automatically generate a site map by simply browsing the web application.
-    * In Burp Suite Professional, the site map can also be used to perform automated crawling of the target, exploring links between pages and mapping out as much of the site as possible.
-      * Even with Burp Suite Community, the site map ca nstill be utilised to accumulate data during the initial enumeration steps.
-    * It is particularly useful for mapping out APIs, as any API endpoints accessed by the web application will be captured in the site map.
-  * **Issue definitions**: Although Burp Community does not include the full vulnerability scanning functionality available in Burp Suite Professional, there is still access to a list of all the vulnerabilities that the scanner looks for.
-    * This section provides an extensive list of web vulnerabilities, complete with descriptions and references.
-    * This resource can be valuable for referencing vulnerabilities in reports or assisting in describing a particular vulnerability that may have been identified during manual testing.
+* **Target** tab in Burp Suite consists of three tabs and provides more than just control over the scope of our testing.
+    * **Site map**: This sub-tab maps out the targeted web applications in a tree structure.
+        * Every page visited while the proxy is active will be displayed on the site map.
+        * This feature enables automatic generation of a site map by simply browsing the web application.
+        * In Burp Suite Professional, the site map can also be used to perform automated crawling of the target, exploring links between pages and mapping out as much of the site as possible.
+        * Even with Burp Suite Community, the site map ca nstill be utilised to accumulate data during the initial enumeration steps.
+        * It is particularly useful for mapping out APIs, as any API endpoints accessed by the web application will be captured in the site map.
+   * **Issue definitions**: Although Burp Community does not include the full vulnerability scanning functionality available in Burp Suite Professional, there is still access to a list of all the vulnerabilities that the scanner looks for.
+       * This section provides an extensive list of web vulnerabilities, complete with descriptions and references.
+       * This resource can be valuable for referencing vulnerabilities in reports or assisting in describing a particular vulnerability that may have been identified during manual testing.
   * **Scope settings**: This setting allows control over the target scope in Burp Suite.
-    * It enables the inclusion or exclusion of specific domains/IPs to define the scope of the testing.
-    * By managing the scope, the focus is on the web applications being specifically targeting and avoids capturing unnecessary traffic.
+      * It enables the inclusion or exclusion of specific domains/IPs to define the scope of the testing.
+      * By managing the scope, the focus is on the web applications being specifically targeting and avoids capturing unnecessary traffic.
 ## The Burp Suite Browser
-* In addition to modifying the local web browser to work with the proxy, Burp Suite also includes a built-in Chromium browser that is pre-configured to use the proxy without any of the modifications we just had to do.
+* Burp Suite includes a built-in Chromium browser that is pre-configured to use the proxy without any of the modifications.
   * To start the Burp Browser, click the Open Browser button in the proxy tab.
   * A Chromium window will pop up, and any requests made in this browser will go through the proxy.
   * There are many settings related to the Burp Browser in the project options and user options settings.
@@ -201,7 +196,7 @@
 ## Scoping and Targeting
 * One of the most important aspects of using the Burp Proxy.
 * Capturing and logging all of the traffic can quickly become overwhelming and inconvenient, especially when the focus is on specific web applications.
-* By setting a scope for the project, we can define what gets proxied and logged in Burp Suite.
+* By setting a scope for the project, what gets proxied and logged in Burp Suite can be defined.
 * Burp Suite can be restricted to target only the specific web application(s) to test:
   * Switch to the Target tab, right-click on the target from the list on the left, and select Add To Scope.
   * Burp will then prompt to choose whether to stop logging anything that is not in scope.
@@ -215,17 +210,17 @@
 ## Proxying HTTPS
 * When intercepting HTTP traffic, an issue may be encountered when navigating to sites with TLS enabled.
   * For example, when accessing a site like `https://google.com/`, an error will be received indicating that the PortSwigger Certificate Authority (CA) is not authorised to secure the connection.
-  * This happens because the browser does not trust the certificate presented by Burp Suite.
-  * To overcome this issue, manually add the PortSwigger CA certificate to the local browser's list of trusted certificate authorities:
-    * **Download the CA Certificate**: With the Burp Proxy activated, navigate to `http://burp/cert`.
-    * This will download a file called `cacert.der`.
+* This happens because the browser does not trust the certificate presented by Burp Suite.
+* To overcome this issue, manually add the PortSwigger CA certificate to the local browser's list of trusted certificate authorities:
+  * **Download the CA Certificate**: With the Burp Proxy activated, navigate to `http://burp/cert`.
+      * This will download a file called `cacert.der`.
       * Save this file locally.
-    * **Access Firefox Certificate Settings**: Type `about:preferences` into the Firefox URL bar and press Enter.
+  * **Access Firefox Certificate Settings**: Type `about:preferences` into the Firefox URL bar and press Enter.
       * This will go to the Firefox settings page.
       * Search the page for 'certificates' and click on the **View Certificates** button.
-    * **Import the CA Certificate**: In the Certificate Manager window, click on the **Import** button.
-        * Select the cacert.der file that you downloaded in the previous step.
-    * **Set Trust for the CA Certificate**: In the subsequent window that appears, check the box that says 'Trust this CA to identify websites' and click OK.
+  * **Import the CA Certificate**: In the Certificate Manager window, click on the **Import** button.
+      * Select the cacert.der file that you downloaded in the previous step.
+  * **Set Trust for the CA Certificate**: In the subsequent window that appears, check the box that says 'Trust this CA to identify websites' and click OK.
 * By completing these steps, the PortSwigger CA certificate has been added to the list of trusted certificate authorities.
 * Now visits to any TLS-enabled site will not present the certificate error.
   * The browser now trusts the PortSwigger CA certificate and securely communicates with TLS-enabled websites through the Burp Suite Proxy.
