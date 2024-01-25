@@ -2,4 +2,4 @@
 # 2. [Burp Repeater](Repeater.md)
 # 3. [Burp Intruder](Intruder.md)
 # 4. [Other Burp Modules](Other%20Modules.md)
-# 5. [Burp Extensions[(Extensions.md)
+# 5. [Burp Extensions](Extensions.md)
