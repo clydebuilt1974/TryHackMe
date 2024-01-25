@@ -7,16 +7,17 @@
 * By intercepting requests, users have the flexibility to route them to various components within the Burp Suite framework.
 * The ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
 * The focus will be on Burp Suite Community Edition.
-  * This is freely accessible for non-commercial use within legal boundaries.
+  * Freely accessible for non-commercial use within legal boundaries.
 * It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
-* Burp Suite Professional is an unrestricted version of Burp Suite Community. It comes with features such as:
-  * An automated vulnerability scanner.
-  * A fuzzer/brute-forcer that isn't rate limited.
-  * Saving projects for future use and report generation.
-  * A built-in API to allow integration with other tools.
-  * Unrestricted access to add new extensions for greater functionality.
-  * Access to the Burp Suite Collaborator (effectively providing a unique request catcher self-hosted or running on a Portswigger-owned server).
-* Burp Suite Professional is a highly potent tool, making it a preferred choice for professionals in the field.
+* Burp Suite Professional is an unrestricted version of Burp Suite Community.
+  * It comes with features such as:
+    * An automated vulnerability scanner.
+    * A fuzzer/brute-forcer that isn't rate limited.
+    * Saving projects for future use and report generation.
+    * A built-in API to allow integration with other tools.
+    * Unrestricted access to add new extensions for greater functionality.
+    * Access to the Burp Suite Collaborator (effectively providing a unique request catcher self-hosted or running on a Portswigger-owned server).
+  * Highly potent tool, making it a preferred choice for professionals in the field.
 * Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning.
   * It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
   * Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
