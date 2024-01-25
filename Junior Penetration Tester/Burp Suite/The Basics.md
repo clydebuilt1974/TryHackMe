@@ -10,7 +10,7 @@
   * Freely accessible for non-commercial use within legal boundaries.
 * It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
 * Burp Suite Professional is an unrestricted version of Burp Suite Community.
-  * It comes with features such as:
+  * Comes with features such as:
     * An automated vulnerability scanner.
     * A fuzzer/brute-forcer that isn't rate limited.
     * Saving projects for future use and report generation.
@@ -111,28 +111,23 @@
 
 ## Options
 ### Global Settings
-* These settings affect the entire Burp Suite installation and are applied every time you start the application. 
+* These affect the entire Burp Suite installation and are applied every time you start the application. 
 * They provide a baseline configuration for your Burp Suite environment.
 ### Project Settings
-* These settings are specific to the current project and apply only during the session.
-* However, please note that Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
-* To access the settings, click on the Settings button in the top navigation bar. This will open a separate settings window.
-
-
- Below is the image showing the separate settings window.
- 
-In the Settings window, you will find a menu on the left-hand side. 
-This menu allows you to switch between different types of settings, including:
-
-Search: Enables searching for specific settings using keywords.
-Type filter: Filters the settings for User and Project options.
-User settings: Shows settings that affect the entire Burp Suite installation.
-Project settings: Displays settings specific to the current project.
-Categories: Allows selecting settings by category.
-
-It's worth noting that many tools within Burp Suite provide shortcuts to specific categories of settings. For example, the Proxy module includes a Proxy settings button that opens the settings window directly to the relevant proxy section.
-
-The search feature on the settings page is a valuable addition, allowing you to quickly search for settings using keywords.
+* These are specific to the current project and apply only during the session.
+* Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
+* To access the settings, click on the **Settings** button in the top navigation bar.
+* This will open a separate settings window.
+* There is a menu on the left-hand side in the Settings window.
+* This menu allows switching between different types of settings including:
+  * **Search**: Enables searching for specific settings using keywords.
+  * **Type filter**: Filters the settings for User and Project options.
+  * **User settings**: Shows settings that affect the entire Burp Suite installation.
+  * **Project settings**: Displays settings specific to the current project.
+  * **Categories**: Allows selecting settings by category.
+* Mmany tools within Burp Suite provide shortcuts to specific categories of settings.
+  * For example, the Proxy module includes a Proxy settings button that opens the settings window directly to the relevant proxy section.
+* The search feature on the settings page is a valuable addition, allowing the quick search for settings using keywords.
 ## Introduction to the Burp Proxy
 The Burp Proxy is a fundamental and crucial tool within Burp Suite. It enables the capture of requests and responses between the user and the target web server. This intercepted traffic can be manipulated, sent to other tools for further processing, or explicitly allowed to continue to its destination.
 Key Points to Understand About the Burp Proxy
