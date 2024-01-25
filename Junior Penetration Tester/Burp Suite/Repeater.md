@@ -67,7 +67,7 @@
 * The task is to launch an attack to retrieve the notes about the CEO stored in the database by leveraging this vulnerability.
 * Capture a request to `http://website.thm/about/2` in the Burp Proxy.
 * Send it to Repeater with Ctrl + R or by right-clicking and choosing 'Send to Repeater'.
-* Add a single apostrophe `'` after the `/about/2 at the end of the path.
+* Add a single apostrophe `'` after the `/about/2` at the end of the path.
 * Send the request.
 * The server responds with a '500 Internal Server Error', indicating that the query was successfully broken.
   * This validates that a simple SQLi is present.
