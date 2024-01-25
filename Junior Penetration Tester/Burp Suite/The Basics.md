@@ -151,19 +151,22 @@
 ## Connecting through the Proxy (FoxyProxy)
 * To use the Burp Suite Proxy, the local web browser must be configured to redirect traffic through Burp Suite.
 * These instructions are specific to Firefox. 
-* Install FoxyProxy: Download and install the [FoxyProxy Basic extension](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-basic/).
-* Access FoxyProxy Options: Once installed, a button will appear at the top right of the Firefox browser. Click on the FoxyProxy button to access the FoxyProxy options pop-up.
-* Create Burp Proxy Configuration: In the FoxyProxy options pop-up, click the Options button. This will open a new browser tab with the FoxyProxy configurations. Click the Add button to create a new proxy configuration.
-* Add Proxy Details: On the "Add Proxy" page, fill in the following values:
-
-Title: Burp (or any preferred name)
-Proxy IP: 127.0.0.1
-Port: 8080
-
-* Save Configuration: Click Save to save the Burp Proxy configuration.
-* Activate Proxy Configuration: Click on the FoxyProxy icon at the top-right of the Firefox browser and select the Burp configuration. This will redirect your browser traffic through 127.0.0.1:8080. Note that Burp Suite must be running for your browser to make requests when this configuration is activated.
-* Enable Proxy Intercept in Burp Suite: Switch to Burp Suite and ensure that Intercept is turned on in the Proxy tab.
-* Test the Proxy: Open Firefox and try accessing a website, such as the homepage for http://MACHINE_IP/. Your browser will hang, and the proxy will populate with the HTTP request. Congratulations, you have successfully intercepted your first request!
+  * **Install FoxyProxy**: Download and install the [FoxyProxy Basic extension](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-basic/).
+  * **Access FoxyProxy Options**: Once installed, a button will appear at the top right of the Firefox browser.
+      * Click on the FoxyProxy button to access the FoxyProxy options pop-up.
+  * **Create Burp Proxy Configuration**: In the FoxyProxy options pop-up, click the **Options** button.
+      * This will open a new browser tab with the FoxyProxy configurations.
+      * Click the **Add** button to create a new proxy configuration.
+* **Add Proxy Details**: On the **Add Proxy** page, fill in the following values:
+> Title: Burp (or any preferred name)
+> Proxy IP: 127.0.0.1
+> Port: 8080
+* **Save Configuration**: Click **Save** to save the Burp Proxy configuration.
+* **Activate Proxy Configuration**: Click on the FoxyProxy icon at the top-right of the Firefox browser and select the Burp configuration.
+    * This will redirect your browser traffic through 127.0.0.1:8080.
+* **Enable Proxy Intercept in Burp Suite**: Switch to Burp Suite and ensure that Intercept is turned on in the **Proxy** tab.
+* **Test the Proxy**: Open Firefox and try accessing a website.
+    * The browser will hang, and the proxy will populate with the HTTP request.
 ## Remember the following:
 * When the proxy configuration is active, and the intercept is switched on in Burp Suite, your browser will hang whenever you make a request.
 * Be cautious not to leave the intercept switched on unintentionally, as it can prevent your browser from making any requests.
