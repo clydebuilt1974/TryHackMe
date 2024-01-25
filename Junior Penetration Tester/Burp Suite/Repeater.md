@@ -27,17 +27,21 @@
   * For instance, altering the Connection header to "open" instead of "close" yields a response with a Connection header containing the value "keep-alive":
 * The history buttons situated to the right of the Send button can be used to navigate through the modification history, allowing movement forward or backwards as needed.
 ## Message Analysis Toolbar
-Repeater provides us with various request and response presentation options, ranging from hexadecimal output to a fully rendered page.
-To explore these options, we can refer to the section located above the response box, where the following four view buttons are available:
+* Repeater provides various request and response presentation options, ranging from hexadecimal output to a fully rendered page.
+* To explore these options, refer to the section located above the response box, where the following four view buttons are available:
+  * **Pretty**: This is the default option, which takes the raw response and applies slight formatting enhancements to improve readability.
+  * **Raw**: This option displays the unmodified response directly received from the server without any additional formatting.
+  * **Hex**: By selecting this view, the response can be examined in a byte-level representation, which is particularly useful when dealing with binary files.
+  * **Render**: The render option allows visualisation of the page as it would appear in a web browser.
+      * While not commonly utilised in Repeater, as the focus is usually on the source code, it still offers a valuable feature.
+* For most scenarios, the **Pretty** option is generally sufficient.
+* Adjacent to the view buttons, on the right-hand side, are the **Show non-printable characters** button (\n).
+  * This functionality enables the display of characters that may not be visible with the **Pretty** or **Raw** options.
+    * For example, each line in the response typically ends with the characters `\r\n`, representing a carriage return followed by a new line.
+    * These characters play an important role in the interpretation of HTTP headers.
+  * While not mandatory for most tasks, this option can prove advantageous in certain situations.
 
-We are presented with the following display choices:
-Pretty: This is the default option, which takes the raw response and applies slight formatting enhancements to improve readability.
-Raw: This option displays the unmodified response directly received from the server without any additional formatting.
-Hex: By selecting this view, we can examine the response in a byte-level representation, which is particularly useful when dealing with binary files.
-Render: The render option allows us to visualise the page as it would appear in a web browser. While not commonly utilised in Repeater, as our focus is usually on the source code, it still offers a valuable feature. For most scenarios, the Pretty option is generally sufficient. However, it is beneficial to be acquainted with the usage of the other three options.
-Adjacent to the view buttons, on the right-hand side, we find the Show non-printable characters button (\n). This functionality enables the display of characters that may not be visible with the Pretty or Raw options. For example, each line in the response typically ends with the characters \r\n, representing a carriage return followed by a new line. These characters play an important role in the interpretation of HTTP headers.
-While not mandatory for most tasks, this option can prove advantageous in certain situations.
-Inspector
+## Inspector
 Inspector is a supplementary feature to the Request and Response views in the Repeater module. It is also used to obtain a visually organised breakdown of requests and responses, as well as for experimenting to see how changes made using the higher-level Inspector affect the equivalent raw versions.
 Inspector can be utilised both in the Proxy and Repeater module. In both instances, it is situated on the far-right side of the window, presenting a list of components within the request and response:
 
