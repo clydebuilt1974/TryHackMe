@@ -83,28 +83,39 @@
  </code>
 </h2>
 ```
-  * The server is displaying the query we tried to execute.
-* Overly Verbose Error Message Showing the Query:
-* This is an extremely useful error message that the server should absolutely not be sending us, but the fact that we have it makes our job significantly more straightforward.
-* The message tells us a couple of things that will be invaluable when exploiting this vulnerability:
-* The database table we are selecting from is called people.
-* The query selects five columns from the table: firstName, lastName, pfpLink, role, and bio. We can guess where these fit into the page, which will be helpful for when we choose where to place our requests.
-* With this information, we can skip over the query column number and table name enumeration steps.
-* Although we have managed to cut out a lot of the enumeration required here, we still need to find the name of our target column.
-* As we know the table name and the number of rows, we can use a union query to select the column names for the people table from the columns table in the information_schema default database.
-* A simple query for this is as follows: /about/-1 UNION ALL SELECT column_name,null,null,null,null FROM information_schema.columns WHERE table_name="people"
-* This creates a union query and selects our target, then four null columns (to avoid the query erroring out). Notice that we also changed the ID that we are selecting from 2 to -1. By setting the ID to an invalid number, we ensure that we don't retrieve anything with the original (legitimate) query; this means that the first row returned from the database will be our desired response from the injected query.
-* Looking through the returned response, we can see that the first column name (id) has been inserted into the page title:
-* We have successfully pulled the first column name out of the database, but we now have a problem. The page is only displaying the first matching item — we need to see all of the matching items.
+* This is an extremely useful error message that the server should absolutely not be sending, but the fact that it has makes things significantly more straightforward.
+* The message states a couple of things that will be invaluable when exploiting this vulnerability:
+  * The database table we are selecting from is called `people`.
+  * The query selects five columns from the table `firstName`, `lastName`, `pfpLink`, `role`, and `bio`.
+* With this information, the query column number and table name enumeration steps can be skipped.
+* Still need to find the name of the target column.
+* Use a union query to select the column names for the `people` table from the `columns` table in the `information_schema` default database:
+```
+/about/-1 UNION ALL SELECT column_name,null,null,null,null FROM information_schema.columns WHERE table_name="people"
+```
+* This creates a union query and selects the target, then four null columns (to avoid the query erroring out).
+  * The selected `ID` is changed from `2` to an invalid number; `-1`.
+    * Ensures that nothing is retrieved with the original (legitimate) query.
+    * First row returned from the database will be the desired response from the injected query.
+* The returned response shows that the first column name `id` has been inserted into the page title:
+```
+<title>
+ About | id None
+</title>
+```
+* We have successfully pulled the first column name out of the database, but we now have a problem.
+* The page is only displaying the first matching item — we need to see all of the matching items.
 * Fortunately, we can use our SQLi to group the results. We can still only retrieve one result at a time, but by using the group_concat() function, we can amalgamate all of the column names into a single output:
+```
 /about/-1 UNION ALL SELECT group_concat(column_name),null,null,null,null FROM information_schema.columns WHERE table_name="people"
+```
 * We have successfully identified eight columns in this table: id, firstName, lastName, pfpLink, role, shortRole, bio, and notes.
 * Considering our task, it seems a safe bet that our target column is notes.
 * Finally, we are ready to take the flag from this database — we have all of the information that we need:
 * The name of the table: people.
 * The name of the target column: notes.
 * The ID of the CEO is 1; this can be found simply by clicking on Jameson Wolfe's profile on the /about/ page and checking the ID in the URL.
-* Let's craft a query to extract this flag: -1 UNION ALL SELECT notes,null,null,null,null FROM people WHERE id = 1
-
-
-
+* Let's craft a query to extract this flag:
+```
+-1 UNION ALL SELECT notes,null,null,null,null FROM people WHERE id = 1
+``
