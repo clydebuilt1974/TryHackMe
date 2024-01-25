@@ -97,7 +97,8 @@
   * To do this, go to the Window option in the application menu above the Module Selection bar.
     * From there, choose the "Detach" option, and the selected tab will open in a separate window.
 * The detached tabs can be reattached using the same method.
-* Burp Suite also provides keyboard shortcuts for quick navigation to key tabs. By default, the following shortcuts are available:
+* Keyboard shortcuts are provided for quick navigation to key tabs.
+  * By default, the following shortcuts are available:
 
 | Shortcut | Tab
 | --- | ---
@@ -108,14 +109,13 @@
 | Ctrl + Shift + R | Repeater tab
 
 ## Options
-Before diving into the Burp Proxy, let's explore the available options for configuring Burp Suite. 
 ### Global Settings
-These settings affect the entire Burp Suite installation and are applied every time you start the application. 
-They provide a baseline configuration for your Burp Suite environment.
+* These settings affect the entire Burp Suite installation and are applied every time you start the application. 
+* They provide a baseline configuration for your Burp Suite environment.
 ### Project Settings
-These settings are specific to the current project and apply only during the session.
-However, please note that Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
-To access the settings, click on the Settings button in the top navigation bar. This will open a separate settings window.
+* These settings are specific to the current project and apply only during the session.
+* However, please note that Burp Suite Community Edition does not support saving projects, so any project-specific options will be lost when you close Burp.
+* To access the settings, click on the Settings button in the top navigation bar. This will open a separate settings window.
 
 
  Below is the image showing the separate settings window.
