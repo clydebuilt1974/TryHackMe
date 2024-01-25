@@ -62,81 +62,38 @@
       * Note that this section becomes visible only after sending a request and receiving a response.
 * While the textual representation of these components can be found within the Request and Response views, Inspector's tabular format provides a convenient way to visualise and interact with them.
 
-### Repeater Example
-Repeater is particularly well-suited for tasks requiring repetitive sending of similar requests, typically with minor modifications. This is particularly useful for activities such as manual testing for SQL Injection vulnerabilities, attempting to bypass web application firewall filters, or adjusting parameters in a form submission.
-Let's begin with an exceedingly simple example: Utilising Repeater to modify the headers of a request sent to a target.
-Capture a request to http://10.10.114.145/ in the Proxy module and send it to Repeater.
-Send the request once from Repeater — you should see the HTML source code for the page you requested in the Response view.
-
-Try viewing this in one of the other display options (e.g. Hex).
-Using Inspector (or manually, if you prefer), add a header called FlagAuthorised and set it to have a value of True, as shown below:
-
-Challenge
-Now, it's time for a straightforward challenge!
-To begin, make sure intercept is disabled in your Proxy module and navigate to http://10.10.114.145/products/. Next, try clicking on some of the See More links.
-Observe that you are redirected to a numeric endpoint (e.g., /products/2).
-
-The objective is to validate the endpoint, confirming the existence of the number you wish to navigate to and ensuring it is a valid integer. However, consider what might occur if this endpoint is not adequately validated.
-Enable intercept again and capture a request to one of the numeric products endpoints in the Proxy module, then forward it to Repeater.
-See if you can get the server to error out with a "500 Internal Server Error" code by changing the number at the end of the request to extreme inputs.        
-In this example, the product number was changed to -1 in Inspector:
-
-
-
-
-This resulted in a "500 Internal Server Error" code when the amended Request was resent:
-
-
-
-Extra-mile Challenge
-This task is designed to test your skills in a slightly more challenging, real-world scenario utilising Burp Repeater. 
-Challenge Objective
-Your objective in this challenge is to identify and exploit a Union SQL Injection vulnerability present in the ID parameter of the /about/ID endpoint. By leveraging this vulnerability, your task is to launch an attack to retrieve the notes about the CEO stored in the database.
-Walkthrough
-We know that there is a vulnerability, and we know where it is. Now we just need to exploit it!
-Let's start by capturing a request to http://10.10.114.145/about/2 in the Burp Proxy. 
-
-Once you have captured the request, send it to Repeater with Ctrl + R or by right-clicking and choosing "Send to Repeater".
-Now that we have our request primed, let's confirm that a vulnerability exists. Adding a single apostrophe (') is usually enough to cause the server to error when a simple SQLi is present, so, either using Inspector or by editing the request path manually, add an apostrophe after the "2" at the end of the path and send the request:
-
-
-
-You should see that the server responds with a "500 Internal Server Error", indicating that we successfully broke the query:
-
-      
-If we look through the body of the server's response, we see something very interesting at around line 40. The server is telling us the query we tried to execute.
-Overly Verbose Error Message Showing the Query:
-
-
-
-This is an extremely useful error message that the server should absolutely not be sending us, but the fact that we have it makes our job significantly more straightforward.
-The message tells us a couple of things that will be invaluable when exploiting this vulnerability:
-The database table we are selecting from is called people.
-The query selects five columns from the table: firstName, lastName, pfpLink, role, and bio. We can guess where these fit into the page, which will be helpful for when we choose where to place our requests.
-With this information, we can skip over the query column number and table name enumeration steps.
-Although we have managed to cut out a lot of the enumeration required here, we still need to find the name of our target column.
-As we know the table name and the number of rows, we can use a union query to select the column names for the people table from the columns table in the information_schema default database.
-A simple query for this is as follows:
-
-/about/-1 UNION ALL SELECT column_name,null,null,null,null FROM information_schema.columns WHERE table_name="people"
-
-This creates a union query and selects our target, then four null columns (to avoid the query erroring out). Notice that we also changed the ID that we are selecting from 2 to -1. By setting the ID to an invalid number, we ensure that we don't retrieve anything with the original (legitimate) query; this means that the first row returned from the database will be our desired response from the injected query.
-Looking through the returned response, we can see that the first column name (id) has been inserted into the page title:
-       
-We have successfully pulled the first column name out of the database, but we now have a problem. The page is only displaying the first matching item — we need to see all of the matching items.
-Fortunately, we can use our SQLi to group the results. We can still only retrieve one result at a time, but by using the group_concat() function, we can amalgamate all of the column names into a single output:
-
+### Repeater Challenge
+* The objective is to identify and exploit a Union SQL Injection vulnerability present in the `ID` parameter of the `/about/ID` endpoint.
+* By leveraging this vulnerability, the task is to launch an attack to retrieve the notes about the CEO stored in the database.
+* Capture a request to `http://website.thm/about/2` in the Burp Proxy.
+* Once the request has been captured, send it to Repeater with Ctrl + R or by right-clicking and choosing 'Send to Repeater'.
+* Now that the request is primed, confirm that a vulnerability exists.
+* Add a single apostrophe `'` after the '2' at the end of the path.
+* Send the request to validate that a simple SQLi is present.
+* The server responds with a '500 Internal Server Error', indicating that we successfully broke the query.
+* If we look through the body of the server's response, we see something very interesting at around line 40.
+* The server is telling us the query we tried to execute.
+* Overly Verbose Error Message Showing the Query:
+* This is an extremely useful error message that the server should absolutely not be sending us, but the fact that we have it makes our job significantly more straightforward.
+* The message tells us a couple of things that will be invaluable when exploiting this vulnerability:
+* The database table we are selecting from is called people.
+* The query selects five columns from the table: firstName, lastName, pfpLink, role, and bio. We can guess where these fit into the page, which will be helpful for when we choose where to place our requests.
+* With this information, we can skip over the query column number and table name enumeration steps.
+* Although we have managed to cut out a lot of the enumeration required here, we still need to find the name of our target column.
+* As we know the table name and the number of rows, we can use a union query to select the column names for the people table from the columns table in the information_schema default database.
+* A simple query for this is as follows: /about/-1 UNION ALL SELECT column_name,null,null,null,null FROM information_schema.columns WHERE table_name="people"
+* This creates a union query and selects our target, then four null columns (to avoid the query erroring out). Notice that we also changed the ID that we are selecting from 2 to -1. By setting the ID to an invalid number, we ensure that we don't retrieve anything with the original (legitimate) query; this means that the first row returned from the database will be our desired response from the injected query.
+* Looking through the returned response, we can see that the first column name (id) has been inserted into the page title:
+* We have successfully pulled the first column name out of the database, but we now have a problem. The page is only displaying the first matching item — we need to see all of the matching items.
+* Fortunately, we can use our SQLi to group the results. We can still only retrieve one result at a time, but by using the group_concat() function, we can amalgamate all of the column names into a single output:
 /about/-1 UNION ALL SELECT group_concat(column_name),null,null,null,null FROM information_schema.columns WHERE table_name="people"
-
-
-We have successfully identified eight columns in this table: id, firstName, lastName, pfpLink, role, shortRole, bio, and notes.
-Considering our task, it seems a safe bet that our target column is notes.
-Finally, we are ready to take the flag from this database — we have all of the information that we need:
-The name of the table: people.
-The name of the target column: notes.
-The ID of the CEO is 1; this can be found simply by clicking on Jameson Wolfe's profile on the /about/ page and checking the ID in the URL.
-Let's craft a query to extract this flag:
--1 UNION ALL SELECT notes,null,null,null,null FROM people WHERE id = 1
+* We have successfully identified eight columns in this table: id, firstName, lastName, pfpLink, role, shortRole, bio, and notes.
+* Considering our task, it seems a safe bet that our target column is notes.
+* Finally, we are ready to take the flag from this database — we have all of the information that we need:
+* The name of the table: people.
+* The name of the target column: notes.
+* The ID of the CEO is 1; this can be found simply by clicking on Jameson Wolfe's profile on the /about/ page and checking the ID in the URL.
+* Let's craft a query to extract this flag: -1 UNION ALL SELECT notes,null,null,null,null FROM people WHERE id = 1
 
 
 
