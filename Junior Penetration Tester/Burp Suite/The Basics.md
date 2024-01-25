@@ -1,12 +1,13 @@
 # Burp Suite: The Basics
 ## What is Burp Suite?
-* Burp Suite is a Java-based framework designed to serve as a comprehensive solution for conducting web application penetration testing.
-* It has become the industry standard tool for hands-on security assessments of web and mobile applications, including those that rely on application programming interfaces (APIs).
-* Burp Suite captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server.
-* This fundamental capability forms the backbone of the framework.
+* Java-based framework designed to serve as a comprehensive solution for conducting web application penetration testing.
+* Has become the industry standard tool for hands-on security assessments of web and mobile applications, including those that rely on application programming interfaces (APIs).
+* Captures and enables manipulation of all the HTTP/HTTPS traffic between a browser and a web server.
+  * This fundamental capability forms the backbone of the framework.
 * By intercepting requests, users have the flexibility to route them to various components within the Burp Suite framework.
 * The ability to intercept, view, and modify web requests before they reach the target server or even manipulate responses before they are received by our browser makes Burp Suite an invaluable tool for manual web application testing.
-* The focus will be on the Burp Suite Community Edition, which is freely accessible for non-commercial use within legal boundaries.
+* The focus will be on Burp Suite Community Edition.
+  * This is freely accessible for non-commercial use within legal boundaries.
 * It's worth noting that Burp Suite also offers Professional and Enterprise editions, which come with advanced features and require licensing.
 * Burp Suite Professional is an unrestricted version of Burp Suite Community. It comes with features such as:
   * An automated vulnerability scanner.
@@ -19,39 +20,38 @@
 * Burp Suite Enterprise, in contrast to the community and professional editions, is primarily utilised for continuous scanning.
   * It features an automated scanner that periodically scans web applications for vulnerabilities, similar to how tools like Nessus perform automated infrastructure scanning.
   * Unlike the other editions, which allow manual attacks from a local machine, Burp Suite Enterprise resides on a server and constantly scans the target web applications for potential vulnerabilities.
-## Features of Burp Community
-Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality. 
-These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter). 
-The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules. 
-While certain extensions may require a professional licence for integration, there are still a considerable number of extensions available for Burp Community. 
-For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
+## Features of Burp Suite Community Edition
+* Beyond the built-in features, the Java codebase of Burp Suite facilitates the development of extensions to enhance the framework's functionality.
+  * These extensions can be written in Java, Python (using the Java Jython interpreter), or Ruby (using the Java JRuby interpreter).
+* The Burp Suite Extender module allows for quick and easy loading of extensions into the framework, while the marketplace, known as the BApp Store, enables downloading of third-party modules.
+* While certain extensions may require a professional licence for integration, there are still a considerable number of extensions available for Burp Community.
+  * For instance, the Logger++ module can extend the built-in logging functionality of Burp Suite.
 ### Proxy
-It enables interception and modification of requests and responses while interacting with web applications.
+* Enables interception and modification of requests and responses while interacting with web applications.
 ### Repeater
-Repeater allows for capturing, modifying, and resending the same request multiple times. 
-This functionality is particularly useful when crafting payloads through trial and error (e.g., in SQLi - Structured Query Language Injection) or testing the functionality of an endpoint for vulnerabilities.
+* Allows for capturing, modifying, and resending the same request multiple times.
+* This functionality is particularly useful when crafting payloads through trial and error (e.g., in SQLi - Structured Query Language Injection) or testing the functionality of an endpoint for vulnerabilities.
 ### Intruder
-Despite rate limitations in Burp Suite Community, Intruder allows for spraying endpoints with requests. 
-It is commonly utilised for brute-force attacks or fuzzing endpoints.
+* Despite rate limitations in Burp Suite Community, Intruder allows for spraying endpoints with requests.
+* Commonly utilised for brute-force attacks or fuzzing endpoints.
 ### Decoder
-Decoder offers a valuable service for data transformation. 
-It can decode captured information or encode payloads before sending them to the target. 
-While alternative services exist for this purpose, leveraging Decoder within Burp Suite can be highly efficient.
+* Offers a valuable service for data transformation.
+* Can decode captured information or encode payloads before sending them to the target.
+* While alternative services exist for this purpose, leveraging Decoder within Burp Suite can be highly efficient.
 ### Comparer
-Comparer enables the comparison of two pieces of data at either the word or byte level. 
-While not exclusive to Burp Suite, the ability to send potentially large data segments directly to a comparison tool with a single keyboard shortcut significantly accelerates the process.
+* Enables the comparison of two pieces of data at either the word or byte level.
+* While not exclusive to Burp Suite, the ability to send potentially large data segments directly to a comparison tool with a single keyboard shortcut significantly accelerates the process.
 ### Sequencer
-Sequencer is typically employed when assessing the randomness of tokens, such as session cookie values or other supposedly randomly generated data. 
-If the algorithm used for generating these values lacks secure randomness, it can expose avenues for devastating attacks.
+* Typically employed when assessing the randomness of tokens, such as session cookie values or other supposedly randomly generated data.
+* If the algorithm used for generating these values lacks secure randomness, it can expose avenues for devastating attacks.
 ## Installation
 ### Downloads
-To download the latest version of Burp Suite for other systems, you may click this button to go to their download page.
-Kali Linux: Burp Suite comes pre-installed with Kali Linux. 
-In case it is missing on your Kali installation, you can easily install it from the Kali apt repositories.
-Linux, macOS, and Windows: For other operating systems, PortSwigger provides dedicated installers for Burp Suite Community and Burp Suite Professional on the Burp Suite downloads page. 
-Choose your operating system from the dropdown menu and select Burp Suite Community Edition. 
-Then, click the Download button to initiate the download.
-
+* To download the latest version of Burp Suite for other systems, you may click [this](https://portswigger.net/burp/releases/) button to go to their download page.
+* Burp Suite comes pre-installed with **Kali Linux**.
+* In case it is missing on the Kali installation, it can easily be installed from the Kali apt repositories.
+* **Linux, macOS, and Windows**: PortSwigger provides dedicated installers for Burp Suite Community and Burp Suite Professional on the Burp Suite downloads page.
+* Choose your operating system from the dropdown menu and select **Burp Suite Community Edition**.
+* Then, click the **Download** button to initiate the download.
 ### Installation
 Install Burp Suite using the appropriate method for your operating system. 
 On Windows, run the executable file, while on Linux, execute the script from the terminal (with or without sudo). 
