@@ -1,1 +1,10 @@
-1. # [Walk an Application](Walk%20an%20Application.md)
+# 1. [Walk an Application](Walk%20an%20Application.md)
+# 2. [Content Discovery]
+# 3. [Subdomain Enumeration]
+# 4. [Authentication Bypass]
+# 5. [Insecure Directed Object Reference (IDOR)]
+# 6. [File Inclusion]
+# 7. [Introduction to Server Side Request Forgery (SSRF)]
+# 8. [Cross Site Scripting (XSS)]
+# 9. [Command Injection]
+# 10. [Structured Query Language (SQL) Injection]
