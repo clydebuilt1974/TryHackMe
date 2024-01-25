@@ -63,16 +63,27 @@
 * While the textual representation of these components can be found within the Request and Response views, Inspector's tabular format provides a convenient way to visualise and interact with them.
 
 ### Repeater Challenge
-* The objective is to identify and exploit a Union SQL Injection vulnerability present in the `ID` parameter of the `/about/ID` endpoint.
-* By leveraging this vulnerability, the task is to launch an attack to retrieve the notes about the CEO stored in the database.
+* The objective is to identify and exploit a Union SQLi vulnerability present in the `ID` parameter of the `/about/ID` endpoint.
+* The task is to launch an attack to retrieve the notes about the CEO stored in the database by leveraging this vulnerability.
 * Capture a request to `http://website.thm/about/2` in the Burp Proxy.
-* Once the request has been captured, send it to Repeater with Ctrl + R or by right-clicking and choosing 'Send to Repeater'.
-* Now that the request is primed, confirm that a vulnerability exists.
-* Add a single apostrophe `'` after the '2' at the end of the path.
-* Send the request to validate that a simple SQLi is present.
-* The server responds with a '500 Internal Server Error', indicating that we successfully broke the query.
-* If we look through the body of the server's response, we see something very interesting at around line 40.
-* The server is telling us the query we tried to execute.
+* Send it to Repeater with Ctrl + R or by right-clicking and choosing 'Send to Repeater'.
+* Add a single apostrophe `'` after the `/about/2 at the end of the path.
+* Send the request.
+* The server responds with a '500 Internal Server Error', indicating that the query was successfully broken.
+  * This validates that a simple SQLi is present.
+* The body of the server's response contains an overly verbose error message that shows the query:
+```
+<h2>
+ <code>
+  Invalid statement: <code>
+   SELECT firstName, lastName,
+    pfpLink, role, bio FROM
+   people WHERE id = 2'
+  </code>
+ </code>
+</h2>
+```
+  * The server is displaying the query we tried to execute.
 * Overly Verbose Error Message Showing the Query:
 * This is an extremely useful error message that the server should absolutely not be sending us, but the fact that we have it makes our job significantly more straightforward.
 * The message tells us a couple of things that will be invaluable when exploiting this vulnerability:
