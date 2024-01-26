@@ -11,15 +11,27 @@
   * Limitation often leads security practitioners to rely on other tools for fuzzing and brute-forcing.
 
 ## The Intruder interface:
+* Initial view presents a simple interface where the target can be selcted.
+  * This field will already be populated if a request has been sent from the Proxy (using Ctrl + I or right-clicking and selecting "Send to Intruder").
+* There are four sub-tabs:
+  * **Positions**: Allows attack type selection and configuration of where to insert the payloads in the request template.
+  * **Payloads**: Select values to insert into the positions defined in the Positions tab.
+      * Various payload options, such as loading items from a wordlist.
+        * The way these payloads are inserted into the template depends on the attack type chosen in the Positions tab.
+      * Enables the modification of Intruder's behaviour regarding payloads:
+        * Defining pre-processing rules for each payload (e.g., adding a prefix or suffix.
+        * Performing match and replace.
+        * Skipping payloads based on a defined regex).
+  * **Resource Pool**: Not particularly useful in the Burp Community Edition.
+     * Without access to these automated tasks it is of limited importance.
+     * Allows for resource allocation among various automated tasks in Burp Professional.
+  * **Settings**: Allows configuration of attack behaviour.
+    * Primarily deals with how Burp handles results and the attack itself.
+      * For instance, flag requests containing specific text or define Burp's response to redirect (3xx) responses.
+* The term "fuzzing" refers to the process of testing functionality or existence by applying a set of data to a parameter.
+  * For example, fuzzing for endpoints in a web application involves taking each word in a wordlist and appending it to a request URL (e.g., `http://MACHINE_IP/WORD_GOES_HERE`) to observe the server's response.
 
-The initial view of Intruder presents a simple interface where we can select our target. This field will already be populated if a request has been sent from the Proxy (using Ctrl + I or right-clicking and selecting "Send to Intruder").
-There are four sub-tabs within Intruder:
-Positions: This tab allows us to select an attack type and configure where we want to insert our payloads in the request template.
-Payloads: Here we can select values to insert into the positions defined in the Positions tab. We have various payload options, such as loading items from a wordlist. The way these payloads are inserted into the template depends on the attack type chosen in the Positions tab. The Payloads tab also enables us to modify Intruder's behaviour regarding payloads, such as defining pre-processing rules for each payload (e.g., adding a prefix or suffix, performing match and replace, or skipping payloads based on a defined regex).
-Resource Pool: This tab is not particularly useful in the Burp Community Edition. It allows for resource allocation among various automated tasks in Burp Professional. Without access to these automated tasks, this tab is of limited importance.
-Settings: This tab allows us to configure attack behaviour. It primarily deals with how Burp handles results and the attack itself. For instance, we can flag requests containing specific text or define Burp's response to redirect (3xx) responses.
-Note: The term "fuzzing" refers to the process of testing functionality or existence by applying a set of data to a parameter. For example, fuzzing for endpoints in a web application involves taking each word in a wordlist and appending it to a request URL (e.g., http://MACHINE_IP/WORD_GOES_HERE) to observe the server's response.
-Positions
+## Positions
 When using Burp Suite Intruder to perform an attack, the first step is to examine the positions within the request where we want to insert our payloads. These positions inform Intruder about the locations where our payloads will be introduced (as we will explore in upcoming tasks).
 Let's navigate to the Positions tab:
 
