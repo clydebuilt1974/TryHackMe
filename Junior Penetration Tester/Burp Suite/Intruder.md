@@ -65,7 +65,7 @@
   * This level of control allows the fine tuning of payloads for effective testing and exploitation.
 
 ## Sniper
-* This attack type is the default and most commonly used attack type in Burp Suite Intruder.
+* Default attack type and most commonly used attack type in Burp Suite Intruder.
 * Particularly effective for single-position attacks, such as password brute-force or fuzzing for API endpoints.
 * Set of payloads provided in a Sniper attack.
   * Can be a wordlist or a range of numbers.
@@ -106,7 +106,7 @@ username=§pentester§&password=§Expl01ted§
 * It allows for precise testing and analysis of different payload variations.
 
 ## Battering Ram
-* The Battering ram attack type places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
+* Places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
 * Example template:
 ```
 POST /support/login/ HTTP/1.1
@@ -137,7 +137,7 @@ POST /support/login/ HTTP/1.1
 * The Battering Ram attack type is useful when testing the same payload against multiple positions at once without the need for sequential substitution.
 
 ## Pitchfork
-* The Pitchfork attack type is similar to having multiple Sniper attacks running simultaneously.
+* Similar to having multiple Sniper attacks running simultaneously.
 * Pitchfork utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
 * Revisit the Battering Ram brute-force example, but this time with two wordlists:
   * The first wordlist contains usernames `joel`, `harriet`, and `alex`.
@@ -160,36 +160,33 @@ POST /support/login/ HTTP/1.1
 * Allows for simultaneous testing of multiple positions with different payloads.
 
 ## Cluster Bomb
-The Cluster bomb attack type in Burp Suite Intruder allows us to choose multiple payload sets, one per position (up to a maximum of 20). Unlike Pitchfork, where all payload sets are tested simultaneously, Cluster bomb iterates through each payload set individually, ensuring that every possible combination of payloads is tested.
-To illustrate the Cluster bomb attack type, let's use the same wordlists as before:
-Usernames: joel, harriet, and alex.
-Passwords: J03l, Emma1815, and Sk1ll.
-In this example, let's assume that we don't know which password belongs to which user. We have three users and three passwords, but the mappings are unknown. In this case, we can use a Cluster bomb attack to try every combination of values. The request table for our username and password positions would look like this:
-Request Number
-Request Body
-1
-username=joel&password=J03l
-2
-username=harriet&password=J03l
-3
-username=alex&password=J03l
-4
-username=joel&password=Emma1815
-5
-username=harriet&password=Emma1815
-6
-username=alex&password=Emma1815
-7
-username=joel&password=Sk1ll
-8
-username=harriet&password=Sk1ll
-9
-username=alex&password=Sk1ll
+* Allows multiple payload sets tpo be chosen, one per position (up to a maximum of 20).
+* Iterates through each payload set individually ensuring that every possible combination of payloads is tested.
+* Assume there are three users and three passwords, but the mappings are unknown.
+  * In this case use a Cluster bomb attack to try every combination of values.
+  * The request table for the `username` and `password` positions would look like this:
 
-As shown in the table, the Cluster bomb attack type iterates through every combination of the provided payload sets. It tests every possibility by substituting each value from each payload set into the corresponding position in the request.
-Cluster bomb attacks can generate a significant amount of traffic as it tests every combination. The number of requests made by a Cluster bomb attack can be calculated by multiplying the number of lines in each payload set together. It's important to be cautious when using this attack type, especially when dealing with large payload sets. Additionally, when using Burp Community and its Intruder rate-limiting, the execution of a Cluster bomb attack with a moderately sized payload set can take a significantly longer time.
-The Cluster bomb attack type is particularly useful for credential brute-forcing scenarios where the mapping between usernames and passwords is unknown.
-Introduction to Attack Types
+| Request Number | Request Body
+| --- | ---
+| 1 | `username=joel&password=J03l`
+| 2 | `username=harriet&password=J03l`
+| 3 | `username=alex&password=J03l`
+| 4 | `username=joel&password=Emma1815`
+| 5 | `username=harriet&password=Emma1815`
+| 6 | `username=alex&password=Emma1815`
+| 7 | `username=joel&password=Sk1ll`
+| 8 | `username=harriet&password=Sk1ll`
+| 9 | `username=alex&password=Sk1ll`
+
+* Cluster bomb attack type iterates through every combination of the provided payload sets.
+  * It tests every possibility by substituting each value from each payload set into the corresponding position in the request.
+* Cluster bomb attacks can generate a significant amount of traffic as it tests every combination.
+* The number of requests made by a Cluster bomb attack can be calculated by multiplying the number of lines in each payload set together.
+* Important to be cautious when using this attack type, especially when dealing with large payload sets.
+* Execution of a Cluster bomb attack with a moderately sized payload set can take a significantly longer time when using Burp Community and its Intruder rate-limiting.
+* Particularly useful for credential brute-forcing scenarios where the mapping between usernames and passwords is unknown.
+
+## Introduction to Attack Types
 The Positions tab of Burp Suite Intruder has a dropdown menu for selecting the attack type. Intruder offers four attack types, each serving a specific purpose. Let's explore each of them:
 Sniper: The Sniper attack type is the default and most commonly used option. It cycles through the payloads, inserting one payload at a time into each position defined in the request. Sniper attacks iterate through all the payloads in a linear fashion, allowing for precise and focused testing.
 Battering ram: The Battering ram attack type differs from Sniper in that it sends all payloads simultaneously, each payload inserted into its respective position. This attack type is useful when testing for race conditions or when payloads need to be sent concurrently.
