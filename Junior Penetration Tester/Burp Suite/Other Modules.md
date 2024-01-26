@@ -100,11 +100,11 @@
 
 ### Comparer: Example
 * There are many situations where being able to quickly compare two (potentially very large) pieces of data can come in handy.
-* For example, when performing a login bruteforce or credential stuffing attack with Intruder, you may wish to compare two responses with different lengths to see where the differences lie and whether the differences indicate a successful login.
+  * For example, comparing two responses with different lengths to see where the differences lie and whether the differences indicate a successful login when performing a login bruteforce or credential stuffing attack with Intruder.
 
-### Practical Example
-* Navigate to http://10.10.112.89/support/login
-* Try to log in with an invalid username and password – capture the request in the Burp Proxy.
+### Practical Comparer Example
+* Navigate to http://website.thm/support/login
+* Try to log in with an invalid username and password and capture the request in the Burp Proxy.
 * Send the request to Repeater with Ctrl + R (or Mac equivalent) or by right-clicking on the request in the Proxy module and choosing Send to Repeater.
 * Send the request, then right-click on the response and choose Send to Comparer.
 * In the Repeater tab, change the credentials to:
