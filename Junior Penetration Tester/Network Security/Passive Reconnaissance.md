@@ -81,6 +81,10 @@ URL of the ICANN WHOIS Data Problem Reporting System: http://wdprs.internic.net/
   * They might redact email addresses.
   * Many registrants subscribe to privacy services to avoid their email addresses being harvested by spammers and keep their information private.
 
+| Purpose | Command Line Example
+| --- | ---
+| Lookup WHOIS record | `whois tryhackme.com`
+
 ## `nslookup` and `dig`
 * Find the IP address of a domain name using `nslookup`, which stands for Name Server Look Up.
   * Need to issue the command `nslookup DOMAIN_NAME`, for example, `nslookup tryhackme.com`.
@@ -144,6 +148,13 @@ tryhackme.com	mail exchanger = 5 alt2.aspmx.l.google.com.
   * Mail servers may be found that are not adequately secured or patched.
 * Such pieces of information might prove valuable as the passive reconnaissance of the target continues.
   * Can repeat similar queries for other domain names and try different types, such as `-type=txt`.
+
+| Purpose | Command Line Example
+| --- | ---
+| Lookup DNS A records | `nslookup -type=A tryhackme.com`
+| Lookup DNS MX records at DNS server | `nslookup -type=MX tryhackme.com 1.1.1.1`
+| Lookup DNS TXT records | `nslookup -type=TXT tryhackme.com`
+ 
 * For more advanced DNS queries and additional functionality, use `dig`, the acronym for 'Domain Information Groper'.
   * Use `dig` to look up the MX records and compare them to `nslookup`.
   * Can use `dig DOMAIN_NAME`, but to specify the record type, use `dig DOMAIN_NAME TYPE`.
@@ -180,6 +191,12 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 * A quick comparison between the output of `nslookup` and `dig` shows that `dig` returned more information, such as the TTL (Time To Live) by default.
   * To query a 1.1.1.1 DNS server, execute `dig @1.1.1.1 tryhackme.com MX`.
 
+| Purpose | Command Line Example
+| --- | ---
+| Lookup DNS A records | `dig tryhackme.com A`
+| Lookup DNS MX records at DNS server | `dig @1.1.1.1 tryhackme.com MX`
+| Lookup DNS TXT records | `dig tryhackme.com TXT`
+
 ## [DNSDumpster](https://dnsdumpster.com/)
 * DNS lookup tools, such as nslookup and dig, cannot find subdomains on their own.
   * The domain being inspecting might include a different subdomain that can reveal much information about the target.
@@ -205,37 +222,14 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 * DNSDumpster will also represent the collected information graphically.
 
 ## [Shodan.io](https://www.shodan.io/)
-* When you are tasked to run a penetration test against specific targets, as part of the passive reconnaissance phase, a service like Shodan.io can be helpful to learn various pieces of information about the client’s network, without actively connecting to it.
-* Furthermore, on the defensive side, you can use different services from Shodan.io to learn about connected and exposed devices belonging to your organisation.
-
+* When tasked to run a penetration test against specific targets, as part of the passive reconnaissance phase, a service like Shodan.io can be helpful to learn various pieces of information about the client’s network, without actively connecting to it.
+  * On the defensive side, the different services from Shodan.io can be used to learn about connected and exposed devices belonging to the organisation.
 * Shodan.io tries to connect to every device reachable online to build a search engine of connected “things” in contrast with a search engine for web pages.
-* Once it gets a response, it collects all the information related to the service and saves it in the database to make it searchable.
-* Consider the saved record of one of `tryhackme.com`’s servers.
-
-* This record shows a web server; however, as mentioned already, Shodan.io collects information related to any device it can find connected online.
-* Searching for tryhackme.com on Shodan.io will display at least the record shown in the screenshot above.
-* Via this Shodan.io search result, we can learn several things related to our search, such as:
+  * Once it gets a response, it collects all the information related to the service and saves it in the database to make it searchable.
+* Searching for `tryhackme.com` on Shodan.io will display at least one record:
   * IP address
   * hosting company
   * geographic location
   * server type and version
-* You may also try searching for the IP addresses you have obtained from DNS lookups.
-* These are, of course, more subject to change.
-* On their help page, you can learn about all the search options available at Shodan.io, and you are encouraged to join TryHackMe’s Shodan.io.
-
-## Summary
-This section focused on passive reconnaissance. 
-In particular, we covered command-line tools, whois, nslookup, and dig. 
-We also discussed two publicly available services DNSDumpster and Shodan.io. 
-The power of such tools is that you can collect information about your targets without directly connecting to them. 
-Moreover, the trove of information you may find using such tools can be massive once you master the search options and get used to reading the results.
-
-| Purpose | Command Line Example
-| --- | ---
-| Lookup WHOIS record | `whois tryhackme.com`
-| Lookup DNS A records | `nslookup -type=A tryhackme.com`
-| Lookup DNS MX records at DNS server | `nslookup -type=MX tryhackme.com 1.1.1.1`
-| Lookup DNS TXT records | `nslookup -type=TXT tryhackme.com`
-| Lookup DNS A records | `dig tryhackme.com A`
-| Lookup DNS MX records at DNS server | `dig @1.1.1.1 tryhackme.com MX`
-| Lookup DNS TXT records | `dig tryhackme.com TXT`
+* Can also search for IP addresses obtained from DNS lookups.
+* Learn about all the search options available at Shodan.io on their [help page](https://help.shodan.io/the-basics/search-query-fundamentals).
