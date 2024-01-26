@@ -182,60 +182,60 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 
 ## [DNSDumpster](https://dnsdumpster.com/)
 * DNS lookup tools, such as nslookup and dig, cannot find subdomains on their own.
-* The domain you are inspecting might include a different subdomain that can reveal much information about the target.
-* For instance, if tryhackme.com has the subdomains wiki.tryhackme.com and webmail.tryhackme.com, you want to learn more about these two as they can hold a trove of information about your target.
-* There is a possibility that one of these subdomains has been set up and is not updated regularly.
-* Lack of proper regular updates usually leads to vulnerable services. But how can we know that such subdomains exist?
+  * The domain being inspecting might include a different subdomain that can reveal much information about the target.
+    * For instance, if `tryhackme.com` has the subdomains `wiki.tryhackme.com` and `webmail.tryhackme.com`, it is prudent to learn more about these two as they can hold a trove of information about the target.
+    * There is a possibility that one of these subdomains has been set up and is not updated regularly.
+      * Lack of proper regular updates usually leads to vulnerable services.
 
-We can consider using multiple search engines to compile a list of publicly known subdomains. 
-One search engine won’t be enough; moreover, we should expect to go through at least tens of results to find interesting data. 
-After all, you are looking for subdomains that are not explicitly advertised, and hence it is not necessary to make it to the first page of search results. 
-Another approach to discover such subdomains would be to rely on brute-forcing queries to find which subdomains have DNS records.
+* Consider using multiple search engines to compile a list of publicly known subdomains.
+  * Should expect to go through at least tens of results to find interesting data.
+  * Looking for subdomains that are not explicitly advertised, and hence it is not necessary to make it to the first page of search results.
+  * Another approach to discover such subdomains would be to rely on brute-forcing queries to find which subdomains have DNS records.
 
-To avoid such a time-consuming search, one can use an online service that offers detailed answers to DNS queries, such as DNSDumpster.
-If we search DNSDumpster for tryhackme.com, we will discover the subdomain blog.tryhackme.com, which a typical DNS query cannot provide. 
-In addition, DNSDumpster will return the collected DNS information in easy-to-read tables and a graph. 
-DNSDumpster will also provide any collected information about listening servers.
+* To avoid such a time-consuming search, use an online service that offers detailed answers to DNS queries, such as DNSDumpster.
+  * Searching DNSDumpster for `tryhackme.com` discovers the subdomain `blog.tryhackme.com`, which a typical DNS query cannot provide.
+  * DNSDumpster will return the collected DNS information in easy-to-read tables and a graph.
+  * DNSDumpster will also provide any collected information about listening servers.
+  * Among the results, is a list of DNS servers for the domain.
+  * DNSDumpster also resolved the domain names to IP addresses and even tried to geolocate them.
+  * DNSDumpster also returned the MX records.
+    * Resolved all five mail exchange servers to their respective IP addresses and provided more information about the owner and location.
+  * DNSDumpster also returned TXT records.
+  * Practically a single query was enough to retrieve all this information.
+* DNSDumpster will also represent the collected information graphically.
 
-We will search for tryhackme.com on DNSDumpster to give you a glimpse of the expected output. 
-Among the results, we got a list of DNS servers for the domain we are looking up. 
-DNSDumpster also resolved the domain names to IP addresses and even tried to geolocate them. 
-We can also see the MX records; DNSDumpster resolved all five mail exchange servers to their respective IP addresses and provided more information about the owner and location. 
-Finally, we can see TXT records. Practically a single query was enough to retrieve all this information.
+## [Shodan.io](https://www.shodan.io/)
+* When you are tasked to run a penetration test against specific targets, as part of the passive reconnaissance phase, a service like Shodan.io can be helpful to learn various pieces of information about the client’s network, without actively connecting to it.
+* Furthermore, on the defensive side, you can use different services from Shodan.io to learn about connected and exposed devices belonging to your organisation.
 
-DNSDumpster will also represent the collected information graphically. 
-DNSDumpster displayed the data from the table earlier as a graph. 
-You can see the DNS and MX branching to their respective servers and also showing the IP addresses.
+* Shodan.io tries to connect to every device reachable online to build a search engine of connected “things” in contrast with a search engine for web pages.
+* Once it gets a response, it collects all the information related to the service and saves it in the database to make it searchable.
+* Consider the saved record of one of `tryhackme.com`’s servers.
 
-There is currently a beta feature that allows you to export the graph as well. 
-You can manipulate the graph and move blocks around if needed.
-
-## Shodan.io
-When you are tasked to run a penetration test against specific targets, as part of the passive reconnaissance phase, a service like Shodan.io can be helpful to learn various pieces of information about the client’s network, without actively connecting to it. Furthermore, on the defensive side, you can use different services from Shodan.io to learn about connected and exposed devices belonging to your organisation.
-Shodan.io tries to connect to every device reachable online to build a search engine of connected “things” in contrast with a search engine for web pages. Once it gets a response, it collects all the information related to the service and saves it in the database to make it searchable. Consider the saved record of one of tryhackme.com’s servers.
-
-This record shows a web server; however, as mentioned already, Shodan.io collects information related to any device it can find connected online. Searching for tryhackme.com on Shodan.io will display at least the record shown in the screenshot above. Via this Shodan.io search result, we can learn several things related to our search, such as:
-IP address
-hosting company
-geographic location
-server type and version
-You may also try searching for the IP addresses you have obtained from DNS lookups. These are, of course, more subject to change. On their help page, you can learn about all the search options available at Shodan.io, and you are encouraged to join TryHackMe’s Shodan.io.
+* This record shows a web server; however, as mentioned already, Shodan.io collects information related to any device it can find connected online.
+* Searching for tryhackme.com on Shodan.io will display at least the record shown in the screenshot above.
+* Via this Shodan.io search result, we can learn several things related to our search, such as:
+  * IP address
+  * hosting company
+  * geographic location
+  * server type and version
+* You may also try searching for the IP addresses you have obtained from DNS lookups.
+* These are, of course, more subject to change.
+* On their help page, you can learn about all the search options available at Shodan.io, and you are encouraged to join TryHackMe’s Shodan.io.
 
 ## Summary
-In this room, we focused on passive reconnaissance. In particular, we covered command-line tools, whois, nslookup, and dig. We also discussed two publicly available services DNSDumpster and Shodan.io. The power of such tools is that you can collect information about your targets without directly connecting to them. Moreover, the trove of information you may find using such tools can be massive once you master the search options and get used to reading the results.
-Purpose
-Command Line Example
-Lookup WHOIS record
-whois tryhackme.com
-Lookup DNS A records
-nslookup -type=A tryhackme.com
-Lookup DNS MX records at DNS server
-nslookup -type=MX tryhackme.com 1.1.1.1
-Lookup DNS TXT records
-nslookup -type=TXT tryhackme.com
-Lookup DNS A records
-dig tryhackme.com A
-Lookup DNS MX records at DNS server
-dig @1.1.1.1 tryhackme.com MX
-Lookup DNS TXT records
-dig tryhackme.com TXT
+This section focused on passive reconnaissance. 
+In particular, we covered command-line tools, whois, nslookup, and dig. 
+We also discussed two publicly available services DNSDumpster and Shodan.io. 
+The power of such tools is that you can collect information about your targets without directly connecting to them. 
+Moreover, the trove of information you may find using such tools can be massive once you master the search options and get used to reading the results.
+
+| Purpose | Command Line Example
+| --- | ---
+| Lookup WHOIS record | `whois tryhackme.com`
+| Lookup DNS A records | `nslookup -type=A tryhackme.com`
+| Lookup DNS MX records at DNS server | `nslookup -type=MX tryhackme.com 1.1.1.1`
+| Lookup DNS TXT records | `nslookup -type=TXT tryhackme.com`
+| Lookup DNS A records | `dig tryhackme.com A`
+| Lookup DNS MX records at DNS server | `dig @1.1.1.1 tryhackme.com MX`
+| Lookup DNS TXT records | `dig tryhackme.com TXT`
