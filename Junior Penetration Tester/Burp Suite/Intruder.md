@@ -6,7 +6,7 @@
   * Brute-force login forms by substituting username and password fields with values from a wordlist.
   * Perform fuzzing attacks using wordlists to test subdirectories, endpoints, or virtual hosts.
 * Functionality is comparable to command-line tools like `Wfuzz` or `ffuf`.
-* Important to note that while Intruder is rate-limited within Burp Community Edition.
+* Important to note that Intruder is rate-limited within Burp Community Edition.
   * Significantly reduces its speed compared to Burp Professional.
   * Limitation often leads security practitioners to rely on other tools for fuzzing and brute-forcing.
 
