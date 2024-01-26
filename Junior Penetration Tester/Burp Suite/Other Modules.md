@@ -132,16 +132,21 @@ Password: w58ySK4W
     * Does require that there is a large list of pre-generated tokens.
 
 ### Sequencer: Live Capture
-* Let's dive into the process of using the Sequencer's live capture for entropy analysis on the anti-bruteforce token used in the admin login form.
-* First, capture a request to http://10.10.112.89/admin/login/ in the Proxy. Right-click on the request and select Send to Sequencer.
-* In the "Token Location Within Response" section, we can select between Cookie, Form field, and Custom location. Since we're testing the loginToken in this case, select the "Form field" radio button and choose the loginToken from the dropdown menu:
-* In this situation, we can safely leave all other options at their default values. So, click on the Start live capture button.
-* A new window will pop up indicating that a live capture is in progress and displaying the number of tokens captured so far. Wait until a sufficient number of tokens are captured (approximately 10,000 should suffice); the more tokens we have, the more precise our analysis will be.
-* Once around 10,000 tokens are captured, click on Pause and then select the Analyze now button:
-* It's important to note that we could have also chosen to Stop the capture. However, by opting to pause, we keep the option to resume the capture later if the report doesn't have enough samples to accurately calculate the token's entropy.
-* If we wished for periodic updates on the analysis, we could have also selected the "Auto analyse" checkbox. This option tells Burp to perform the entropy analysis after every 2000 requests, providing frequent updates that will become increasingly accurate as more samples are loaded into Sequencer.
-* At this point, it's also worth noting that we could choose to copy or save the captured tokens for further analysis at a later time.
-* Upon clicking the Analyze now button, Burp will analyse the token's entropy and generate a report.
+* Use Sequencer's live capture for entropy analysis on the anti-bruteforce token used in the admin login form.
+* Capture a request to `http://website.thm/admin/login/` in the Proxy.
+* Right-click on the request and select **Send to Sequencer**.
+* In the 'Token Location Within Response' section, select the **Form field** radio button and choose the `loginToken` from the dropdown menu.
+* Leave all other options at their default values and click on the **Start live capture** button.
+* A new window will pop up indicating that a live capture is in progress and displaying the number of tokens captured so far.
+* Wait until a sufficient number of tokens are captured (approximately 10,000 should suffice).
+  * The more tokens we have, the more precise the analysis will be.
+* Once around 10,000 tokens are captured, click on **Pause** and then select the **Analyze now** button.
+* Note that there is also a button to **Stop** the capture.
+  * By opting to pause, the option is still available to resume the capture later if the report does not have enough samples to accurately calculate the token's entropy.
+* Could have also selected the 'Auto analyse' checkbox if periodic updates on the analysis was required.
+  * This option tells Burp to perform the entropy analysis after every 2000 requests, providing frequent updates that will become increasingly accurate as more samples are loaded into Sequencer.
+* Could now choose to copy or save the captured tokens for further analysis at a later time.
+* Burp will analyse the token's entropy and generate a report after clicking the **Analyze now** button.
 
 ### Sequencer: Analysis
 * Now that we have a report for the entropy analysis of our token, it's time to analyse it!
