@@ -244,29 +244,34 @@ POST /support/login/ HTTP/1.1
 * To confirm the successful login attempt, use the credentials from the request with the shorter response length to log in.
 
 ## Practical Challenge
-Having gained access to the support system, we now have the opportunity to explore its functionalities and see what actions we can perform.
-Upon accessing the home interface, we are presented with a table displaying various tickets. 
+* Having gained access to the support system, explore its functionalities and see what actions can be performed.
+* Upon accessing the home interface, there is a table displaying various tickets.
+* Clicking on any row redirects to a page where the complete ticket can be viewed.
+* By examining the URL structure, these pages are numbered in the following format: `http://website.thm/support/ticket/NUMBER`
+* The numbering system indicates that the tickets are assigned integer identifiers rather than complex and hard-to-guess IDs.
+* This information is significant because it suggests two possible scenarios:
+  * **Access Control**: The endpoint may be properly configured to restrict access only to tickets assigned to our current user.
+      * In this case, we can only view tickets associated with our account.
+  * **IDOR Vulnerability**: The endpoint may lack appropriate access controls, leading to a vulnerability known as Insecure Direct Object References (IDOR).
+      * Could potentially exploit the system and read all existing tickets, regardless of the assigned user.
+* To investigate further, utilise the Intruder tool to fuzz the `/support/ticket/NUMBER` endpoint.
+* This approach will help to determine whether the endpoint has been correctly configured or if an IDOR vulnerability is present.
+* Note: need to capture a request while being logged in.
+1. Click on a ticket and Send the Request via BURP proxy.
+2. Send the captured Request to Intruder
+3. Add a Position around the ticket integer identifier
+```
+GET /support/ticket/§78§ HTTP/1.1
+```
+* Move to Payloads sub tab
+* Select Numbers as the Payload type
+* Change the Number range From 1 To 100 to fuzz the endpoint.
+* Start the Attack.
+* Sort the results table by Status code.
+  * Status code 200 means that the request was successful
+* Sequentially change the ticket integer identifier in the browser to view the tickets where the Status code wa 200 to find the flag.
 
-Clicking on any row redirects us to a page where we can view the complete ticket. By examining the URL structure, we observe that these pages are numbered in the following format:
-http://10.10.225.178/support/ticket/NUMBER
-The numbering system indicates that the tickets are assigned integer identifiers rather than complex and hard-to-guess IDs. This information is significant because it suggests two possible scenarios:
-Access Control: The endpoint may be properly configured to restrict access only to tickets assigned to our current user. In this case, we can only view tickets associated with our account.
-IDOR Vulnerability: Alternatively, the endpoint may lack appropriate access controls, leading to a vulnerability known as Insecure Direct Object References (IDOR). If this is the case, we could potentially exploit the system and read all existing tickets, regardless of the assigned user.
-To investigate further, we will utilise the Intruder tool to fuzz the /support/ticket/NUMBER endpoint. This approach will help us determine whether the endpoint has been correctly configured or if an IDOR vulnerability is present. Let's proceed with the fuzzing process!
-Note: You have to capture a request while being logged in.
-
-Click on a ticket and Send the Request via BURP proxy:
-Send the captured Request to Intruder
-Add a Position around the ticket integer identifier:
-	
-Move to Payloads sub tab
-Select Numbers as the Payload type
-Change the Number range From 1 To 100 to fuzz the endpoint:
-
-Start the Attack
-Sort the results table by Status code.  Status code 200 means that the request was successful
-Sequentially change the ticket integer identifier in the browser to view the tickets where the Status code wa 200 to find the flag
-Extra Mile Challenge
+## Extra Mile Challenge
 In this extra-mile exercise, we will tackle a more challenging variant of the credential-stuffing attack we previously performed. However, this time, additional measures have been implemented to make brute-forcing more difficult. 
 Catching the Request
 Begin by capturing a request to http://10.10.225.178/admin/login/ and reviewing the response. Here is an example of the response:
