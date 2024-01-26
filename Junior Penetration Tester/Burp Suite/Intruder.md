@@ -1,8 +1,8 @@
 # Burp Suite: Intruder
 ## What is Intruder?
-* Burp Suite's built-in fuzzing.
+* Burp Suite's built-in fuzzing tool.
 * Allows for automated request modification and repetitive testing with variations in input values.
-* Uses a captured request (often from the Proxy module) to send multiple requests with slightly altered values based on user-defined configurations.
+* Uses a captured request (often from the Proxy module) to send multiple requests with slightly altered values based on user-defined configurations:
   * Brute-force login forms by substituting username and password fields with values from a wordlist.
   * Perform fuzzing attacks using wordlists to test subdirectories, endpoints, or virtual hosts.
 * Functionality is comparable to command-line tools like `Wfuzz` or `ffuf`.
