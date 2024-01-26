@@ -137,23 +137,29 @@ POST /support/login/ HTTP/1.1
 * The Battering Ram attack type is useful when testing the same payload against multiple positions at once without the need for sequential substitution.
 
 ## Pitchfork
-The Pitchfork attack type in Burp Suite Intruder is similar to having multiple Sniper attacks running simultaneously. While Sniper uses one payload set to test all positions simultaneously, Pitchfork utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
-To better understand Pitchfork, let us revisit our brute-force example, but this time with two wordlists:
-The first wordlist contains usernames: joel, harriet, and alex.
-The second wordlist contains passwords: J03l, Emma1815, and Sk1ll.
-We can use these two lists to perform a Pitchfork attack on the login form. Each request made during the attack would look like this:
-Request Number
-Request Body
-1
-username=joel&password=J03l
-2
-username=harriet&password=Emma1815
-3
-username=alex&password=Sk1ll
+* The Pitchfork attack type is similar to having multiple Sniper attacks running simultaneously.
+* Pitchfork utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
+* Revisit the Battering Ram brute-force example, but this time with two wordlists:
+  * The first wordlist contains usernames `joel`, `harriet`, and `alex`.
+  * The second wordlist contains passwords `J03l`, `Emma1815`, and `Sk1ll`.
+* Use these two lists to perform a Pitchfork attack on the login form.
+* Each request made during the attack would look like this:
 
-As shown in the table, Pitchfork takes the first item from each list and substitutes them into the request, one per position. It then repeats this process for the next request by taking the second item from each list and substituting it into the template. Intruder continues this iteration until one or all of the lists run out of items. It's important to note that Intruder stops testing as soon as one of the lists is complete. Therefore, in Pitchfork attacks, it is ideal for the payload sets to have the same length. If the lengths of the payload sets differ, Intruder will only make requests until the shorter list is exhausted, and the remaining items in the longer list will not be tested.
-The Pitchfork attack type is especially useful when conducting credential-stuffing attacks or when multiple positions require separate payload sets. It allows for simultaneous testing of multiple positions with different payloads.
-Cluster Bomb
+| Request Number | Request Body
+| --- | --- 
+| 1 | `username=joel&password=J03l`
+| 2 | `username=harriet&password=Emma1815`
+| 3 | `username=alex&password=Sk1ll`
+
+* Pitchfork takes the first item from each list and substitutes them into the request, one per position.
+* Repeats the process for the next request by taking the second item from each list and substituting it into the template.
+* Continues this iteration until one or all of the lists run out of items.
+* Note that Intruder stops testing as soon as one of the lists is complete.
+  * It is ideal for the payload sets to have the same length.
+* Pitchfork attack type is especially useful when conducting credential-stuffing attacks or when multiple positions require separate payload sets.
+* Allows for simultaneous testing of multiple positions with different payloads.
+
+## Cluster Bomb
 The Cluster bomb attack type in Burp Suite Intruder allows us to choose multiple payload sets, one per position (up to a maximum of 20). Unlike Pitchfork, where all payload sets are tested simultaneously, Cluster bomb iterates through each payload set individually, ensuring that every possible combination of payloads is tested.
 To illustrate the Cluster bomb attack type, let's use the same wordlists as before:
 Usernames: joel, harriet, and alex.
