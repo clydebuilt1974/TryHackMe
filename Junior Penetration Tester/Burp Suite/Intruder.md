@@ -203,56 +203,47 @@ POST /support/login/ HTTP/1.1
 * Each attack type has its advantages and is suitable for different testing scenarios.
 
 ## Practical Example
-To put our theoretical knowledge into practice, we will attempt to gain access to the support portal located at http://10.10.225.178/support/login. This portal follows a typical login structure, and upon inspecting its source code, we find that no protective measures have been implemented:
-Support Login Form Source Code
+* Attempt to gain access to a support portal located at `http://website.thm/support/login`.
+* This portal follows a typical login structure.
+* Inspecting the source code shows that no protective measures have been implemented:
+```
+<from method="POST">
+ <div class="form-floating mb-3">
+  <input class="form-control" type="text" name="username" placeholder="Username" required>
+  <label for="username">Username</label>
+ </div>
+ <div class="form-floating mb-3">
+  <input class="form-control" type="password" name="password" placeholder="Password" required>
+  <label for="password">Password</label>
+ </div>
+ <div class="d-grid"><button class="btn btn-primary btn-lg" type="submit"><Login!</button></div>
+</form>
+```
+* `EmployeeCreds.zip` contains a collection of leaked credentials belonging to employees (usernames.txt and passwords.txt).
+> Approximately three months ago, Bastion Hosting fell victim to a cyber attack, compromising employee usernames, email addresses, and plaintext passwords. While the affected employees were instructed to change their passwords promptly, there is a possibility that some disregarded this advice.
+* Leverage a credential-stuffing attack instead of a straightforward brute-force.
+* Navigate to `http://website.thm/support/login`.
+* Activate the Burp Proxy and attempt to log in, capturing the request in the proxy.
+  * Any credentials will suffice for this step.
+* Send the captured request from the Proxy to Intruder by right-clicking and selecting "Send to Intruder" or using Ctrl + I.
+* In the "Positions" sub-tab, ensure that only the username and password parameters are selected.
+* Clear any additional selections, such as session cookies.
+* Set the Attack type to "Pitchfork."
+* Move to the "Payloads" sub-tab.
+* Two payload sets available for the `username` and `password` fields.
+* In the first payload set (for usernames), go to "Payload settings," choose "Load," and select the `usernames.txt` list.
+* Repeat the same process for the second payload set (for passwords) using the `passwords.txt` list.
+* Click the Start Attack button to begin the credential-stuffing attack.
+  * A warning about rate-limiting may appear; click OK to proceed.
+  * The attack will take a few minutes to complete in Burp Community.
+* Once the attack starts, a new window will display the results of the requests.
+* Need to identify which one(s) were successful as Burp sent 100 requests.
+* Use the response length to distinguish them since the response status codes are not differentiating successful and unsuccessful attempts (all are 302 redirects).
+* Click on the header for the "Length" column to sort the results by byte length.
+* Look for the request with a shorter response length, indicating a successful login attempt.
+* To confirm the successful login attempt, use the credentials from the request with the shorter response length to log in.
 
-
-
-Given the absence of protective measures, we have multiple options to exploit this form, including a cluster bomb attack for brute-forcing the credentials. However, we have an easier approach at our disposal. Attached to this task is a compressed file called BastionHostingCreds.zip, which contains a collection of leaked credentials belonging to Bastion Hosting employees.
-Approximately three months ago, Bastion Hosting fell victim to a cyber attack, compromising employee usernames, email addresses, and plaintext passwords. While the affected employees were instructed to change their passwords promptly, there is a possibility that some disregarded this advice.
-As we possess a list of known usernames, each accompanied by a corresponding password, we can leverage a credential-stuffing attack instead of a straightforward brute-force. This method proves advantageous and significantly quicker, especially when utilising the rate-limited version of Intruder. To access the leaked credentials, download the file from the target machine:
-cd /Desktop
-mkdir BastionHostingCreds
-cd BastionHostingCreds/
-wget http://10.10.225.178:9999/Credentials/BastionHostingCreds.zip
-unzip BastionHostingCreds.zip
-Tutorial
-To solve this example, follow these steps to conduct a credential-stuffing attack with Burp Macros:
-Download and Prepare Wordlists:
-Download and extract the BastionHostingCreds.zip file.
-Within the extracted folder, find the following wordlists:
-emails.txt
-usernames.txt
-passwords.txt
-combined.txt
-These contain lists of leaked emails, usernames, and passwords, respectively. The last list contains the combined email and password lists. We will be using the usernames.txt and passwords.txt lists.
-Navigate to http://10.10.225.178/support/login in your browser. Activate the Burp Proxy and attempt to log in, capturing the request in your proxy. Note that any credentials will suffice for this step.
-
-Send the captured request from the Proxy to Intruder by right-clicking and selecting "Send to Intruder" or using Ctrl + I.
-In the "Positions" sub-tab, ensure that only the username and password parameters are selected. Clear any additional selections, such as session cookies.
-
-Set the Attack type to "Pitchfork."
-
-Move to the "Payloads" sub-tab. You will find two payload sets available for the username and password fields.
- 
-
-
-In the first payload set (for usernames), go to "Payload settings," choose "Load," and select the usernames.txt list.
-Repeat the same process for the second payload set (for passwords) using the passwords.txt list.
-The entire process can be seen in the GIF image below:
-
- 
-Click the Start Attack button to begin the credential-stuffing attack. A warning about rate-limiting may appear; click OK to proceed. The attack will take a few minutes to complete in Burp Community.
-Once the attack starts, a new window will display the results of the requests. However, as Burp sent 100 requests, we need to identify which one(s) were successful.
-
-Since the response status codes are not differentiating successful and unsuccessful attempts (all are 302 redirects), we need to use the response length to distinguish them.
-
-
-
-Click on the header for the "Length" column to sort the results by byte length. Look for the request with a shorter response length, indicating a successful login attempt.
-
-To confirm the successful login attempt, use the credentials from the request with the shorter response length to log in.
-Practical Challenge
+## Practical Challenge
 Having gained access to the support system, we now have the opportunity to explore its functionalities and see what actions we can perform.
 Upon accessing the home interface, we are presented with a table displaying various tickets. 
 
