@@ -149,14 +149,22 @@ Password: w58ySK4W
 * Burp will analyse the token's entropy and generate a report after clicking the **Analyze now** button.
 
 ### Sequencer: Analysis
-* Now that we have a report for the entropy analysis of our token, it's time to analyse it!
-* The generated entropy analysis report is split into four primary sections. The first of these is the Summary of the results. The summary gives us the following:
-* Overall result: This gives a broad assessment of the security of the token generation mechanism. In this case, the level of entropy indicates that the tokens are likely securely generated.
-* Effective entropy: This measures the randomness of the tokens. The effective entropy of 117 bits is relatively high, indicating that the tokens are sufficiently random and, therefore, secure against prediction or brute force attacks.
-* Reliability: The significance level of 1% implies that there is 99% confidence in the accuracy of the results. This level of confidence is quite high, providing assurance in the accuracy of the effective entropy estimation.
-* Sample: This provides details about the token samples analysed during the entropy testing process, including the number of tokens and their characteristics.
-* While the summary report often provides enough information to assess the security of the token generation process, it's important to remember that further investigation may be necessary in some cases. The character-level and bit-level analysis can provide more detailed insights into the randomness of the tokens, especially when the summary results raise potential concerns.
-* While the entropy report can provide a strong indicator of the security of the token generation mechanism, there needs to be more definitive proof. Other factors could also impact the security of the tokens, and the nature of probability and statistics means there's always a degree of uncertainty. That said, an effective entropy of 117 bits with a significance level of 1% suggests a robustly secure token generation process.
+* The generated entropy analysis report is split into four primary sections:
+  * The first of these is the **Summary** of the results.
+    * The summary gives us the following:
+      * **Overall result**: providing a broad assessment of the security of the token generation mechanism.
+          * In this exapmle, the level of entropy indicates that the tokens are likely securely generated.
+      * **Effective entropy**: measures the randomness of the tokens.
+          * The effective entropy of 117 bits is relatively high, indicating that the tokens are sufficiently random and, therefore, secure against prediction or brute force attacks.
+      * **Reliability**: measure the cofidence in the accuracy of the results.
+          * The significance level of 1% implies that there is 99% confidence in the accuracy.
+            * This level of confidence is high, providing assurance in the accuracy of the effective entropy estimation.
+      * **Sample**: provides details about the token samples analysed during the entropy testing process, including the number of tokens and their characteristics.
+* While the summary report often provides enough information to assess the security of the token generation process, it's important to remember that further investigation may be necessary in some cases.
+* The **Character-level** and **Bit-level** analysis can provide more detailed insights into the randomness of the tokens, especially when the summary results raise potential concerns.
+* The entropy report can provide a strong indicator of the security of the token generation mechanism, there needs to be more definitive proof.
+* Other factors could also impact the security of the tokens, and the nature of probability and statistics means there's always a degree of uncertainty.
+* Howver, An effective entropy of 117 bits with a significance level of 1% suggests a robustly secure token generation process.
 
 ## Organiser: Overview
 * The Organizer module of Burp Suite is designed to help you store and annotate copies of HTTP requests that you may want to revisit later. This tool can be particularly useful for organising your penetration testing workflow. Here are some of its key features:
