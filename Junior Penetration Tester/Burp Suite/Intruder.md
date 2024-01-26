@@ -65,8 +65,13 @@
   * This level of control allows the fine tuning of payloads for effective testing and exploitation.
 
 ## Sniper
-The Sniper attack type is the default and most commonly used attack type in Burp Suite Intruder. It is particularly effective for single-position attacks, such as password brute-force or fuzzing for API endpoints. In a Sniper attack, we provide a set of payloads, which can be a wordlist or a range of numbers, and Intruder inserts each payload into each defined position in the request.
-Let's refer to our example template from before:
+* This attack type is the default and most commonly used attack type in Burp Suite Intruder.
+* Particularly effective for single-position attacks, such as password brute-force or fuzzing for API endpoints.
+* Set of payloads provided in a Sniper attack.
+  * Can be a wordlist or a range of numbers.
+  * Intruder inserts each payload into each defined position in the request.
+* Example template:
+```
 POST /support/login/ HTTP/1.1
 Host: 10.10.225.178
 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0
@@ -81,26 +86,26 @@ Referer: http://10.10.225.178/support/login/
 Upgrade-Insecure-Requests: 1
 
 username=§pentester§&password=§Expl01ted§             
-In this example, we have two positions defined for the username and password body parameters. In a Sniper attack, Intruder takes each payload from the payload set and substitutes it into each defined position in turn.
-Assuming we have a wordlist with three words: burp, suite, and intruder, Intruder would generate six requests:
-Request Number
-Request Body
-1
-username=burp&password=Expl01ted
-2
-username=suite&password=Expl01ted
-3
-username=intruder&password=Expl01ted
-4
-username=pentester&password=burp
-5
-username=pentester&password=suite
-6
-username=pentester&password=intruder
+```
+* Two positions are defined for the `username` and `password` body parameters.
+* Intruder takes each payload from the payload set and substitutes it into each defined position in turn.
+* Intruder would generate six requests assuming a wordlist with three words is used (`burp`, `suite`, and `intruder`):
 
-Observe how Intruder starts with the first position (username) and substitutes each payload into it, then moves to the second position (password) and performs the same substitution with the payloads. The total number of requests made by Intruder Sniper can be calculated as requests = numberOfWords * numberOfPositions.
-The Sniper attack type is beneficial when we want to perform tests with single-position attacks, utilising different payloads for each position. It allows for precise testing and analysis of different payload variations.
-Battering Ram
+|  Request Number | Request Body
+| --- | ---
+| 1 | `username=burp&password=Expl01ted`
+| 2 | `username=suite&password=Expl01ted`
+| 3 | `username=intruder&password=Expl01ted`
+| 4 | `username=pentester&password=burp`
+| 5 | `username=pentester&password=suite`
+| 6 | `username=pentester&password=intruder`
+
+* Intruder starts with the first position (`username`) and substitutes each payload into it, then moves to the second position (`password`) and performs the same substitution with the payloads.
+* The total number of requests made by Sniper can be calculated as requests = numberOfWords * numberOfPositions.
+* Sniper attack type is beneficial when tests are performws with single-position attacks, utilising different payloads for each position.
+* It allows for precise testing and analysis of different payload variations.
+
+## Battering Ram
 The Battering ram attack type in Burp Suite Intruder differs from Sniper in that it places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
 Let's refer back to our previous example template:
 POST /support/login/ HTTP/1.1
