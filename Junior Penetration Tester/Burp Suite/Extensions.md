@@ -20,20 +20,26 @@
 * By using extensions, Burp Suite becomes a powerful and customizable platform for various security testing and web application assessment tasks.
 
 ## The BApp Store
-* BApp Store (Burp App Store) allows us to easily discover and integrate official extensions seamlessly into the tool.
+* BApp Store (Burp App Store) allows us easy discovery and integration of official extensions seamlessly into the tool.
 * Extensions can be written in various languages, with Java and Python being the most common choices.
 * Java extensions integrate automatically with the Burp Suite framework, while Python extensions require the Jython interpreter.
-* To get a feel for the BApp store and install a Java extension, let's install the Request Timer extension, written by Nick Taylor.
-* The Request Timer extension enables us to log the time it takes for each request to receive a response.
-* This functionality is particularly useful for identifying and exploiting time-based vulnerabilities.
-* For instance, if a login form takes an extra second to process requests with valid usernames compared to invalid ones, we can use the time differences to determine which usernames are valid.
+
+### BApp Java Extenion Installation
+* To get a feel for the BApp store and install a Java extension, install the Request Timer extension, written by Nick Taylor.
+  * The Request Timer extension logs the time it takes for each request to receive a response.
+  * This functionality is particularly useful for identifying and exploiting time-based vulnerabilities.
+    * For instance, if a login form takes an extra second to process requests with valid usernames compared to invalid ones, the time differences can be userd to determine which usernames are valid.
 * Follow these steps to install the Request Timer extension from the BApp store:
-* Switch to the BApp Store sub-tab in Burp Suite.
-* Use the search function to find Request Timer. There should only be one result for this extension.
-* Click on the returned extension to view more details.
-* Click the Install button to install the Request Timer extension.
-* After successfully installing the extension, you will notice a new tab appearing in the main menu at the top of the Burp Suite interface. Different extensions may have varying behaviours. Some may add new items to right-click context menus, while others create entirely new tabs in the main menu bar.
-* As this installation is simply an example of using the BApp store, we won't cover how to use the Request Timer here. However, I highly recommend switching to the new tab and exploring the extension to understand its functionalities better. The Request Timer can be valuable in various scenarios, especially when assessing web application security and identifying potential time-based vulnerabilities.
+  1. Switch to the **BApp Store** sub-tab in Burp Suite.
+  2. Use the search function to find **Request Timer**.
+     * There should only be one result for this extension.
+  3. Click on the returned extension to view more details.
+  4. Click the **Install** button to install the Request Timer extension.
+* A new tab appears in the main menu at the top of the Burp Suite interface after successfully installing the extension.
+  * Different extensions may have varying behaviours.
+  * Some may add new items to right-click context menus, while others create entirely new tabs in the main menu bar.
+* Highly recommend switching to the new tab and exploring the extension to understand its functionalities better.
+  * Request Timer can be valuable in various scenarios, especially when assessing web application security and identifying potential time-based vulnerabilities.
 
 ## Jython
 To use Python modules in Burp Suite, we need to include the Jython Interpreter JAR file, which is a Java implementation of Python. The Jython Interpreter enables us to run Python-based extensions within Burp Suite.
