@@ -83,16 +83,16 @@ URL of the ICANN WHOIS Data Problem Reporting System: http://wdprs.internic.net/
 
 ## `nslookup` and `dig`
 * Find the IP address of a domain name using `nslookup`, which stands for Name Server Look Up.
-  * You need to issue the command `nslookup DOMAIN_NAME`, for example, `nslookup tryhackme.com`.
-  * Or, more generally, you can use `nslookup OPTIONS DOMAIN_NAME SERVER`.
-  * These three main parameters are:
+  * Need to issue the command `nslookup DOMAIN_NAME`, for example, `nslookup tryhackme.com`.
+  * Can use `nslookup OPTIONS DOMAIN_NAME SERVER`.
+  * Three main parameters:
     * `OPTIONS` contains the query type as shown in the table below.
-      * For instance, you can use A for IPv4 addresses and AAAA for IPv6 addresses.
-    * `DOMAIN_NAME` is the domain name you are looking up.
-    * `SERVER` is the DNS server that you want to query.
-      * You can choose any local or public DNS server to query.
+      * For instance, use A for IPv4 addresses and AAAA for IPv6 addresses.
+    * `DOMAIN_NAME` is the domain name being looked up.
+    * `SERVER` is the DNS server to query.
+      * Can choose any local or public DNS server to query.
       * Cloudflare offers 1.1.1.1 and 1.0.0.1, Google offers 8.8.8.8 and 8.8.4.4, and Quad9 offers 9.9.9.9 and 149.112.112.112.
-      * There are [many more public DNS servers](https://duckduckgo.com/?q=public+dns) that you can choose from if you want alternatives to your ISP’s DNS servers.
+      * There are [many more public DNS servers](https://duckduckgo.com/?q=public+dns) to choose from if alternatives to the ISP’s DNS servers are required.
 
 | Query type | Result
 | --- | ---
@@ -118,12 +118,12 @@ Address: 104.26.11.229
 Name:	tryhackme.com
 Address: 104.26.10.229
 ```
-* The A and AAAA records are used to return IPv4 and IPv6 addresses, respectively.
+* A and AAAA records are used to return IPv4 and IPv6 addresses, respectively.
   * This lookup is helpful to know from a penetration testing perspective.
-  * In the example above, we started with one domain name, and we obtained three IPv4 addresses.
-  * Each of these IP addresses can be further checked for insecurities, assuming they lie within the scope of the penetration test.
-* Let’s say you want to learn about the email servers and configurations for a particular domain.
-  * You can issue nslookup -type=MX tryhackme.com. Here is an example:
+    * The example above started with one domain name, and obtained three IPv4 addresses.
+    * Each of these IP addresses can be further checked for insecurities, assuming they lie within the scope of the penetration test.
+* To learn about the email servers and configurations for a particular domain, issue `nslookup -type=MX tryhackme.com`.
+  * Here is an example:
 ```
 nslookup -type=MX tryhackme.com
 
@@ -137,21 +137,20 @@ tryhackme.com	mail exchanger = 10 alt4.aspmx.l.google.com.
 tryhackme.com	mail exchanger = 10 alt3.aspmx.l.google.com.
 tryhackme.com	mail exchanger = 5 alt2.aspmx.l.google.com.
 ``` 
-* We can see that tryhackme.com’s current email configuration uses Google.
-  * Since MX is looking up the Mail Exchange servers, we notice that when a mail server tries to deliver email @tryhackme.com, it will try to connect to the aspmx.l.google.com, which has order 1.
-  * If it is busy or unavailable, the mail server will attempt to connect to the next in order mail exchange servers, alt1.aspmx.l.google.com or alt2.aspmx.l.google.com.
-* Google provides the listed mail servers; therefore, we should not expect the mail servers to be running a vulnerable server version.
-  * However, in other cases, we might find mail servers that are not adequately secured or patched.
-* Such pieces of information might prove valuable as you continue the passive reconnaissance of your target.
-  * You can repeat similar queries for other domain names and try different types, such as -type=txt.
-  * Who knows what kind of information you might discover along your way!
-* For more advanced DNS queries and additional functionality, you can use `dig`, the acronym for “Domain Information Groper,” if you are curious.
-  * Let’s use `dig` to look up the MX records and compare them to `nslookup`.
-  * We can use `dig DOMAIN_NAME`, but to specify the record type, we would use `dig DOMAIN_NAME TYPE`.
-  * Optionally, we can select the server we want to query using `dig @SERVER DOMAIN_NAME TYPE`.
-    * SERVER is the DNS server that you want to query.
-    * DOMAIN_NAME is the domain name you are looking up.
-    * TYPE contains the DNS record type, as shown in the table provided earlier.
+* Can see that tryhackme.com’s current email configuration uses Google.
+  * Since MX is looking up the Mail Exchange servers, notice that when a mail server tries to deliver email `@tryhackme.com`, it will try to connect to the `aspmx.l.google.com`, which has order 1.
+  * If it is busy or unavailable, the mail server will attempt to connect to the next in order mail exchange servers, `alt1.aspmx.l.google.com` or `alt2.aspmx.l.google.com`.
+* Google provides the listed mail servers; therefore, the mail servers are not expected to be running a vulnerable server version.
+  * Mail servers may be found that are not adequately secured or patched.
+* Such pieces of information might prove valuable as the passive reconnaissance of the target continues.
+  * Can repeat similar queries for other domain names and try different types, such as `-type=txt`.
+* For more advanced DNS queries and additional functionality, use `dig`, the acronym for 'Domain Information Groper'.
+  * Use `dig` to look up the MX records and compare them to `nslookup`.
+  * Can use `dig DOMAIN_NAME`, but to specify the record type, use `dig DOMAIN_NAME TYPE`.
+  * Optionally, select the server to query using `dig @SERVER DOMAIN_NAME TYPE`.
+    * `SERVER` is the DNS server to query.
+    * `DOMAIN_NAME` is the domain name being looked up.
+    * `TYPE` contains the DNS record type, as shown in the table provided earlier.
 ```
 dig tryhackme.com MX
 
@@ -179,7 +178,7 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 ;; MSG SIZE  rcvd: 157
 ```
 * A quick comparison between the output of `nslookup` and `dig` shows that `dig` returned more information, such as the TTL (Time To Live) by default.
-  * If you want to query a 1.1.1.1 DNS server, you can execute `dig @1.1.1.1 tryhackme.com MX`.
+  * To query a 1.1.1.1 DNS server, execute `dig @1.1.1.1 tryhackme.com MX`.
 
 ## DNSDumpster
 DNS lookup tools, such as nslookup and dig, cannot find subdomains on their own. The domain you are inspecting might include a different subdomain that can reveal much information about the target. For instance, if tryhackme.com has the subdomains wiki.tryhackme.com and webmail.tryhackme.com, you want to learn more about these two as they can hold a trove of information about your target. There is a possibility that one of these subdomains has been set up and is not updated regularly. Lack of proper regular updates usually leads to vulnerable services. But how can we know that such subdomains exist?
