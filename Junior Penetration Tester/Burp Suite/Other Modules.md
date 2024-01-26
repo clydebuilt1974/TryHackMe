@@ -167,13 +167,33 @@ Password: w58ySK4W
 * Howver, An effective entropy of 117 bits with a significance level of 1% suggests a robustly secure token generation process.
 
 ## Organiser: Overview
-* The Organizer module of Burp Suite is designed to help you store and annotate copies of HTTP requests that you may want to revisit later. This tool can be particularly useful for organising your penetration testing workflow. Here are some of its key features:
-* You can store requests that you want to investigate later, save requests that you've already identified as interesting, or save requests that you want to add to a report later.
-* You can send HTTP requests to Burp Organizer from other Burp Modules such as Proxy or Repeater. You can do this by right-clicking the request and selecting Send to Organizer or using the default hotkey Ctrl + O. Each HTTP request that you send to Organizer is a read-only copy of the original request saved at the point you sent it to Organizer.
-* Requests are stored in a table, which contains columns such as the request index number, the time the request was made, workflow status, Burp tool that the request was sent from, HTTP method, server hostname, URL file path, URL query string, number of parameters in the request, HTTP status code of the response, length of the response in bytes, and any notes that you have made.
-* To view the request and response
-* Click on any Organizer item.
-* The request and response are both read-only. You can search within the request or response, select the request, and then use the search bar below the request.
+* Designed to help store and annotate copies of HTTP requests that may want to be revisited later.
+* Can be particularly useful for organising your penetration testing workflow.
+* Key Features:
+  * Store requests that to investigate later, save requests already identified as interesting, or save requests to add to a report later.
+  * Send HTTP requests to Burp Organizer from other Burp Modules such as **Proxy** or **Repeater**.
+    * Can do this by right-clicking the request and selecting **Send to Organizer** or using the default hotkey Ctrl + O.
+    * Each HTTP request send to Organizer is a read-only copy of the original request saved at the point it was sent to Organizer.
+* Requests are stored in a table, which contains columns such as:
+  * Rquest index number.
+  * Time the request was made.
+  * Workflow status.
+  * Burp tool that the request was sent from.
+  * HTTP method.
+  * Server hostname.
+  * URL file path.
+  * URL query string.
+  * Number of parameters in the request.
+  * HTTP status code of the response.
+  * Length of the response in bytes.
+  * Any notes made.
+* To view the request and response:
+  1. Click on any Organizer item.
+  2. The request and response are both read-only.
+     * Search within the request or response, select the request, and then use the search bar below the request.
  
 ## Conclusion
-* To summarise, Decoder allows you to encode and decode data, making it easier to read and understand the information being transferred. Comparer enables you to spot differences between two datasets, which can be pivotal in identifying vulnerabilities or anomalies. Sequencer helps in performing entropy analysis on tokens, providing insights into the randomness of their generation and, consequently, their security level. Organiser enables you to store and annotate copies of HTTP requests that you may want to revisit later.
+* Decoder allows the encoding and decoding of data, making it easier to read and understand the information being transferred.
+* Comparer enables the spotting of differences between two datasets, which can be pivotal in identifying vulnerabilities or anomalies.
+* Sequencer helps in performing entropy analysis on tokens, providing insights into the randomness of their generation and, consequently, their security level.
+* Organiser enables storing and annotating of copies of HTTP requests that may need to be revisited later.
