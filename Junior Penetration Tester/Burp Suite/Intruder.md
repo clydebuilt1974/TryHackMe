@@ -187,13 +187,22 @@ POST /support/login/ HTTP/1.1
 * Particularly useful for credential brute-forcing scenarios where the mapping between usernames and passwords is unknown.
 
 ## Introduction to Attack Types
-The Positions tab of Burp Suite Intruder has a dropdown menu for selecting the attack type. Intruder offers four attack types, each serving a specific purpose. Let's explore each of them:
-Sniper: The Sniper attack type is the default and most commonly used option. It cycles through the payloads, inserting one payload at a time into each position defined in the request. Sniper attacks iterate through all the payloads in a linear fashion, allowing for precise and focused testing.
-Battering ram: The Battering ram attack type differs from Sniper in that it sends all payloads simultaneously, each payload inserted into its respective position. This attack type is useful when testing for race conditions or when payloads need to be sent concurrently.
-Pitchfork: The Pitchfork attack type enables the simultaneous testing of multiple positions with different payloads. It allows the tester to define multiple payload sets, each associated with a specific position in the request. Pitchfork attacks are effective when there are distinct parameters that need separate testing.
-Cluster bomb: The Cluster bomb attack type combines the Sniper and Pitchfork approaches. It performs a Sniper-like attack on each position but simultaneously tests all payloads from each set. This attack type is useful when multiple positions have different payloads, and we want to test them all together.
-Each attack type has its advantages and is suitable for different testing scenarios. Understanding their differences helps us select the appropriate attack type based on the testing objectives.
-Practical Example
+* Positions tab of Intruder has a dropdown menu for selecting the attack type.
+* Intruder offers four attack types, each serving a specific purpose:
+  * **Sniper**: default attack type and most commonly used option.
+      * It cycles through the payloads, inserting one payload at a time into each position defined in the request.
+      * Sniper attacks iterate through all the payloads in a linear fashion, allowing for precise and focused testing.
+  * **Battering ram**: Differs from Sniper in that it sends all payloads simultaneously, each payload inserted into its respective position.
+      * This attack type is useful when testing for race conditions or when payloads need to be sent concurrently.
+  * **Pitchfork**: Enables the simultaneous testing of multiple positions with different payloads.
+      * Allows the tester to define multiple payload sets, each associated with a specific position in the request.
+      * Effective when there are distinct parameters that need separate testing.
+  * **Cluster bomb**: Combines the Sniper and Pitchfork approaches.
+      * Performs a Sniper-like attack on each position but simultaneously tests all payloads from each set.
+      * Useful when multiple positions have different payloads, and we want to test them all together.
+* Each attack type has its advantages and is suitable for different testing scenarios.
+
+## Practical Example
 To put our theoretical knowledge into practice, we will attempt to gain access to the support portal located at http://10.10.225.178/support/login. This portal follows a typical login structure, and upon inspecting its source code, we find that no protective measures have been implemented:
 Support Login Form Source Code
 
