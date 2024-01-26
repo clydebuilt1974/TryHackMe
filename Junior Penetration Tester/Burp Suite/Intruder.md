@@ -36,36 +36,35 @@
 * In the Positions tab:
   * Burp Suite automatically attempts to identify the most probable positions where payloads can be inserted.
     * These positions are highlighted in green and enclosed by section marks `§`.
-  * Right-hand side of the interface displays the `Add §`, `Clear §`, and `Auto §` buttons.
+  * Right-hand side of the interface displays `Add §`, `Clear §`, and `Auto §` buttons.
     * `Add §` defines new positions manually by highlighting them within the request editor and then clicking the button.
     * `Clear §` button removes all defined positions, providing a blank canvas where to custom positions can be defined.
     * `Auto §` button automatically attempts to identify the most likely positions based on the request.
        * This feature is helpful if the default positions were previously cleared.
 
 ## Payloads
-In the Payloads tab of Burp Suite Intruder, we can create, assign, and configure payloads for our attack. This sub-tab is divided into four sections:
+* In the **Payloads** tab, payloads for the attack can be created, assigned, and configured.
+* This sub-tab is divided into four sections:
+  * **Payload Sets**: Selects the position to configure a payload set and select the type of payload to use.
+      * Dropdown will have only one option regardless of the number of defined positions when using attack types that allow only a single payload set (Sniper or Battering Ram).
+      * One item in the dropdown for each position when using attack types that require multiple payload sets (Pitchfork or Cluster Bomb).
+      * Follow a top-to-bottom, left-to-right order when assigning numbers dropdown for multiple positions.
+        * For example, with two positions (`username=§pentester§&password=§Expl01ted§`) the first item in the payload set dropdown would refer to the username field, and the second item would refer to the password field.
+* **Payload settings**: Provides options specific to the selected payload type for the current payload set.
+    * For example, when using the 'Simple list' payload type, payloads can be manually added or removed to/from the set using the **Add** text box, **Paste** lines, or **Load** payloads from a file.
+      * **Remove** button removes the currently selected line.
+      * **Clear** button clears the entire list.
+      * Be cautious with loading huge lists as it may cause Burp to crash.
+    * Each payload type will have its own set of options and functionality.
+* **Payload Processing**: Defines rules to be applied to each payload in the set before it is sent to the target.
+    * For example, capitalise every word, skip payloads that match a regex pattern, or apply other transformations or filtering.
+* **Payload Encoding**: Customises the encoding options for the payloads.
+    * Burp Suite applies URL encoding by default to ensure the safe transmission of payloads.
+      * Override the default URL encoding options by modifying the list of characters to be encoded or unchecking the "URL-encode these characters" checkbox.
+* These sections allow the creation and customisation of payload sets to suit the specific requirements of the attacks.
+  * This level of control allows the fine tuning of payloads for effective testing and exploitation.
 
-Payload Sets:
-This section allows us to choose the position for which we want to configure a payload set and select the type of payload we want to use.
-When using attack types that allow only a single payload set (Sniper or Battering Ram), the "Payload Set" dropdown will have only one option, regardless of the number of defined positions.
-If we use attack types that require multiple payload sets (Pitchfork or Cluster Bomb), there will be one item in the dropdown for each position.
-Note: When assigning numbers in the "Payload Set" dropdown for multiple positions, follow a top-to-bottom, left-to-right order. For example, with two positions (username=§pentester§&password=§Expl01ted§), the first item in the payload set dropdown would refer to the username field, and the second item would refer to the password field.
-Payload settings:
-This section provides options specific to the selected payload type for the current payload set.
-For example, when using the "Simple list" payload type, we can manually add or remove payloads to/from the set using the Add text box, Paste lines, or Load payloads from a file. The Remove button removes the currently selected line, and the Clear button clears the entire list. Be cautious with loading huge lists, as it may cause Burp to crash.
-Each payload type will have its own set of options and functionality. Explore the options available to understand the range of possibilities.
-
-
-Payload Processing:
-In this section, we can define rules to be applied to each payload in the set before it is sent to the target.
-For example, we can capitalise every word, skip payloads that match a regex pattern, or apply other transformations or filtering.
-While you may not use this section frequently, it can be highly valuable when specific payload processing is required for your attack.
-Payload Encoding:
-The section allows us to customise the encoding options for our payloads.
-By default, Burp Suite applies URL encoding to ensure the safe transmission of payloads. However, there may be cases where we want to adjust the encoding behaviour.
-We can override the default URL encoding options by modifying the list of characters to be encoded or unchecking the "URL-encode these characters" checkbox.
-By leveraging these sections, we can create and customise payload sets to suit the specific requirements of our attacks. This level of control allows us to finely tune our payloads for effective testing and exploitation.
-Sniper
+## Sniper
 The Sniper attack type is the default and most commonly used attack type in Burp Suite Intruder. It is particularly effective for single-position attacks, such as password brute-force or fuzzing for API endpoints. In a Sniper attack, we provide a set of payloads, which can be a wordlist or a range of numbers, and Intruder inserts each payload into each defined position in the request.
 Let's refer to our example template from before:
 POST /support/login/ HTTP/1.1
