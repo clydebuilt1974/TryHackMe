@@ -106,8 +106,9 @@ username=§pentester§&password=§Expl01ted§
 * It allows for precise testing and analysis of different payload variations.
 
 ## Battering Ram
-The Battering ram attack type in Burp Suite Intruder differs from Sniper in that it places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
-Let's refer back to our previous example template:
+* The Battering ram attack type places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
+* Example template:
+```
 POST /support/login/ HTTP/1.1
     Host: 10.10.225.178
     User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:80.0) Gecko/20100101 Firefox/80.0
@@ -122,19 +123,20 @@ POST /support/login/ HTTP/1.1
     Upgrade-Insecure-Requests: 1
     
     username=§pentester§&password=§Expl01ted§             
-Using the Battering Ram attack type with the same wordlist from before (burp, suite, and intruder), Intruder would generate three requests:
-Request Number
-Request Body
-1
-username=burp&password=burp
-2
-username=suite&password=suite
-3
-username=intruder&password=intruder
+```
+* Using the Battering Ram attack type with the same wordlist from before (`burp`, `suite`, and `intruder`), Intruder would generate three requests:
 
-As shown in the table, each payload from the wordlist is inserted into every position for each request made. In a Battering Ram attack, the same payload is thrown at every defined position simultaneously, providing a brute-force-like approach to testing.
-The Battering Ram attack type is useful when we want to test the same payload against multiple positions at once without the need for sequential substitution.
-Pitchfork
+| Request Number | Request Body
+| --- | ---
+| 1 | `username=burp&password=burp`
+| 2 | `username=suite&password=suite`
+| 3 | `username=intruder&password=intruder`
+
+* Each payload from the wordlist is inserted into every position for each request made.
+* In a Battering Ram attack, the same payload is thrown at every defined position simultaneously, providing a brute-force-like approach to testing.
+* The Battering Ram attack type is useful when testing the same payload against multiple positions at once without the need for sequential substitution.
+
+## Pitchfork
 The Pitchfork attack type in Burp Suite Intruder is similar to having multiple Sniper attacks running simultaneously. While Sniper uses one payload set to test all positions simultaneously, Pitchfork utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
 To better understand Pitchfork, let us revisit our brute-force example, but this time with two wordlists:
 The first wordlist contains usernames: joel, harriet, and alex.
