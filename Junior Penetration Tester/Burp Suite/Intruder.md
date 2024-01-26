@@ -1,6 +1,8 @@
 # Burp Suite: Intruder
 ## What is Intruder?
 * Burp Suite's built-in fuzzing tool.
+  * The term 'fuzzing' refers to the process of testing functionality or existence by applying a set of data to a parameter.
+    * For example, fuzzing for endpoints in a web application involves taking each word in a wordlist and appending it to a request URL (e.g., `http://website.thm/WORD_GOES_HERE`) to observe the server's response.
 * Allows for automated request modification and repetitive testing with variations in input values.
 * Uses a captured request (often from the Proxy module) to send multiple requests with slightly altered values based on user-defined configurations:
   * Brute-force login forms by substituting username and password fields with values from a wordlist.
@@ -12,65 +14,63 @@
 
 ## The Intruder interface:
 * Initial view presents a simple interface where the target can be selcted.
-  * This field will already be populated if a request has been sent from the Proxy (using Ctrl + I or right-clicking and selecting "Send to Intruder").
+  * This field will already be populated if a request has been sent from the Proxy.
+    * Use Ctrl + I or right-click and select "Send to Intruder".
 * Four sub-tabs:
-  * **Positions**: Allows attack type selection and configuration of where to insert the payloads in the request template.
-  * **Payloads**: Select values to insert into the positions defined in the Positions tab.
-      * Various payload options, such as loading items from a wordlist.
+  * **Positions**: allows attack type selection and configuration of where to insert the payloads in the request template.
+  * **Payloads**: selects values to insert into the positions defined in the Positions tab.
+      * Various payload options qre available such as loading items from a wordlist.
         * The way these payloads are inserted into the template depends on the attack type chosen in the Positions tab.
       * Enables the modification of Intruder's behaviour regarding payloads:
         * Defining pre-processing rules for each payload (e.g., adding a prefix or suffix.
         * Performing match and replace.
         * Skipping payloads based on a defined regex).
-  * **Resource Pool**: Not particularly useful in the Burp Community Edition.
+  * **Resource Pool**: is not particularly useful in the Burp Community Edition.
      * Without access to these automated tasks it is of limited importance.
      * Allows for resource allocation among various automated tasks in Burp Professional.
-  * **Settings**: Allows configuration of attack behaviour.
+  * **Settings**: allows configuration of attack behaviour.
     * Primarily deals with how Burp handles results and the attack itself.
       * For instance, flag requests containing specific text or define Burp's response to redirect (3xx) responses.
-* The term "fuzzing" refers to the process of testing functionality or existence by applying a set of data to a parameter.
-  * For example, fuzzing for endpoints in a web application involves taking each word in a wordlist and appending it to a request URL (e.g., `http://MACHINE_IP/WORD_GOES_HERE`) to observe the server's response.
 
 ## Positions
-* First step is to examine the positions within the request where payloads might be introduced when using Intruder to perform an attack.
+* Examine the positions within the request where payloads might be introduced when performing an attack.
 * In the Positions tab:
-  * Burp Suite automatically attempts to identify the most probable positions where payloads can be inserted.
+  * Burp automatically attempts to identify the most probable positions where payloads can be inserted.
     * These positions are highlighted in green and enclosed by section marks `§`.
-  * Right-hand side of the interface displays `Add §`, `Clear §`, and `Auto §` buttons.
+  * Right-hand side of the interface displays buttons:
     * `Add §` defines new positions manually by highlighting them within the request editor and then clicking the button.
     * `Clear §` button removes all defined positions, providing a blank canvas where to custom positions can be defined.
     * `Auto §` button automatically attempts to identify the most likely positions based on the request.
        * This feature is helpful if the default positions were previously cleared.
 
 ## Payloads
-* In the **Payloads** tab, payloads for the attack can be created, assigned, and configured.
-* This sub-tab is divided into four sections:
-  * **Payload Sets**: Selects the position to configure a payload set and select the type of payload to use.
+* Payloads for the attack can be created, assigned, and configured.
+* Sub-tab is divided into four sections:
+  * **Payload Sets**: selects the position to configure a payload set and select the type of payload to use.
       * Dropdown will have only one option regardless of the number of defined positions when using attack types that allow only a single payload set (Sniper or Battering Ram).
       * One item in the dropdown for each position when using attack types that require multiple payload sets (Pitchfork or Cluster Bomb).
       * Follow a top-to-bottom, left-to-right order when assigning numbers dropdown for multiple positions.
         * For example, with two positions (`username=§pentester§&password=§Expl01ted§`) the first item in the payload set dropdown would refer to the username field, and the second item would refer to the password field.
-* **Payload settings**: Provides options specific to the selected payload type for the current payload set.
+* **Payload settings**: provides options specific to the selected payload type for the current payload set.
     * For example, when using the 'Simple list' payload type, payloads can be manually added or removed to/from the set using the **Add** text box, **Paste** lines, or **Load** payloads from a file.
       * **Remove** button removes the currently selected line.
       * **Clear** button clears the entire list.
       * Be cautious with loading huge lists as it may cause Burp to crash.
     * Each payload type will have its own set of options and functionality.
-* **Payload Processing**: Defines rules to be applied to each payload in the set before it is sent to the target.
+* **Payload Processing**: defines rules to be applied to each payload in the set before it is sent to the target.
     * For example, capitalise every word, skip payloads that match a regex pattern, or apply other transformations or filtering.
-* **Payload Encoding**: Customises the encoding options for the payloads.
+* **Payload Encoding**: customises the encoding options for the payloads.
     * Burp Suite applies URL encoding by default to ensure the safe transmission of payloads.
       * Override the default URL encoding options by modifying the list of characters to be encoded or unchecking the "URL-encode these characters" checkbox.
 * These sections allow the creation and customisation of payload sets to suit the specific requirements of the attacks.
   * This level of control allows the fine tuning of payloads for effective testing and exploitation.
 
 ## Sniper
-* Default attack type and most commonly used attack type in Burp Suite Intruder.
+* Default attack type and most commonly used attack type in Intruder.
 * Particularly effective for single-position attacks, such as password brute-force or fuzzing for API endpoints.
-* Set of payloads provided in a Sniper attack.
-  * Can be a wordlist or a range of numbers.
-  * Intruder inserts each payload into each defined position in the request.
-* Example template:
+* Set of payloads provided in a Sniper attack can be a wordlist or a range of numbers.
+* Intruder inserts each payload into each defined position in the request.
+* Example Request:
 ```
 POST /support/login/ HTTP/1.1
 Host: 10.10.225.178
@@ -101,13 +101,13 @@ username=§pentester§&password=§Expl01ted§
 | 6 | `username=pentester&password=intruder`
 
 * Intruder starts with the first position (`username`) and substitutes each payload into it, then moves to the second position (`password`) and performs the same substitution with the payloads.
-* The total number of requests made by Sniper can be calculated as requests = numberOfWords * numberOfPositions.
+* Total number of requests made by Sniper can be calculated as requests = numberOfWords * numberOfPositions.
 * Sniper attack type is beneficial when tests are performws with single-position attacks, utilising different payloads for each position.
-* It allows for precise testing and analysis of different payload variations.
+  * Allows for precise testing and analysis of different payload variations.
 
 ## Battering Ram
 * Places the same payload in every position simultaneously, rather than substituting each payload into each position in turn.
-* Example template:
+* Example Request:
 ```
 POST /support/login/ HTTP/1.1
     Host: 10.10.225.178
@@ -124,7 +124,7 @@ POST /support/login/ HTTP/1.1
     
     username=§pentester§&password=§Expl01ted§             
 ```
-* Using the Battering Ram attack type with the same wordlist from before (`burp`, `suite`, and `intruder`), Intruder would generate three requests:
+* Intruder would generate three requests using the Battering Ram attack type with the same wordlist from before (`burp`, `suite`, and `intruder`):
 
 | Request Number | Request Body
 | --- | ---
@@ -133,13 +133,13 @@ POST /support/login/ HTTP/1.1
 | 3 | `username=intruder&password=intruder`
 
 * Each payload from the wordlist is inserted into every position for each request made.
-* In a Battering Ram attack, the same payload is thrown at every defined position simultaneously, providing a brute-force-like approach to testing.
-* The Battering Ram attack type is useful when testing the same payload against multiple positions at once without the need for sequential substitution.
+* Same payload is thrown at every defined position simultaneously, providing a brute-force-like approach to testing.
+  * Useful when testing the same payload against multiple positions at once without the need for sequential substitution.
 
 ## Pitchfork
 * Similar to having multiple Sniper attacks running simultaneously.
-* Pitchfork utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
-* Revisit the Battering Ram brute-force example, but this time with two wordlists:
+* Utilises one payload set per position (up to a maximum of 20) and iterates through them all simultaneously.
+* Revisiting the Battering Ram brute-force example, but this time with two wordlists:
   * The first wordlist contains usernames `joel`, `harriet`, and `alex`.
   * The second wordlist contains passwords `J03l`, `Emma1815`, and `Sk1ll`.
 * Use these two lists to perform a Pitchfork attack on the login form.
@@ -151,20 +151,20 @@ POST /support/login/ HTTP/1.1
 | 2 | `username=harriet&password=Emma1815`
 | 3 | `username=alex&password=Sk1ll`
 
-* Pitchfork takes the first item from each list and substitutes them into the request, one per position.
+* Takes the first item from each list and substitutes them into the request, one per position.
 * Repeats the process for the next request by taking the second item from each list and substituting it into the template.
 * Continues this iteration until one or all of the lists run out of items.
 * Note that Intruder stops testing as soon as one of the lists is complete.
   * It is ideal for the payload sets to have the same length.
-* Pitchfork attack type is especially useful when conducting credential-stuffing attacks or when multiple positions require separate payload sets.
-* Allows for simultaneous testing of multiple positions with different payloads.
+* Especially useful when conducting credential-stuffing attacks or when multiple positions require separate payload sets.
+  * Allows for simultaneous testing of multiple positions with different payloads.
 
 ## Cluster Bomb
-* Allows multiple payload sets tpo be chosen, one per position (up to a maximum of 20).
+* Allows multiple payload sets to be chosen, one per position (up to a maximum of 20).
 * Iterates through each payload set individually ensuring that every possible combination of payloads is tested.
 * Assume there are three users and three passwords, but the mappings are unknown.
-  * In this case use a Cluster bomb attack to try every combination of values.
-  * The request table for the `username` and `password` positions would look like this:
+  * Use a Cluster bomb attack to try every combination of values.
+  * Request table for the `username` and `password` positions would look like this:
 
 | Request Number | Request Body
 | --- | ---
@@ -178,10 +178,10 @@ POST /support/login/ HTTP/1.1
 | 8 | `username=harriet&password=Sk1ll`
 | 9 | `username=alex&password=Sk1ll`
 
-* Cluster bomb attack type iterates through every combination of the provided payload sets.
-  * It tests every possibility by substituting each value from each payload set into the corresponding position in the request.
-* Cluster bomb attacks can generate a significant amount of traffic as it tests every combination.
-* The number of requests made by a Cluster bomb attack can be calculated by multiplying the number of lines in each payload set together.
+* Iterates through every combination of the provided payload sets.
+  * Tests every possibility by substituting each value from each payload set into the corresponding position in the request.
+* Can generate a significant amount of traffic as it tests every combination.
+* Number of requests made by a Cluster bomb attack can be calculated by multiplying the number of lines in each payload set together.
 * Important to be cautious when using this attack type, especially when dealing with large payload sets.
 * Execution of a Cluster bomb attack with a moderately sized payload set can take a significantly longer time when using Burp Community and its Intruder rate-limiting.
 * Particularly useful for credential brute-forcing scenarios where the mapping between usernames and passwords is unknown.
@@ -192,20 +192,20 @@ POST /support/login/ HTTP/1.1
   * **Sniper**: default attack type and most commonly used option.
       * It cycles through the payloads, inserting one payload at a time into each position defined in the request.
       * Sniper attacks iterate through all the payloads in a linear fashion, allowing for precise and focused testing.
-  * **Battering ram**: Differs from Sniper in that it sends all payloads simultaneously, each payload inserted into its respective position.
+  * **Battering ram**: differs from Sniper in that it sends all payloads simultaneously, each payload inserted into its respective position.
       * This attack type is useful when testing for race conditions or when payloads need to be sent concurrently.
-  * **Pitchfork**: Enables the simultaneous testing of multiple positions with different payloads.
+  * **Pitchfork**: enables the simultaneous testing of multiple positions with different payloads.
       * Allows the tester to define multiple payload sets, each associated with a specific position in the request.
       * Effective when there are distinct parameters that need separate testing.
-  * **Cluster bomb**: Combines the Sniper and Pitchfork approaches.
+  * **Cluster bomb**: combines the Sniper and Pitchfork approaches.
       * Performs a Sniper-like attack on each position but simultaneously tests all payloads from each set.
       * Useful when multiple positions have different payloads, and we want to test them all together.
 * Each attack type has its advantages and is suitable for different testing scenarios.
 
-## Practical Example
+## Practical Intruder Example
 * Attempt to gain access to a support portal located at `http://website.thm/support/login`.
-* This portal follows a typical login structure.
-* Inspecting the source code shows that no protective measures have been implemented:
+  * This portal follows a typical login structure.
+  * Inspecting the source code shows that no protective measures have been implemented:
 ```
 <from method="POST">
  <div class="form-floating mb-3">
@@ -243,7 +243,7 @@ POST /support/login/ HTTP/1.1
 * Look for the request with a shorter response length, indicating a successful login attempt.
 * To confirm the successful login attempt, use the credentials from the request with the shorter response length to log in.
 
-## Practical Challenge
+## Practical Intruder Challenge
 * Having gained access to the support system, explore its functionalities and see what actions can be performed.
 * Upon accessing the home interface, there is a table displaying various tickets.
 * Clicking on any row redirects to a page where the complete ticket can be viewed.
@@ -271,7 +271,7 @@ GET /support/ticket/§78§ HTTP/1.1
   * Status code `200` means that the request was successful
 * Sequentially change the ticket integer identifier in the browser to view the tickets where the Status code was `200` to find the flag.
 
-## Extra Mile Challenge
+## Extra Mile Intruder Challenge
 * A more challenging variant of the credential-stuffing attack where additional measures have been implemented to make brute-forcing more difficult.
 ### Catching the Request
 * Begin by capturing a request to http://website.thm/admin/login/ and reviewing the response.
