@@ -116,11 +116,20 @@ Password: w58ySK4W
 * Compare the two responses by word to identify the main differences.
 
 ## Sequencer: Overview
-* Sequencer allows us to evaluate the entropy, or randomness, of "tokens". Tokens are strings used to identify something and should ideally be generated in a cryptographically secure manner. These tokens could be session cookies or Cross-Site Request Forgery (CSRF) tokens used to protect form submissions. If these tokens aren't generated securely, then, in theory, we could predict upcoming token values. The implications could be substantial, for instance, if the token in question is used for password resets.
-* Let's start by looking at the Sequencer interface:
-* We have two main ways to perform token analysis with Sequencer:
-* Live Capture: This is the more common method and is the default sub-tab for Sequencer. Live capture lets us pass a request that will generate a token to Sequencer for analysis. For instance, we might want to pass a POST request to a login endpoint to Sequencer, knowing that the server will respond with a cookie. With the request passed in, we can instruct Sequencer to start a live capture. It will then automatically make the same request thousands of times, storing the generated token samples for analysis. After collecting enough samples, we stop the Sequencer and allow it to analyse the captured tokens.
-* Manual Load: This allows us to load a list of pre-generated token samples directly into Sequencer for analysis. Using Manual Load means we don't need to make thousands of requests to our target, which can be noisy and resource-intensive. However, it does require that we have a large list of pre-generated tokens.
+* Evaluates the entropy, or randomness, of 'tokens'.
+  * Tokens are strings used to identify something and should ideally be generated in a cryptographically secure manner.
+* Tokens could be session cookies or Cross-Site Request Forgery (CSRF) tokens used to protect form submissions.
+* If the tokens aren't generated securely, then prediction of upcoming token values should be possible.
+* Two main ways to perform token analysis with Sequencer:
+  * **Live Capture**: is the more common method and is the default sub-tab for Sequencer.
+      * Allows passing of a request that will generate a token to Sequencer for analysis.
+        * For instance, pass a POST request to a login endpoint to Sequencer, knowing that the server will respond with a cookie.
+    * With the request passed in, Sequencer can be instructed to start a live capture.
+    * Will then automatically make the same request thousands of times, storing the generated token samples for analysis.
+    * After collecting enough samples, we stop the Sequencer and allow it to analyse the captured tokens.
+* **Manual Load**: allows the loading of a list of pre-generated token samples directly into Sequencer for analysis.
+    * Do not need to make thousands of requests to the target, which can be noisy and resource-intensive.
+    * Does require that there is a large list of pre-generated tokens.
 
 ### Sequencer: Live Capture
 * Let's dive into the process of using the Sequencer's live capture for entropy analysis on the anti-bruteforce token used in the admin login form.
