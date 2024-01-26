@@ -23,13 +23,24 @@
   * Entering company premises pretending to be a repairman.
 * Considering the invasive nature of active reconnaissance, a person can quickly get into legal trouble unless they obtain proper legal authorisation.
 
-## Whois
-WHOIS is a request and response protocol that follows the RFC 3912 specification. A WHOIS server listens on TCP port 43 for incoming requests. The domain registrar is responsible for maintaining the WHOIS records for the domain names it is leasing. The WHOIS server replies with various information related to the domain requested. Of particular interest, we can learn:
-Registrar: Via which registrar was the domain name registered?
-Contact info of registrant: Name, organisation, address, phone, among other things. (unless made hidden via a privacy service)
-Creation, update, and expiration dates: When was the domain name first registered? When was it last updated? And when does it need to be renewed?
-Name Server: Which server to ask to resolve the domain name?
-To get this information, we need to use a whois client or an online service. Many online services provide whois information; however, it is generally faster and more convenient to use your local whois client. Using a Linux machine, such as Parrot or Kali, you can easily access your whois client on the terminal. The syntax is whois DOMAIN_NAME, where DOMAIN_NAME is the domain about which you are trying to get more information. Consider the following example executing whois tryhackme.com.
+## `whois`
+* Request and response protocol that follows the [RFC 3912](https://www.ietf.org/rfc/rfc3912.txt) specification.
+  * WHOIS server listens on TCP port 43 for incoming requests.
+  * Domain registrar is responsible for maintaining the WHOIS records for the domain names it is leasing.
+  * WHOIS server replies with various information related to the domain requested.
+* Of particular interest:
+  * Registrar: via which registrar was the domain name registered?
+  * Contact info of registrant: the name, organisation, address, phone, among other things. (unless made hidden via a privacy service)
+  * Creation, update, and expiration dates: when was the domain name first registered?
+    * When was it last updated?
+    * When does it need to be renewed?
+  * Name Server: which server to ask to resolve the domain name?
+* To get this information, use a whois client or an online service.
+  * Many online services provide whois information.
+    * It is generally faster and more convenient to use a local whois client.
+  * Using a Linux machine, such as Parrot or Kali, can easily access the whois client on the terminal.
+  * The syntax is `whois DOMAIN_NAME`, where `DOMAIN_NAME` is the domain about of interest.
+```
 whois tryhackme.com
 
 [Querying whois.verisign-grs.com]
@@ -55,14 +66,22 @@ Registrant Organization: Privacy service provided by Withheld for Privacy ehf
 [...]
 URL of the ICANN WHOIS Data Problem Reporting System: http://wdprs.internic.net/
 >>> Last update of WHOIS database: 2021-08-25T14:58:29.57Z <<<
+```
+* For more information on Whois status codes, visit [https://icann.org/epp](https://icann.org/epp).
+* Can see plenty of information:
+  * Redirection to `whois.namecheap.com` to get the information.
+    * `namecheap.com` is maintaining the WHOIS record for this domain name.
+  * Creation date along with the last-update date and expiration date.
+* Information about the registrar and the registrant.
+  * Registrant’s name and contact information appear unless they are using some privacy service.
+  * Domain name servers to query if there are any DNS records to look up.
+* Information collected can be inspected to find new attack surfaces, such as social engineering or technical attacks.
+  * For instance, depending on the scope of the penetration test, consider an attack against the email server of the admin user or the DNS servers, assuming they are owned by the client and fall within the scope of the penetration test.
+* Note that due to automated tools abusing WHOIS queries to harvest email addresses, many WHOIS services take measures against this.
+  * They might redact email addresses.
+  * Many registrants subscribe to privacy services to avoid their email addresses being harvested by spammers and keep their information private.
 
-For more information on Whois status codes, please visit https://icann.org/epp
-
-We can see plenty of information; we will inspect them in the order displayed. First, we noticed that we were redirected to whois.namecheap.com to get our information. In this case and at the time being, namecheap.com is maintaining the WHOIS record for this domain name. Furthermore, we can see the creation date along with the last-update date and expiration date.
-Next, we obtain information about the registrar and the registrant. We can find the registrant’s name and contact information unless they are using some privacy service. Although not displayed above, we get the admin and tech contacts for this domain. Finally, we see the domain name servers that we should query if we have any DNS records to look up.
-The information collected can be inspected to find new attack surfaces, such as social engineering or technical attacks. For instance, depending on the scope of the penetration test, you might consider an attack against the email server of the admin user or the DNS servers, assuming they are owned by your client and fall within the scope of the penetration test.
-It is important to note that due to automated tools abusing WHOIS queries to harvest email addresses, many WHOIS services take measures against this. They might redact email addresses, for instance. Moreover, many registrants subscribe to privacy services to avoid their email addresses being harvested by spammers and keep their information private.
-nslookup and dig
+## `nslookup` and `dig`
 Find the IP address of a domain name using nslookup, which stands for Name Server Look Up. You need to issue the command nslookup DOMAIN_NAME, for example, nslookup tryhackme.com. Or, more generally, you can use nslookup OPTIONS DOMAIN_NAME SERVER. These three main parameters are:
 OPTIONS contains the query type as shown in the table below. For instance, you can use A for IPv4 addresses and AAAA for IPv6 addresses.
 DOMAIN_NAME is the domain name you are looking up.
