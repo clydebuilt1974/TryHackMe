@@ -289,45 +289,55 @@ Set-Cookie: session=eyJpZCI6IjUwN2E1OGZkLTFkM2QtNDFhNS1iYmEzLThmNDVhOTRlYjFiMSIs
 * Use Burp Macros to define a repeated set of actions (macro) to be executed before each request.
 * This macro will extract unique values for the session cookie and loginToken, replacing them in every subsequent request of our attack.
 ### Tutorial
-1. Navigate to http://website.thm/admin/login/.
-2. Activate Intercept in the Proxy module and attempt to log in.
-3. Capture the request and send it to Intruder.
-4. Configure the positions the same way as per brute-forcing the support login.
-5. Set the attack type to 'Pitchfork'.
-6. Clear all predefined positions and select only the username and password form fields.
-7. The macro will handle the other two positions:
-   1. Switch over to the Payloads tab and load in the same username and password wordlists used for the support login attack.
-9. Now need to find a way to grab the ever-changing loginToken and session cookie.
-10. 'Recursive grep' will not work here due to the redirect response so this cannot be done entirely within Intruder.
-11. Macros allow the same set of actions to be performed repeatedly.
-12. Need to send a `GET` request to `/admin/login/`.
-13. Switch over to the main 'Settings' tab at the top-right.
-14. Click on the 'Sessions' category.
-15. Scroll down to the bottom of the category to the 'Macros' section and click the Add button.
-16. The menu that appears will show the request history.
-17. If there is not a `GET` request to `http://website.thm/admin/login/` in the list already, navigate to this location in the browser to see a suitable request appear in the list.
-18. With the request selected, click OK.
- 19. Give the macro a suitable name, then click OK again to finish the process.
-20. There are a lot of steps here, comparatively speaking, so the following GIF shows the entire process:
-* Now that we have a macro defined, we need to set Session Handling rules that define how the macro should be used.
-* Still in the "Sessions" category of the main settings, scroll up to the "Session Handling Rules" section and choose to Add a new rule.
-* A new window will pop up with two tabs in it: "Details" and "Scope". We are in the Details tab by default.
-* Fill in an appropriate description, then switch to the Scope tab.
-* In the "Tools Scope" section, deselect every checkbox other than Intruder – we do not need this rule to apply anywhere else.
-* In the "URL Scope" section, choose "Use suite scope"; this will set the macro to only operate on sites that have been added to the global scope (as was discussed in Burp Basics). If you have not set a global scope, keep the "Use custom scope" option as default and add http://10.10.225.178/ to the scope in this section.
-* Now we need to switch back over to the Details tab and look at the "Rule Actions" section.
-* Click the Add button – this will cause a dropdown menu to appear with a list of actions we can add.
-* Select "Run a Macro" from this list.
-* In the new window that appears, select the macro we created earlier.
-* As it stands, this macro will now overwrite all of the parameters in our Intruder requests before we send them; this is great, as it means that we will get the loginTokens and session cookies added straight into our requests. That said, we should restrict which parameters and cookies are being updated before we start our attack:
-* Select "Update only the following parameters and headers", then click the Edit button next to the input box below the radio button.
-* In the "Enter a new item" text field, type "loginToken". Press Add, then Close.
-* Select "Update only the following cookies", then click the relevant Edit button.
-* Enter "session" in the "Enter a new item" text field. Press Add, then Close.
-* Finally, press OK to confirm our action.
-* The following GIF demonstrates this final stage of the process:
-* Click OK, and we're done!
-* You should now have a macro defined that will substitute in the CSRF token and session cookie. All that's left to do is switch back to Intruder and start the attack!
-*  Note: You should be getting 302 status code responses for every request in this attack. If you see 403 errors, then your macro is not working properly
-*  As with the support login credential stuffing attack we carried out, the response codes here are all the same (302 Redirects). Once again, order your responses by length to find the valid credentials. Your results won't be quite as clear-cut as last time – you will see quite a few different response lengths: however, the response that indicates a successful login should still stand out as being significantly shorter.
-*  Use the credentials you just found to log in (you may need to refresh the login page before entering the credentials).
+1. Navigate to `http://website.thm/admin/login/`.
+   * Activate Intercept in the Proxy module and attempt to log in.
+   * Capture the request and send it to Intruder.
+2. Configure the positions the same way as per brute-forcing the support login:
+   * Set the attack type to 'Pitchfork'.
+   * Clear all predefined positions and select only the `username` and `password` form fields.
+   * The macro will handle the other two positions.
+3. Switch over to the Payloads tab and load in the same `username` and `password` wordlists used for the support login attack.
+4. Now need to find a way to grab the ever changing loginToken and session cookie.
+   * 'Recursive grep' will not work here due to the redirect response so this cannot be done entirely within Intruder.
+   * Will need to build a macro instead.
+     * Macros allow the same set of actions to be performed repeatedly.
+   * Need to send a `GET` request to `/admin/login/`:
+   * To do this. switch over to the main 'Settings' tab at the top-right.
+   * Click on the 'Sessions' category.
+   * Scroll down to the bottom of the category to the 'Macros' section and click the Add button.
+   * The menu that appears will show the request history.
+     * If there is not a `GET` request to `http://website.thm/admin/login/` in the list already, navigate to this location in the browser to see a suitable request appear in the list.
+   * With the request selected, click OK.
+   * Give the macro a suitable name, then click OK again to finish the process.
+5. Now need to set Session Handling rules that define how the macro should be used.
+   * In the "Sessions" category of the main settings, scroll up to the "Session Handling Rules" section and choose to Add a new rule.
+   * A new window pops up with 'Details' and 'Scope' tabs.
+     * Fill in an appropriate description in the Details tab, then switch to the Scope tab:
+       * Deselect every checkbox other than Intruder in the 'Tools Scope' section.
+         * Do not need this rule to apply anywhere else.
+       * Choose 'Use suite scope' in the 'URL Scope' section.
+         * This will set the macro to only operate on sites that have been added to the global scope.
+       * If a global scope has not been set, keep the 'Use custom scope' option as default and add http://website.thm/ to the scope in this section.
+6. Switch back over to the Details tab and look at the 'Rule Actions' section:
+   * Click the Add button.
+     * Dropdown menu will appear with a list of actions we can add.
+       * Select 'Run a Macro'.
+         * In the new window that appears, select the macro created earlier.
+7. The macro will now overwrite all of the parameters in Intruder requests before they are sent.
+   * This means that the loginTokens and session cookies will get added straight into the requests.
+   * Restrict which parameters and cookies are being updated before the attack is started:
+     * Select 'Update only the following parameters and headers', then click the Edit button next to the input box below the radio button.
+       * In the 'Enter a new item' text field, type "loginToken". Press Add, then Close
+     * Select 'Update only the following cookies', then click the relevant Edit button.
+       * Enter 'session' in the "Enter a new item" text field. Press Add, then Close.
+     * Press OK to confirm the action.
+9. Click OK to finish.
+10. Now have a macro defined that will substitute in the CSRF token and session cookie.
+   * All that's left to do is switch back to Intruder and start the attack.
+   * Should be getting `302` status code responses for every request in this attack.
+     * Macro is not working properly if `403` errors are received.
+11. Response codes are all the same (302 Redirects) as with the support login credential stuffing attack carried out previously.
+    * Order the responses by length to find the valid credentials.
+    * Results won't be quite clear-cut as will be quite a few different response lengths.
+      * The response that indicates a successful login should still stand out as being significantly shorter.
+12. Use the credentials just found to log in (may need to refresh the login page before entering the credentials).
