@@ -42,18 +42,22 @@
   * Request Timer can be valuable in various scenarios, especially when assessing web application security and identifying potential time-based vulnerabilities.
 
 ## Jython
-To use Python modules in Burp Suite, we need to include the Jython Interpreter JAR file, which is a Java implementation of Python. The Jython Interpreter enables us to run Python-based extensions within Burp Suite.
-Follow these steps to integrate Jython into Burp Suite on your local machine:
-Download Jython JAR: Visit the Jython website and download the standalone JAR archive. Look for the Jython Standalone option. Save the JAR file to a location on your disk.
+* Jython Interpreter JAR file needs to be included in Python modules in Burp Suite.
+  * Jython Interpreter JAR file is a Java implementation of Python.
+* Enables running of Python-based extensions within Burp Suite.
+* Follow these steps to integrate Jython into Burp Suite on the local machine:
+  1. **Download Jython JAR** by visiting the [Jython website](https://www.jython.org/download) and download the standalone JAR archive.
+  2. Look for the **Jython Standalone** option.
+     * Save the JAR file to a location locally.
+  3. **Configure Jython in Burp Suite** by switching to the **Extensions** module.
+       * Then, go to the **Extensions settings** sub-tab.
+  4. **Python Environment** scroll down to the 'Python environment' section.
+  5. **Set Jython JAR Location** in the 'Location of Jython standalone JAR file' field, set the path to the downloaded Jython JAR file.
+* Once these steps are complete3d, Jython will be integrated with Burp Suite, allowing use of Python modules in the tool.
+* This integration significantly increases the number of available extensions and enhances capabilities in performing various security testing and web application assessment tasks.
+* The process of adding Jython to Burp Suite is the same for all operating systems, as Java is a multi-platform technology.
 
- 
-Configure Jython in Burp Suite: Open Burp Suite and switch to the Extensions module. Then, go to the Extensions settings sub-tab.
-Python Environment: Scroll down to the "Python environment" section.
-Set Jython JAR Location: In the "Location of Jython standalone JAR file" field, set the path to the downloaded Jython JAR file.
- 
-Once you have completed these steps, Jython will be integrated with Burp Suite, allowing you to use Python modules in the tool. This integration significantly increases the number of available extensions and enhances your capabilities in performing various security testing and web application assessment tasks.
-Note: The process of adding Jython to Burp Suite is the same for all operating systems, as Java is a multi-platform technology.
-The Burp Suite API
+## The Burp Suite API
 In the Burp Suite Extensions module, you have access to a wide range of API endpoints that allow you to create and integrate your modules with Burp Suite. These APIs expose various functionalities, enabling you to extend the capabilities of Burp Suite to suit your specific needs.
 To view the available API endpoints, navigate to the APIs sub-tab within the Extensions module. Each item listed in the left-hand panel represents a different API endpoint that can be accessed from within extensions.
 
