@@ -29,12 +29,12 @@
   * Domain registrar is responsible for maintaining the WHOIS records for the domain names it is leasing.
   * WHOIS server replies with various information related to the domain requested.
 * Of particular interest:
-  * Registrar: via which registrar was the domain name registered?
-  * Contact info of registrant: the name, organisation, address, phone, among other things. (unless made hidden via a privacy service)
-  * Creation, update, and expiration dates: when was the domain name first registered?
+  * **Registrar**: via which registrar was the domain name registered?
+  * **Contact info of registrant**: the name, organisation, address, phone, among other things. (unless made hidden via a privacy service)
+  * **Creation, update, and expiration dates**: when was the domain name first registered?
     * When was it last updated?
     * When does it need to be renewed?
-  * Name Server: which server to ask to resolve the domain name?
+  * **Name Server**: which server to ask to resolve the domain name?
 * To get this information, use a whois client or an online service.
   * Many online services provide whois information.
     * It is generally faster and more convenient to use a local whois client.
@@ -123,11 +123,11 @@ Name:	tryhackme.com
 Address: 104.26.10.229
 ```
 * A and AAAA records are used to return IPv4 and IPv6 addresses, respectively.
-  * This lookup is helpful to know from a penetration testing perspective.
-    * The example above started with one domain name, and obtained three IPv4 addresses.
+  * Lookup is helpful to know from a penetration testing perspective.
+    * Example above started with one domain name, and obtained three IPv4 addresses.
     * Each of these IP addresses can be further checked for insecurities, assuming they lie within the scope of the penetration test.
-* To learn about the email servers and configurations for a particular domain, issue `nslookup -type=MX tryhackme.com`.
-  * Here is an example:
+* To learn about the email servers and configurations for a particular domain, use `nslookup -type=MX tryhackme.com`.
+  * Example:
 ```
 nslookup -type=MX tryhackme.com
 
@@ -141,12 +141,12 @@ tryhackme.com	mail exchanger = 10 alt4.aspmx.l.google.com.
 tryhackme.com	mail exchanger = 10 alt3.aspmx.l.google.com.
 tryhackme.com	mail exchanger = 5 alt2.aspmx.l.google.com.
 ``` 
-* Can see that tryhackme.com’s current email configuration uses Google.
+* `tryhackme.com`’s current email configuration uses Google.
   * Since MX is looking up the Mail Exchange servers, notice that when a mail server tries to deliver email `@tryhackme.com`, it will try to connect to the `aspmx.l.google.com`, which has order 1.
   * If it is busy or unavailable, the mail server will attempt to connect to the next in order mail exchange servers, `alt1.aspmx.l.google.com` or `alt2.aspmx.l.google.com`.
 * Google provides the listed mail servers; therefore, the mail servers are not expected to be running a vulnerable server version.
   * Mail servers may be found that are not adequately secured or patched.
-* Such pieces of information might prove valuable as the passive reconnaissance of the target continues.
+* This information may prove valuable as the passive reconnaissance of the target continues.
   * Can repeat similar queries for other domain names and try different types, such as `-type=txt`.
 
 | Purpose | Command Line Example
@@ -156,8 +156,7 @@ tryhackme.com	mail exchanger = 5 alt2.aspmx.l.google.com.
 | Lookup DNS TXT records | `nslookup -type=TXT tryhackme.com`
  
 * For more advanced DNS queries and additional functionality, use `dig`, the acronym for 'Domain Information Groper'.
-  * Use `dig` to look up the MX records and compare them to `nslookup`.
-  * Can use `dig DOMAIN_NAME`, but to specify the record type, use `dig DOMAIN_NAME TYPE`.
+  * Use `dig DOMAIN_NAME`, but to specify the record type, use `dig DOMAIN_NAME TYPE`.
   * Optionally, select the server to query using `dig @SERVER DOMAIN_NAME TYPE`.
     * `SERVER` is the DNS server to query.
     * `DOMAIN_NAME` is the domain name being looked up.
@@ -188,7 +187,7 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 ;; WHEN: Thu Dec 07 13:32:38 GMT 2023
 ;; MSG SIZE  rcvd: 157
 ```
-* A quick comparison between the output of `nslookup` and `dig` shows that `dig` returned more information, such as the TTL (Time To Live) by default.
+* Comparison of the output of `nslookup` and `dig` shows that `dig` returned more information, such as the TTL (Time To Live) by default.
   * To query a 1.1.1.1 DNS server, execute `dig @1.1.1.1 tryhackme.com MX`.
 
 | Purpose | Command Line Example
@@ -198,28 +197,26 @@ tryhackme.com.   	 300    IN    MX    5 alt1.aspmx.l.google.com.
 | Lookup DNS TXT records | `dig tryhackme.com TXT`
 
 ## [DNSDumpster](https://dnsdumpster.com/)
-* DNS lookup tools, such as nslookup and dig, cannot find subdomains on their own.
-  * The domain being inspecting might include a different subdomain that can reveal much information about the target.
+* DNS lookup tools, such as `nslookup` and `dig`, cannot find subdomains on their own.
+  * The domain being inspecting might include a different subdomain that can reveal information about the target.
     * For instance, if `tryhackme.com` has the subdomains `wiki.tryhackme.com` and `webmail.tryhackme.com`, it is prudent to learn more about these two as they can hold a trove of information about the target.
     * There is a possibility that one of these subdomains has been set up and is not updated regularly.
-      * Lack of proper regular updates usually leads to vulnerable services.
-
+    * Lack of proper regular updates usually leads to vulnerable services.
 * Consider using multiple search engines to compile a list of publicly known subdomains.
   * Should expect to go through at least tens of results to find interesting data.
   * Looking for subdomains that are not explicitly advertised, and hence it is not necessary to make it to the first page of search results.
   * Another approach to discover such subdomains would be to rely on brute-forcing queries to find which subdomains have DNS records.
-
 * To avoid such a time-consuming search, use an online service that offers detailed answers to DNS queries, such as DNSDumpster.
   * Searching DNSDumpster for `tryhackme.com` discovers the subdomain `blog.tryhackme.com`, which a typical DNS query cannot provide.
-  * DNSDumpster will return the collected DNS information in easy-to-read tables and a graph.
-  * DNSDumpster will also provide any collected information about listening servers.
-  * Among the results, is a list of DNS servers for the domain.
-  * DNSDumpster also resolved the domain names to IP addresses and even tried to geolocate them.
-  * DNSDumpster also returned the MX records.
-    * Resolved all five mail exchange servers to their respective IP addresses and provided more information about the owner and location.
+  * DNSDumpster returns the collected DNS information in easy-to-read tables and a graph.
+  * DNSDumpster provides any collected information about listening servers.
+  * Among the results is a list of DNS servers for the domain.
+  * The domain names were resolved to IP addresses and DNSDumpster even tried to geolocate them.
+  * DNSDumpster returned the MX records.
+    * All five mail exchange servers were resolved to their respective IP addresses and more information about the owner and location was provided.
   * DNSDumpster also returned TXT records.
   * Practically a single query was enough to retrieve all this information.
-* DNSDumpster will also represent the collected information graphically.
+  * DNSDumpster will also represent the collected information graphically.
 
 ## [Shodan.io](https://www.shodan.io/)
 * When tasked to run a penetration test against specific targets, as part of the passive reconnaissance phase, a service like Shodan.io can be helpful to learn various pieces of information about the client’s network, without actively connecting to it.
