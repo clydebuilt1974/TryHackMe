@@ -78,19 +78,25 @@
   * This is the "hash" form.
 
 ## Comparer: Overview
-* Comparer, as the name implies, lets us compare two pieces of data, either by ASCII words or by bytes.
-* Let's first check out the interface:
-* The interface can be divided into three main sections:
-* On the left, we see the items to be compared. When we load data into Comparer, it appears as rows in these tables. We select two datasets to compare.
-* On the upper right, we have options for pasting data from the clipboard (Paste), loading data from a file (Load), removing the current row (Remove), and clearing all datasets (Clear).
-* Lastly, on the lower right, we can choose to compare our datasets by either words or bytes. It doesn't matter which of these buttons you select initially because this can be changed later. These are the buttons we click when we're ready to compare the selected data.
-* Just like most Burp Suite modules, we can also load data into Comparer from other modules by right-clicking and choosing Send to Comparer.
-* Once we've added at least 2 datasets to compare and press on either Words or Bytes, a pop-up window shows us the comparison:
-* This window also has three distinct sections:
-* The compared data occupies most of the window; it can be viewed in either text or hex format. The initial format depends on whether we chose to compare by words or bytes in the previous window, but this can be overridden by using the buttons above the comparison boxes.
-* The comparison key is at the bottom left, showing which colours represent modified, deleted, and added data between the two datasets.
-* The Sync views checkbox is at the bottom right of the window. When selected, it ensures that both sets of data will sync formats. In other words, if you change one of them into Hex view, the other will adjust to match.
-* The window title displays the total number of differences found.
+* Compares two pieces of data, either by ASCII words or by bytes.
+* The interface is divided into three main sections:
+  * On the left are the items to be compared.
+    * When data is loaded into Comparer, it appears as rows in these tables.
+    * Select two datasets to compare.
+  * On the upper right are options for pasting data from the clipboard (Paste), loading data from a file (Load), removing the current row (Remove), and clearing all datasets (Clear).
+  * On the lower right is the option to compare the datasets by either words or bytes.
+* Can also load data into Comparer from other modules by right-clicking and choosing Send to Comparer.
+* Pop-up window shows the comparison once at least 2 datasets have been added to compare.
+  * Window has three distinct sections:
+    * Compared data occupies most of the window.
+      * Can be viewed in either text or hex format.
+      * Initial format depends on whether the compare is by words or bytes in the previous window.
+        * This can be overridden by using the buttons above the comparison boxes.
+   * Comparison key is at the bottom left, showing which colours represent modified, deleted, and added data between the two datasets.
+   * Sync views checkbox is at the bottom right of the window.
+     * When selected, it ensures that both sets of data will sync formats.
+     * If one of them is changed into Hex view, the other will adjust to match.
+  * The window title displays the total number of differences found.
 
 ### Comparer: Example
 * There are many situations where being able to quickly compare two (potentially very large) pieces of data can come in handy.
