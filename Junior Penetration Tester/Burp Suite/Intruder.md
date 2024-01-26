@@ -1,8 +1,16 @@
 # Burp Suite: Intruder
 ## What is Intruder?
-Intruder is Burp Suite's built-in fuzzing tool that allows for automated request modification and repetitive testing with variations in input values. By using a captured request (often from the Proxy module), Intruder can send multiple requests with slightly altered values based on user-defined configurations. It serves various purposes, such as brute-forcing login forms by substituting username and password fields with values from a wordlist or performing fuzzing attacks using wordlists to test subdirectories, endpoints, or virtual hosts. Intruder's functionality is comparable to command-line tools like Wfuzz or ffuf.
-However, it's important to note that while Intruder can be used with Burp Community Edition, it is rate-limited, significantly reducing its speed compared to Burp Professional. This limitation often leads security practitioners to rely on other tools for fuzzing and brute-forcing. Nonetheless, Intruder remains a valuable tool and is worth learning how to use it effectively.
-Let's explore the Intruder interface:
+* Burp Suite's built-in fuzzing.
+* Allows for automated request modification and repetitive testing with variations in input values.
+* Uses a captured request (often from the Proxy module) to send multiple requests with slightly altered values based on user-defined configurations.
+  * Brute-force login forms by substituting username and password fields with values from a wordlist.
+  * Perform fuzzing attacks using wordlists to test subdirectories, endpoints, or virtual hosts.
+* Functionality is comparable to command-line tools like `Wfuzz` or `ffuf`.
+* Important to note that while Intruder is rate-limited within Burp Community Edition.
+  * Significantly reduces its speed compared to Burp Professional.
+  * Limitation often leads security practitioners to rely on other tools for fuzzing and brute-forcing.
+
+## The Intruder interface:
 
 The initial view of Intruder presents a simple interface where we can select our target. This field will already be populated if a request has been sent from the Proxy (using Ctrl + I or right-clicking and selecting "Send to Intruder").
 There are four sub-tabs within Intruder:
