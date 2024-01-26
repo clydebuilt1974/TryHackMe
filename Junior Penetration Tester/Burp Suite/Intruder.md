@@ -13,7 +13,7 @@
 ## The Intruder interface:
 * Initial view presents a simple interface where the target can be selcted.
   * This field will already be populated if a request has been sent from the Proxy (using Ctrl + I or right-clicking and selecting "Send to Intruder").
-* There are four sub-tabs:
+* Four sub-tabs:
   * **Positions**: Allows attack type selection and configuration of where to insert the payloads in the request template.
   * **Payloads**: Select values to insert into the positions defined in the Positions tab.
       * Various payload options, such as loading items from a wordlist.
@@ -32,17 +32,17 @@
   * For example, fuzzing for endpoints in a web application involves taking each word in a wordlist and appending it to a request URL (e.g., `http://MACHINE_IP/WORD_GOES_HERE`) to observe the server's response.
 
 ## Positions
-When using Burp Suite Intruder to perform an attack, the first step is to examine the positions within the request where we want to insert our payloads. These positions inform Intruder about the locations where our payloads will be introduced (as we will explore in upcoming tasks).
-Let's navigate to the Positions tab:
+* First step is to examine the positions within the request where payloads might be introduced when using Intruder to perform an attack.
+* In the Positions tab:
+  * Burp Suite automatically attempts to identify the most probable positions where payloads can be inserted.
+    * These positions are highlighted in green and enclosed by section marks `§`.
+  * Right-hand side of the interface displays the `Add §`, `Clear §`, and `Auto §` buttons.
+    * `Add §` defines new positions manually by highlighting them within the request editor and then clicking the button.
+    * `Clear §` button removes all defined positions, providing a blank canvas where to custom positions can be defined.
+    * `Auto §` button automatically attempts to identify the most likely positions based on the request.
+       * This feature is helpful if the default positions were previously cleared.
 
-Notice that Burp Suite automatically attempts to identify the most probable positions where payloads can be inserted. These positions are highlighted in green and enclosed by section marks (§).
-On the right-hand side of the interface, we find the following buttons: Add §, Clear §, and Auto §:
-The Add § button allows us to define new positions manually by highlighting them within the request editor and then clicking the button.
-The Clear § button removes all defined positions, providing a blank canvas where we can define our own positions.
-The Auto § button automatically attempts to identify the most likely positions based on the request. This feature is helpful if we previously cleared the default positions and want them back.
-The following GIF demonstrates the process of adding, clearing, and automatically reselecting positions:
-
-Payloads
+## Payloads
 In the Payloads tab of Burp Suite Intruder, we can create, assign, and configure payloads for our attack. This sub-tab is divided into four sections:
 
 Payload Sets:
