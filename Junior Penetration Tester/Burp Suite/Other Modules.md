@@ -41,28 +41,41 @@
 * Each encoding/decoding method is colour-coded, enabling swift identification of the applied transformation.
 
 ### Hex Format
-* While inputting data in ASCII format is beneficial, there are times when byte-by-byte input editing is necessary. This is where "Hex View" proves useful, selectable above the decoding options:
-* This feature enables us to view and alter our data in hexadecimal byte format, a vital tool when working with binary files or other non-ASCII data.
+* There are times when byte-by-byte input editing is necessary.
+* This is where 'Hex View' proves useful (selectable above the decoding options).
+* Enables viewing and altering of data in hexadecimal byte format, a vital tool when working with binary files or other non-ASCII data.
 
-###Smart Decode
-* Lastly, we have the Smart decode option. This feature tries to auto-decode encoded text. For instance, &#x42;&#x75;&#x72;&#x70;&#x20;&#x53;&#x75;&#x69;&#x74;&#x65; is automatically recognized as HTML encoded and is accordingly decoded:
+### Smart Decode
+* Tries to auto-decode encoded text.
+  * For instance `&#x42;&#x75;&#x72;&#x70;&#x20;&#x53;&#x75;&#x69;&#x74;&#x65` is automatically recognized as HTML encoded and is accordingly decoded.
 * While not perfect, this feature can be a quick solution for decoding unknown data chunks.
 
 ### Decoder: Hashing
-* In addition to its Encoding/Decoding functionality, Decoder also offers the ability to generate hashsums for our data.
+* Decoder also offers the ability to generate hashsums for data.
 
 #### Theory
-* Hashing is a one-way process that transforms data into a unique signature. For a function to qualify as a hashing algorithm, the output it generates must be irreversible. A proficient hashing algorithm ensures that every data input will generate a completely unique hash. For instance, using the MD5 algorithm to produce a hashsum for the text "MD5sum" returns 4ae1a02de5bd02a5515f583f4fca5e8c. Using the same algorithm for "MD5SUM" yields an entirely different hash despite the close resemblance of the input: 13b436b09172400c9eb2f69fbd20adad. Therefore, hashes are commonly used to verify the integrity of files and documents, as even a tiny alteration to the file significantly changes the hashsum.
-* Note: The MD5 algorithm is deprecated and should not be used for contemporary applications.
-* Moreover, hashes are used to securely store passwords since the one-way hashing process makes the passwords relatively secure, even if the database is compromised. When a user creates a password, the application hashes and stores it. During login, the application hashes the submitted password and compares it against the stored hash; if they match, the password is correct. Using this method, an application never needs to store the original (plaintext) password.
+* Hashing is a one-way process that transforms data into a unique signature.
+* For a function to qualify as a hashing algorithm, the output it generates must be irreversible.
+* A proficient hashing algorithm ensures that every data input will generate a completely unique hash.
+  * For instance, using the MD5 algorithm to produce a hashsum for the text `MD5sum` returns `4ae1a02de5bd02a5515f583f4fca5e8c`.
+    * Using the same algorithm for `MD5SUM` yields an entirely different hash despite the close resemblance of the input `13b436b09172400c9eb2f69fbd20adad`.
+* Hashes are commonly used to verify the integrity of files and documents, as even a tiny alteration to the file significantly changes the hashsum.
+* MD5 algorithm is deprecated and should not be used for contemporary applications.
+* Hashes are used to securely store passwords since the one-way hashing process makes the passwords relatively secure, even if the database is compromised.
+* When a user creates a password, the application hashes and stores it.
+* During login, the application hashes the submitted password and compares it against the stored hash; if they match, the password is correct.
+* Using this method, an application never needs to store the original (plaintext) password.
 
 #### Hashing in Decoder
-* Decoder allows us to create hashsums for data directly within Burp Suite; it operates similarly to the encoding/decoding options we discussed earlier. Specifically, we click on the Hash dropdown menu and select an algorithm from the list:
-* Note: This list is significantly longer than the encoding/decoding algorithms – it's worth scrolling through to see the many available hashing algorithms.
-* Continuing with our earlier example, let's enter "MD5sum" into the input box, then scroll down the list until we find "MD5". Applying this automatically takes us into the Hex view:
-* A hashing algorithm's output does not yield pure ASCII/Unicode text. Hence, it's customary to convert the algorithm's output into a hexadecimal string; this is the "hash" form you might be familiar with.
-* Let's complete this by applying an "ASCII Hex" encoding to the hashsum to create the neat hex string from our initial example.
-* Here's the full process:
+* Allows creation of hashsums for data directly within Burp Suite.
+* Click on the Hash dropdown menu and select an algorithm from the list.
+  * Note: The list is significantly longer than the encoding/decoding algorithms.
+  * It is worth scrolling through to see the many available hashing algorithms.
+* Enter 'MD5sum' into the input box, then scroll down the list until we find 'MD5'.
+  * Applying this automatically moved into the Hex view.
+* A hashing algorithm's output does not yield pure ASCII/Unicode text.
+  * Customary to convert the algorithm's output into a hexadecimal string.
+  * This is the "hash" form.
 
 ## Comparer: Overview
 * Comparer, as the name implies, lets us compare two pieces of data, either by ASCII words or by bytes.
