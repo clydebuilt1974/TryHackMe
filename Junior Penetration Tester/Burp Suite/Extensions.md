@@ -58,13 +58,17 @@
 * The process of adding Jython to Burp Suite is the same for all operating systems, as Java is a multi-platform technology.
 
 ## The Burp Suite API
-In the Burp Suite Extensions module, you have access to a wide range of API endpoints that allow you to create and integrate your modules with Burp Suite. These APIs expose various functionalities, enabling you to extend the capabilities of Burp Suite to suit your specific needs.
-To view the available API endpoints, navigate to the APIs sub-tab within the Extensions module. Each item listed in the left-hand panel represents a different API endpoint that can be accessed from within extensions.
-
-The Extensions APIs give developers significant power and flexibility when writing custom extensions. You can use these APIs to seamlessly interact with Burp Suite's existing functionality and tailor your extensions to perform specific tasks.
-Burp Suite supports multiple languages for writing extensions, such as:
-Java (Natively): You can directly use Java to write extensions for Burp Suite, taking advantage of the powerful APIs available.
-Python (via Jython): If you prefer Python as your programming language, you can utilise Jython, which is a Java implementation of Python to create Burp Suite extensions.
-Ruby (via JRuby): Developers familiar with Ruby can leverage JRuby, a Java implementation of Ruby, to build Burp Suite extensions.
-It's important to note that coding your extensions for Burp Suite can be a complex task, and it goes beyond the scope of this module. However, suppose you are interested in exploring this area further and creating custom extensions. In that case, PortSwigger provides a comprehensive reference that is an excellent resource for developing Burp Suite extensions.
-To learn more about Burp Suite extension development and to access the detailed reference, you can visit PortSwigger's official documentation. This resource will provide the information and guidance needed to create powerful and customised extensions that enhance your experience with Burp Suite.
+* Access to a wide range of API endpoints in the Burp Suite Extensions module that allows creation and integration of custom modules.
+* These APIs expose various functionalities, enabling extension of the capabilities of Burp Suite to suit specific needs.
+* To view the available API endpoints, navigate to the **APIs** sub-tab within the Extensions module.
+  * Each item listed in the left-hand panel represents a different API endpoint that can be accessed from within extensions.
+* The Extensions APIs give developers significant power and flexibility when writing custom extensions.
+  * Use these APIs to seamlessly interact with Burp Suite's existing functionality and tailor your extensions to perform specific tasks.
+* Burp Suite supports multiple languages for writing extensions, such as:
+  * Java (Natively): can directly use Java to write extensions for Burp Suite, taking advantage of the powerful APIs available.
+  * Python (via Jython): can utilise Jython, which is a Java implementation of Python to create Burp Suite extensions.
+  * Ruby (via JRuby): can leverage JRuby, a Java implementation of Ruby, to build Burp Suite extensions.
+* Coding custom extensions for Burp Suite can be a complex task.
+  * PortSwigger provides a comprehensive reference that is an excellent resource for developing Burp Suite extensions.
+  * To learn more about Burp Suite extension development and to access the detailed reference, visit PortSwigger's [official documentation](https://portswigger.net/burp/extender/writing-your-first-burp-suite-extension).
+    * This resource will provide the information and guidance needed to create powerful and customised extensions that enhance your experience with Burp Suite.
