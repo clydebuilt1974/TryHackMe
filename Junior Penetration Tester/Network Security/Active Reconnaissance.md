@@ -1,33 +1,32 @@
 # Active Reconnaissance
-* Passive reconnaissance lets you gather information about your target without any kind of direct engagement or connection.
-* You are watching from afar or checking publicly available information.
-* Active reconnaissance requires you to make some kind of contact with your target.
-* This contact can be a phone call or a visit to the target company under some pretence to gather more information, usually as part of social engineering.
-* Alternatively, it can be a direct connection to the target system, whether visiting their website or checking if their firewall has an SSH port open.
-* Think of it like you are closely inspecting windows and door locks.
-* Hence, it is essential to remember not to engage in active reconnaissance work before getting signed legal authorisation from the client.
-* Active reconnaissance begins with direct connections made to the target machine.
-* Any such connection might leave information in the logs showing the client IP address, time of the connection, and duration of the connection, among other things. However, not all connections are suspicious.
-* It is possible to let your active reconnaissance appear as regular client activity.
-* Consider web browsing; no one would suspect a browser connected to a target web server among hundreds of other legitimate users.
-* You can use such techniques to your advantage when working as part of the red team (attackers) and don’t want to alarm the blue team (defenders).
+* **Do not engage in active reconnaissance work before getting signed legal authorisation from the client**.
+* Active reconnaissance requires some kind of contact to be made with the target.
+  * Social engineering.
+  * Direct connection to a target system.
+    * A connection might leave information in the logs.
+      * Hide active reconnaissance as regular client activity.
+        * No one should suspect a browser connected to a target web server among hundreds of other legitimate users.
 
 ## Web Browser
-The web browser can be a convenient tool, especially that it is readily available on all systems. There are several ways where you can use a web browser to gather information about a target.
-On the transport level, the browser connects to:
-TCP port 80 by default when the website is accessed over HTTP
-TCP port 443 by default when the website is accessed over HTTPS
-Since 80 and 443 are default ports for HTTP and HTTPS, the web browser does not show them in the address bar. However, it is possible to use custom ports to access a service. For instance, https://127.0.0.1:8834/ will connect to 127.0.0.1 (localhost) at port 8834 via HTTPS protocol. If there is an HTTPS server listening on that port, we will receive a web page.
-While browsing a web page, you can press Ctrl+Shift+I on a PC or Option + Command + I (⌥ + ⌘ + I) on a Mac to open the Developer Tools on Firefox. Similar shortcuts will also get you started with Google Chrome or Chromium. Developer Tools lets you inspect many things that your browser has received and exchanged with the remote server. For instance, you can view and even modify the JavaScript (JS) files, inspect the cookies set on your system and discover the folder structure of the site content.
-Below is a screenshot of Firefox Developer Tools. Chrome DevTools is quite similar.
+* TCP/80 by default when the website is accessed over HTTP
+* TCP/443 by default when the website is accessed over HTTPS
+* Can use custom ports to access a service.
+  * https://127.0.0.1:8834/ will connect to 127.0.0.1 (localhost) at port 8834 via HTTPS protocol.
+* Developer Tools allow inspection of many things that the browser has received and exchanged with the remote server.
+  * View and even modify JavaScript (JS) files.
+  * Inspect cookies set on the system.
+  * Discover the folder structure of the site content.
+* Add-ons for Firefox and Chrome can help in penetration testing.
+  * **FoxyProxy** quickly changes the proxy server being using to access the target website.
+    * Convenient when using a tool such as Burp Suite.
+    * Get FoxyProxy for Firefox from [here](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard).
+  * **User-Agent Switcher and Manager** pretends to access a webpage from a different OS or different web browser.
+    * Pretend to browse a site using an iPhone when accessing it from Mozilla Firefox.
+    * Download User-Agent Switcher and Manager for Firefox [here](https://addons.mozilla.org/en-US/firefox/addon/user-agent-string-switcher).
+  * **Wappalyzer** provides insights about the technologies used on the visited websites.
+  * Get Wappalyzer for Firefox [here](https://addons.mozilla.org/en-US/firefox/addon/wappalyzer).
 
-There are also plenty of add-ons for Firefox and Chrome that can help in penetration testing. Here are a few examples:
-FoxyProxy lets you quickly change the proxy server you are using to access the target website. This browser extension is convenient when you are using a tool such as Burp Suite or if you need to switch proxy servers regularly. You can get FoxyProxy for Firefox from here.
-User-Agent Switcher and Manager gives you the ability to pretend to be accessing the webpage from a different operating system or different web browser. In other words, you can pretend to be browsing a site using an iPhone when in fact, you are accessing it from Mozilla Firefox. You can download User-Agent Switcher and Manager for Firefox here.
-Wappalyzer provides insights about the technologies used on the visited websites. Such extension is handy, primarily when you collect all this information while browsing the website like any other user. A screenshot of Wappalyzer is shown below. You can find Wappalyzer for Firefox here.
-
-Over time, you might find a few extensions that fit perfectly in your workflow.
-Ping
+## Ping
 Ping should remind you of the game ping-pong (table tennis). You throw the ball and expect to get it back. The primary purpose of ping is to check whether you can reach the remote system and that the remote system can reach you back. In other words, initially, this was used to check network connectivity; however, we are more interested in its different uses: checking whether the remote system is online.
 In simple terms, the ping command sends a packet to a remote system, and the remote system replies. This way, you can conclude that the remote system is online and that the network is working between the two systems.
 If you prefer a pickier definition, the ping is a command that sends an ICMP Echo packet to a remote system. If the remote system is online, and the ping packet was correctly routed and not blocked by any firewall, the remote system should send back an ICMP Echo Reply. Similarly, the ping reply should reach the first system if appropriately routed and not blocked by any firewall.
