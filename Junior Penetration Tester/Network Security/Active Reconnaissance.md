@@ -8,12 +8,12 @@
         * No one should suspect a browser connected to a target web server among hundreds of other legitimate users.
 
 ## Web Browser
-* TCP/80 by default when the website is accessed over HTTP
-* TCP/443 by default when the website is accessed over HTTPS
+* TCP/80 by default when the website is accessed over HTTP.
+* TCP/443 by default when the website is accessed over HTTPS.
 * Can use custom ports to access a service.
   * https://127.0.0.1:8834/ will connect to 127.0.0.1 (localhost) at port 8834 via HTTPS protocol.
 * Developer Tools allow inspection of many things that the browser has received and exchanged with the remote server.
-  * View and even modify JavaScript (JS) files.
+  * View and modify JavaScript (JS) files.
   * Inspect cookies set on the system.
   * Discover the folder structure of the site content.
 * Add-ons for Firefox and Chrome can help in penetration testing.
@@ -27,46 +27,33 @@
   * Get Wappalyzer for Firefox [here](https://addons.mozilla.org/en-US/firefox/addon/wappalyzer).
 
 ## Ping
-Ping should remind you of the game ping-pong (table tennis). You throw the ball and expect to get it back. The primary purpose of ping is to check whether you can reach the remote system and that the remote system can reach you back. In other words, initially, this was used to check network connectivity; however, we are more interested in its different uses: checking whether the remote system is online.
-In simple terms, the ping command sends a packet to a remote system, and the remote system replies. This way, you can conclude that the remote system is online and that the network is working between the two systems.
-If you prefer a pickier definition, the ping is a command that sends an ICMP Echo packet to a remote system. If the remote system is online, and the ping packet was correctly routed and not blocked by any firewall, the remote system should send back an ICMP Echo Reply. Similarly, the ping reply should reach the first system if appropriately routed and not blocked by any firewall.
-The objective of such a command is to ensure that the target system is online before we spend time carrying out more detailed scans to discover the running operating system and services.
-On your AttackBox terminal, you can start to use ping as ping 10.10.190.23 or ping HOSTNAME. In the latter, the system needs to resolve HOSTNAME to an IP address before sending the ping packet. If you don’t specify the count on a Linux system, you will need to hit CTRL+c to force it to stop. Hence, you might consider ping -c 10 10.10.190.23 if you just want to send ten packets. This is equivalent to ping -n 10 10.10.190.23 on a MS Windows system.
-Technically speaking, ping falls under the protocol ICMP (Internet Control Message Protocol). ICMP supports many types of queries, but, in particular, we are interested in ping (ICMP echo/type 8) and ping reply (ICMP echo reply/type 0). Getting into ICMP details is not required to use ping.
-In the following example, we have specified the total count of packets to 5. From the AttackBox’s terminal, we started pinging 10.10.190.23. We learned that 10.10.190.23 is up and is not blocking ICMP echo requests. Moreover, any firewalls and routers on the packet route are not blocking ICMP echo requests either.
-ping -c 5 10.10.190.23
+* Sends an ICMP Echo Request (type 8) packet to a remote system and the remote system sends back an ICMP Echo Reply (type 0).
+  * Checks whether the remote system is online and that the network is working between the two systems.
+* Use to ensure that a target system is online before time is spent carrying out more detailed scans to discover the running operating system and services.
+```
+ping 10.10.10.10
+```
+```
+ping example.com
+```
+* System must be able to resolve example.com before sending the ICMP Echo Request packet.
+* `ping -c 10 10.10.190.23` sends ten packets on Linux.
+  * CTRL+c forces ping to stop if count is not specified.
+  * Equivalent to `ping -n 10 10.10.190.23` on Windows.
+* Ping falls under the protocol ICMP (Internet Control Message Protocol).
+* There are a few explanations that could explain why a ping reply is not received.
+  * Destination is not responsive.
+    * Possibly still booting up.
+    * Turned off.
+    * OS has crashed.
+  * Destination is unplugged from the network.
+  * Faulty network device across the path.
+  * A firewall is configured to block such packets.
+    * Firewall might be software running on the remote system or a network appliance.
+    * Note that MS Windows firewall blocks ping by default.
+  * Source system is unplugged from the network.
 
-PING 10.10.190.23 (10.10.190.23) 56(84) bytes of data.
-64 bytes from 10.10.190.23: icmp_seq=1 ttl=64 time=0.752 ms
-64 bytes from 10.10.190.23: icmp_seq=2 ttl=64 time=0.320 ms
-64 bytes from 10.10.190.23: icmp_seq=3 ttl=64 time=0.298 ms
-64 bytes from 10.10.190.23: icmp_seq=4 ttl=64 time=0.283 ms
-64 bytes from 10.10.190.23: icmp_seq=5 ttl=64 time=0.329 ms
-
---- 10.10.190.23 ping statistics ---
-5 packets transmitted, 5 received, 0% packet loss, time 4088ms
-rtt min/avg/max/mdev = 0.283/0.396/0.752/0.179 ms   
-In the example above, we saw clearly that the target system is responding. The ping output is an indicator that it is online and reachable. We have transmitted five packets, and we received five replies. We notice that, on average, it took 0.475 ms (millisecond) for the reply to reach our system, with the maximum being 0.636 ms.
-From a penetration testing point of view, we will try to discover more about this target. We will try to learn as much as possible, for example, which ports are open and which services are running.
-Let’s consider the following case: we shut down the target virtual machine and then tried to ping 10.10.190.23. As you would expect in the following example, we don’t receive any reply.
-ping -c 5 10.10.190.23
-
-PING 10.10.190.23 (10.10.190.23) 56(84) bytes of data.
-From 10.10.190.23 icmp_seq=1 Destination Host Unreachable
-From 10.10.190.23 icmp_seq=2 Destination Host Unreachable
-From 10.10.190.23 icmp_seq=3 Destination Host Unreachable
-From 10.10.190.23 icmp_seq=4 Destination Host Unreachable
-From 10.10.190.23 icmp_seq=5 Destination Host Unreachable
-
---- 10.10.190.23 ping statistics ---
-5 packets transmitted, 0 received, +5 errors, 100% packet loss, time 4098ms
-In this case, we already know that we have shut down the target computer that has 10.10.190.23. For each ping, the system we are using, AttackBox in this case, is responding with “Destination Host Unreachable.” We can see that we have transmitted five packets, but none was received, resulting in a 100% packet loss.
-Generally speaking, when we don’t get a ping reply back, there are a few explanations that would explain why we didn’t get a ping reply, for example:
-The destination computer is not responsive; possibly still booting up or turned off, or the OS has crashed.
-It is unplugged from the network, or there is a faulty network device across the path.
-A firewall is configured to block such packets. The firewall might be a piece of software running on the system itself or a separate network appliance. Note that MS Windows firewall blocks ping by default.
-Your system is unplugged from the network.
-Traceroute
+## Traceroute
 As the name suggests, the traceroute command traces the route taken by the packets from your system to another host. The purpose of a traceroute is to find the IP addresses of the routers or hops that a packet traverses as it goes from your system to a target host. This command also reveals the number of routers between the two systems. It is helpful as it indicates the number of hops (routers) between your system and the target host. However, note that the route taken by the packets might change as many routers use dynamic routing protocols that adapt to network changes.
 On Linux and macOS, the command to use is traceroute MACHINE_IP, and on MS Windows, it is tracert MACHINE_IP. traceroute tries to discover the routers across the path from your system to the target system.
 There is no direct way to discover the path from your system to a target system. We rely on ICMP to “trick” the routers into revealing their IP addresses. We can accomplish this by using a small Time To Live (TTL) in the IP header field. Although the T in TTL stands for time, TTL indicates the maximum number of routers/hops that a packet can pass through before being dropped; TTL is not a maximum number of time units. When a router receives a packet, it decrements the TTL by one before passing it to the next router. The following figure shows that each time the IP packet passes through a router, its TTL value is decremented by 1. Initially, it leaves the system with a TTL value of 64; it reaches the target system with a TTL value of 60 after passing through 4 routers.
