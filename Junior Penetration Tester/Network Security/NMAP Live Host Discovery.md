@@ -210,10 +210,9 @@ Host is up (0.00025s latency).
 MAC Address: 02:28:B1:2E:B0:1B (Unknown)
 Nmap done: 256 IP addresses (8 hosts up) scanned in 2.11 seconds
 ```    
-* Scan output shows that eight hosts are up and shows their MAC addresses.
 * Do not expect to learn the MAC addresses of the targets unless they are on the same subnet as the source system.
 * Output indicates that Nmap did not need to send ICMP packets as it confirmed that these hosts are up based on the ARP responses received.
-* Repeat the ICMP scan but now scan from a system in a different subnet.
+* Repeat the ICMP scan but now scanning from a system in a different subnet.
   * The results are similar but without the MAC addresses.
 ```
 sudo nmap -PE -sn 10.10.68.220/24
@@ -241,7 +240,6 @@ Nmap done: 256 IP addresses (8 hosts up) scanned in 8.26 seconds
 * Because ICMP echo requests tend to be blocked consider ICMP Timestamp or ICMP Address Mask requests to tell if a system is online.
   * Nmap uses timestamp request (ICMP Type 13) and checks whether it will get a Timestamp reply (ICMP Type 14).
   * `-PP` option tells Nmap to use ICMP timestamp requests.
-* In the following example, we run nmap -PP -sn 10.10.68.220/24 to discover the online computers on the target machine subnet.
 ```
 sudo nmap -PP -sn 10.10.68.220/24
 
@@ -264,23 +262,21 @@ Nmap scan report for 10.10.68.222
 Host is up (0.14s latency).
 Nmap done: 256 IP addresses (8 hosts up) scanned in 10.93 seconds      
 ```
-* Similar to the previous ICMP scan, this scan will send many ICMP timestamp requests to every valid IP address in the target subnet.
-* In the Wireshark screenshot below, you can see one source IP address sending ICMP packets to every possible IP address to discover online hosts.
-* Similarly, Nmap uses address mask queries (ICMP Type 17) and checks whether it gets an address mask reply (ICMP Type 18).
-* This scan can be enabled with the option -PM.
-* As shown in the figure below, live hosts are expected to reply to ICMP address mask requests.
-* In an attempt to discover live hosts using ICMP address mask queries, we run the command nmap -PM -sn 10.10.68.220/24.
-* Although, based on earlier scans, we know that at least eight hosts are up, this scan returned none.
-* The reason is that the target system or a firewall on the route is blocking this type of ICMP packet.
-* Therefore, it is essential to learn multiple approaches to achieve the same result.
-* If one type of packet is being blocked, we can always choose another to discover the target network and services.
+* Scan sends many ICMP timestamp requests to every valid IP address in the target subnet.
+* Wireshark shows one source IP address sending ICMP packets to every possible IP address to discover online hosts.
+* Nmap uses address mask queries (ICMP Type 17) and checks whether it gets an address mask reply (ICMP Type 18).
+  * Enable this with `-PM`.
+  * Live hosts are expected to reply to ICMP address mask requests.
 ```
 sudo nmap -PM -sn 10.10.68.220/24
 
 Starting Nmap 7.92 ( https://nmap.org ) at 2021-09-02 12:13 EEST
 Nmap done: 256 IP addresses (0 hosts up) scanned in 52.17 seconds
 ```       
-* Although we didn’t get any reply and could not figure out which hosts are online, it is essential to note that this scan sent ICMP address mask requests to every valid IP address and waited for a reply.
+* This scan returned none although based on the earlier scan there are at least eight live hosts.
+  * Target system or a firewall on the route is blocking this type of ICMP packet.
+  * This scan still sent ICMP address mask requests to every valid IP address and waited for a reply.
+* If one type of packet is being blocked another can be chosen to discover the target network and services.
 
 ## Nmap Host Discovery Using TCP and UDP
 ### TCP SYN Ping
