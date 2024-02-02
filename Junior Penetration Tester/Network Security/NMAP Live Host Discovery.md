@@ -284,12 +284,18 @@ Nmap done: 256 IP addresses (0 hosts up) scanned in 52.17 seconds
 
 ## Nmap Host Discovery Using TCP and UDP
 ### TCP SYN Ping
-We can send a packet with the SYN (Synchronise) flag set to a TCP port, 80 by default, and wait for a response. An open port should reply with a SYN/ACK (Acknowledge); a closed port would result in an RST (Reset). In this case, we only check whether we will get any response to infer whether the host is up. The specific state of the port is not significant here. The figure below is a reminder of how a TCP 3-way handshake usually works.
-
-If you want Nmap to use TCP SYN ping, you can do so via the option -PS followed by the port number, range, list, or a combination of them. For example, -PS21 will target port 21, while -PS21-25 will target ports 21, 22, 23, 24, and 25. Finally -PS80,443,8080 will target the three ports 80, 443, and 8080.
-Privileged users (root and sudoers) can send TCP SYN packets and don’t need to complete the TCP 3-way handshake even if the port is open, as shown in the figure below. Unprivileged users have no choice but to complete the 3-way handshake if the port is open.
-
-We will run nmap -PS -sn 10.10.68.220/24 to scan the target VM subnet. As we can see in the output below, we were able to discover five hosts.
+* We can send a packet with the SYN (Synchronise) flag set to a TCP port, 80 by default, and wait for a response.
+* An open port should reply with a SYN/ACK (Acknowledge); a closed port would result in an RST (Reset).
+* In this case, we only check whether we will get any response to infer whether the host is up.
+* The specific state of the port is not significant here.
+* The figure below is a reminder of how a TCP 3-way handshake usually works.
+* If you want Nmap to use TCP SYN ping, you can do so via the option -PS followed by the port number, range, list, or a combination of them.
+* For example, -PS21 will target port 21, while -PS21-25 will target ports 21, 22, 23, 24, and 25.
+* Finally -PS80,443,8080 will target the three ports 80, 443, and 8080.
+* Privileged users (root and sudoers) can send TCP SYN packets and don’t need to complete the TCP 3-way handshake even if the port is open, as shown in the figure below.
+* Unprivileged users have no choice but to complete the 3-way handshake if the port is open.
+* We will run nmap -PS -sn 10.10.68.220/24 to scan the target VM subnet.
+* As we can see in the output below, we were able to discover five hosts.
 ```
 sudo nmap -PS -sn 10.10.68.220/24
 
@@ -306,14 +312,24 @@ Nmap scan report for 10.10.68.220
 Host is up (0.11s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 17.38 seconds     
 ```
-Let’s take a closer look at what happened behind the scenes by looking at the network traffic on Wireshark in the figure below. Technically speaking, since we didn’t specify any TCP ports to use in the TCP ping scan, Nmap used common ports; in this case, it is TCP port 80. Any service listening on port 80 is expected to reply, indirectly indicating that the host is online.
+* Let’s take a closer look at what happened behind the scenes by looking at the network traffic on Wireshark in the figure below.
+* Technically speaking, since we didn’t specify any TCP ports to use in the TCP ping scan, Nmap used common ports; in this case, it is TCP port 80.
+* Any service listening on port 80 is expected to reply, indirectly indicating that the host is online.
 
 ### TCP ACK Ping
-As you have guessed, this sends a packet with an ACK flag set. You must be running Nmap as a privileged user to be able to accomplish this. If you try it as an unprivileged user, Nmap will attempt a 3-way handshake.
-By default, port 80 is used. The syntax is similar to TCP SYN ping. -PA should be followed by a port number, range, list, or a combination of them. For example, consider -PA21, -PA21-25 and -PA80,443,8080. If no port is specified, port 80 will be used.
-The following figure shows that any TCP packet with an ACK flag should get a TCP packet back with an RST flag set. The target responds with the RST flag set because the TCP packet with the ACK flag is not part of any ongoing connection. The expected response is used to detect if the target host is up.
-
-In this example, we run sudo nmap -PA -sn 10.10.68.220/24 to discover the online hosts on the target’s subnet. We can see that the TCP ACK ping scan detected five hosts as up.
+* As you have guessed, this sends a packet with an ACK flag set.
+* You must be running Nmap as a privileged user to be able to accomplish this.
+* If you try it as an unprivileged user, Nmap will attempt a 3-way handshake.
+* By default, port 80 is used.
+* The syntax is similar to TCP SYN ping.
+* -PA should be followed by a port number, range, list, or a combination of them.
+* For example, consider -PA21, -PA21-25 and -PA80,443,8080.
+* If no port is specified, port 80 will be used.
+* The following figure shows that any TCP packet with an ACK flag should get a TCP packet back with an RST flag set.
+* The target responds with the RST flag set because the TCP packet with the ACK flag is not part of any ongoing connection.
+* The expected response is used to detect if the target host is up.
+* In this example, we run sudo nmap -PA -sn 10.10.68.220/24 to discover the online hosts on the target’s subnet.
+* We can see that the TCP ACK ping scan detected five hosts as up.
 ```
 sudo nmap -PA -sn 10.10.68.220/24
 
@@ -330,14 +346,17 @@ Nmap scan report for 10.10.68.220
 Host is up (0.10s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 29.89 seconds      
 ```
-If we peek at the network traffic as shown in the figure below, we will discover many packets with the ACK flag set and sent to port 80 of the target systems. Nmap sends each packet twice. The systems that don’t respond are offline or inaccessible.
+* If we peek at the network traffic as shown in the figure below, we will discover many packets with the ACK flag set and sent to port 80 of the target systems.
+* Nmap sends each packet twice. The systems that don’t respond are offline or inaccessible.
 
 ### UDP Ping
-Finally, we can use UDP to discover if the host is online. Contrary to TCP SYN ping, sending a UDP packet to an open port is not expected to lead to any reply. However, if we send a UDP packet to a closed UDP port, we expect to get an ICMP port unreachable packet; this indicates that the target system is up and available.
-In the following figure, we see a UDP packet sent to an open UDP port and not triggering any response. However, sending a UDP packet to any closed UDP port can trigger a response indirectly indicating that the target is online.
-
-
-The syntax to specify the ports is similar to that of TCP SYN ping and TCP ACK ping; Nmap uses -PU for UDP ping. In the following example, we use a UDP scan, and we discover five live hosts.
+* Finally, we can use UDP to discover if the host is online.
+* Contrary to TCP SYN ping, sending a UDP packet to an open port is not expected to lead to any reply.
+* However, if we send a UDP packet to a closed UDP port, we expect to get an ICMP port unreachable packet; this indicates that the target system is up and available.
+* In the following figure, we see a UDP packet sent to an open UDP port and not triggering any response.
+* However, sending a UDP packet to any closed UDP port can trigger a response indirectly indicating that the target is online.
+* The syntax to specify the ports is similar to that of TCP SYN ping and TCP ACK ping; Nmap uses -PU for UDP ping.
+* In the following example, we use a UDP scan, and we discover five live hosts.
 ```
 sudo nmap -PU -sn 10.10.68.220/24
 
@@ -354,44 +373,49 @@ Nmap scan report for 10.10.68.220
 Host is up (0.11s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 9.20 seconds      
 ```
-Let’s inspect the UDP packets generated. In the following Wireshark screenshot, we notice Nmap sending UDP packets to UDP ports that are most likely closed. The image below shows that Nmap uses an uncommon UDP port to trigger an ICMP destination unreachable (port unreachable) error.
+* Let’s inspect the UDP packets generated.
+* In the following Wireshark screenshot, we notice Nmap sending UDP packets to UDP ports that are most likely closed.
+* The image below shows that Nmap uses an uncommon UDP port to trigger an ICMP destination unreachable (port unreachable) error.
 
 ## Masscan
-On a side note, Masscan uses a similar approach to discover the available systems. However, to finish its network scan quickly, Masscan is quite aggressive with the rate of packets it generates. The syntax is quite similar: -p can be followed by a port number, list, or range. Consider the following examples:
+* On a side note, Masscan uses a similar approach to discover the available systems.
+* However, to finish its network scan quickly, Masscan is quite aggressive with the rate of packets it generates.
+* The syntax is quite similar: -p can be followed by a port number, list, or range. Consider the following examples:
+```
 masscan 10.10.68.220/24 -p443
 masscan 10.10.68.220/24 -p80,443
 masscan 10.10.68.220/24 -p22-25
 masscan 10.10.68.220/24 ‐‐top-ports 100
-If Masscan is not installed, it can be installed using apt install masscan.
-Using Reverse-DNS Lookup
-Nmap’s default behaviour is to use reverse-DNS online hosts. Because the hostnames can reveal a lot, this can be a helpful step. However, if you don’t want to send such DNS queries, you use -n to skip this step.
-By default, Nmap will look up online hosts; however, you can use the option -R to query the DNS server even for offline hosts. If you want to use a specific DNS server, you can add the --dns-servers DNS_SERVER option.
+```
+* If Masscan is not installed, it can be installed using apt install masscan.
+
+## Using Reverse-DNS Lookup
+* Nmap’s default behaviour is to use reverse-DNS online hosts.
+* Because the hostnames can reveal a lot, this can be a helpful step.
+* However, if you don’t want to send such DNS queries, you use -n to skip this step.
+* By default, Nmap will look up online hosts; however, you can use the option -R to query the DNS server even for offline hosts.
+* If you want to use a specific DNS server, you can add the --dns-servers DNS_SERVER option.
 
 ## Summary
-You have learned how ARP, ICMP, TCP, and UDP can detect live hosts by completing this room. Any response from a host is an indication that it is online. Below is a quick summary of the command-line options for Nmap that we have covered.
-Scan Type
-Example Command
-ARP Scan
-sudo nmap -PR -sn MACHINE_IP/24
-ICMP Echo Scan
-sudo nmap -PE -sn MACHINE_IP/24
-ICMP Timestamp Scan
-sudo nmap -PP -sn MACHINE_IP/24
-ICMP Address Mask Scan
-sudo nmap -PM -sn MACHINE_IP/24
-TCP SYN Ping Scan
-sudo nmap -PS22,80,443 -sn MACHINE_IP/30
-TCP ACK Ping Scan
-sudo nmap -PA22,80,443 -sn MACHINE_IP/30
-UDP Ping Scan
-sudo nmap -PU53,161,162 -sn MACHINE_IP/30
+* You have learned how ARP, ICMP, TCP, and UDP can detect live hosts by completing this room.
+* Any response from a host is an indication that it is online.
+* Below is a quick summary of the command-line options for Nmap that we have covered.
 
-Remember to add -sn if you are only interested in host discovery without port-scanning. Omitting -sn will let Nmap default to port-scanning the live hosts.
-Option
-Purpose
--n
-no DNS lookup
--R
-reverse-DNS lookup for all hosts
--sn
-host discovery only
+| Scan Type | Example Command
+| --- | ---
+| ARP Scan | `sudo nmap -PR -sn MACHINE_IP/24`
+| ICMP Echo Scan | `sudo nmap -PE -sn MACHINE_IP/24`
+| ICMP Timestamp Scan | `sudo nmap -PP -sn MACHINE_IP/24`
+| ICMP Address Mask Scan | `sudo nmap -PM -sn MACHINE_IP/24`
+| TCP SYN Ping Scan | `sudo nmap -PS22,80,443 -sn MACHINE_IP/30`
+| TCP ACK Ping Scan | `sudo nmap -PA22,80,443 -sn MACHINE_IP/30`
+| UDP Ping Scan | `sudo nmap -PU53,161,162 -sn MACHINE_IP/30`
+
+* Remember to add -sn if you are only interested in host discovery without port-scanning.
+* Omitting -sn will let Nmap default to port-scanning the live hosts.
+
+| Option | Purpose
+| --- | ---
+| `-n` | no DNS lookup
+| `-R` | reverse-DNS lookup for all hosts
+| `-sn` | host discovery only
