@@ -317,19 +317,15 @@ Nmap done: 256 IP addresses (5 hosts up) scanned in 17.38 seconds
   * Any service listening on port 80 is expected to reply indirectly indicating that the host is online.
 
 ### TCP ACK Ping
-* As you have guessed, this sends a packet with an ACK flag set.
-* You must be running Nmap as a privileged user to be able to accomplish this.
-* If you try it as an unprivileged user, Nmap will attempt a 3-way handshake.
-* By default, port 80 is used.
-* The syntax is similar to TCP SYN ping.
-* -PA should be followed by a port number, range, list, or a combination of them.
-* For example, consider -PA21, -PA21-25 and -PA80,443,8080.
-* If no port is specified, port 80 will be used.
-* The following figure shows that any TCP packet with an ACK flag should get a TCP packet back with an RST flag set.
-* The target responds with the RST flag set because the TCP packet with the ACK flag is not part of any ongoing connection.
-* The expected response is used to detect if the target host is up.
-* In this example, we run sudo nmap -PA -sn 10.10.68.220/24 to discover the online hosts on the target’s subnet.
-* We can see that the TCP ACK ping scan detected five hosts as up.
+* This sends a packet with an ACK flag set.
+* Must be running Nmap as a privileged user.
+  * Nmap will attempt a 3-way handshake If attempted as an unprivileged user.
+* `-PA` should be followed by a port number, range, list, or a combination of them.
+  * `-PA21`, `-PA21-25` and `-PA80,443,8080`.
+  * Port 80 will be used if no port is specified.
+* Any TCP packet with an ACK flag should get a TCP packet back with an RST flag set.
+  * Target responds with RST flag set because the TCP packet with the ACK flag is not part of any ongoing connection.
+  * Expected response is used to detect if the target host is up.
 ```
 sudo nmap -PA -sn 10.10.68.220/24
 
@@ -346,8 +342,9 @@ Nmap scan report for 10.10.68.220
 Host is up (0.10s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 29.89 seconds      
 ```
-* If we peek at the network traffic as shown in the figure below, we will discover many packets with the ACK flag set and sent to port 80 of the target systems.
-* Nmap sends each packet twice. The systems that don’t respond are offline or inaccessible.
+* Wireshark analysis shows many packets with the ACK flag set and sent to port 80 of the target systems.
+  * Nmap sends each packet twice.
+  * The systems that do not respond are offline or inaccessible.
 
 ### UDP Ping
 * Finally, we can use UDP to discover if the host is online.
