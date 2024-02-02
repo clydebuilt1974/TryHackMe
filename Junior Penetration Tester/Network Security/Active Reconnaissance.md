@@ -116,11 +116,22 @@ Accept-Ranges: bytes
 * Need to use proper commands based on the protocol such as SMTP and POP3 when connecting to a mail server.
 
 ## Netcat
-Netcat or simply nc has different applications that can be of great value to a pentester. Netcat supports both TCP and UDP protocols. It can function as a client that connects to a listening port; alternatively, it can act as a server that listens on a port of your choice. Hence, it is a convenient tool that you can use as a simple client or server over TCP or UDP.
-First, you can connect to a server, as you did with Telnet, to collect its banner using nc 10.10.190.23 PORT, which is quite similar to our previous telnet 10.10.190.23 PORT. Note that you might need to press SHIFT+ENTER after the GET line.
+* Netcat (`nc`) has different applications that can be of great value to a pentester.
+* Supports both TCP and UDP protocols.
+* Can function as a client that connects to a listening port or can act as a server that listens on a port of choice.
+  * Convenient tool to use as a simple client or server over TCP or UDP.
+* `nc 10.10.190.23 PORT` to connect to a server to collect its banner.
+```
 nc 10.10.190.23 80
-
+```
+* Issue a get for the default page.
+* Specify to the target server that the client supports HTTP version 1.1.
+```
 GET / HTTP/1.1
+```
+* May need to press SHIFT+ENTER after the GET line.
+* Give a name to the host.
+```
 host: netcat
 
 HTTP/1.1 200 OK
@@ -132,33 +143,28 @@ Last-Modified: Tue, 17 Aug 2021 11:12:16 GMT
 Connection: keep-alive
 ETag: "611b9990-363"
 Accept-Ranges: bytes
-...       
-In the terminal shown above, we used netcat to connect to 10.10.190.23 port 80 using nc 10.10.190.23 80. Next, we issued a get for the default page using GET / HTTP/1.1; we are specifying to the target server that our client supports HTTP version 1.1. Finally, we need to give a name to our host, so we added on a new line, host: netcat; you can name your host anything as this has no impact on this exercise.
-Based on the output Server: nginx/1.6.2 we received, we can tell that on port 80, we have Nginx version 1.6.2 listening for incoming connections.
-You can use netcat to listen on a TCP port and connect to a listening port on another system.
-On the server system, where you want to open a port and listen on it, you can issue nc -lp 1234 or better yet, nc -vnlp 1234, which is equivalent to nc -v -l -n -p 1234. The exact order of the letters does not matter as long as the port number is preceded directly by -p.
-option
-meaning
--l
-Listen mode
--p
-Specify the Port number
--n
-Numeric only; no resolution of hostnames via DNS
--v
-Verbose output (optional, yet useful to discover any bugs)
--vv
-Very Verbose (optional)
--k
-Keep listening after client disconnects
+```   
+* Netcat can be used to listen on a TCP port and connect to a listening port on another system.
+  * `nc -vnlp PORT_NUMBER` on the *server-side* system where a port should be opened and listened on.
+    * Exact order of the letters does not matter as long as the port number is preceded directly by `-p`.
+* Connect to listening server from the client-side using `nc SERVER_IP PORT_NUMBER`.
+* This setup will echo whatever is typed on one side to the other side of the TCP tunnel.
 
-Notes:
-the option -p should appear just before the port number you want to listen on.
-the option -n will avoid DNS lookups and warnings.
-port numbers less than 1024 require root privileges to listen on.
-On the client-side, you would issue nc 10.10.190.23 PORT_NUMBER. Here is an example of using nc to echo. After you successfully establish a connection to the server, whatever you type on the client-side will be echoed on the server-side and vice versa.
-Consider the following example. On the server-side, we will listen on port 1234. We can achieve this with the command nc -vnlp 1234 (same as nc -lvnp 1234). In our case, the listening server has the IP address 10.10.190.23, so we can connect to it from the client-side by executing nc 10.10.190.23 1234. This setup would echo whatever you type on one side to the other side of the TCP tunnel. You can find a recording of the process below. Note that the listening server is on the left side of the screen.
-Putting It All Together
+| Option | Meaning
+| --- | ---
+| `-l` | Listen mode
+| `-p` | Specify the Port number
+| `-n` | Numeric only; no resolution of hostnames via DNS
+| -v | Verbose output (optional, yet useful to discover any bugs)
+| -vv | Very Verbose (optional)
+| -k | Keep listening after client disconnects
+
+* Notes:
+  * `-p` should appear just before the port number to listen on.
+  * '-n' will avoid DNS lookups and warnings.
+  * port numbers less than 1024 require root privileges to listen on.
+
+## Putting It All Together
 In this room, we have covered many various tools. It is easy to put a few of them together via a shell script to build a primitive network and system scanner. You can use traceroute to map the path to the target, ping to check if the target system responds to ICMP Echo, and telnet to check which ports are open and reachable by attempting to connect to them. Available scanners do this at much more advanced and sophisticated levels, as we will see in the next four rooms with nmap.
 Command
 Example
