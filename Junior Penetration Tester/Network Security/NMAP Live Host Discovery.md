@@ -45,18 +45,82 @@
   * Names might reveal various information to the pentester.
   * To prevent Nmap from perfroming DNS lookups add `-n`.
 
-## Discovering Live Hosts
-Let’s revisit the TCP/IP layers shown in the figure next. We will leverage the protocols to discover the live hosts. Starting from bottom to top, we can use:
-ARP from Link Layer
-ICMP from Network Layer
-TCP from Transport Layer
-UDP from Transport Layer
+<table>
+    <thead>
+        <tr>
+            <th>Layer</th>
+            <th>OSI</th>
+            <th>TCP/IP</th>
+            <th>Protocols</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>7</td>
+            <td>Application</td>
+            <td rowspan=3>Application</td>
+            <td rowspan=3>HTTP, HTTPS, SMTP, POP3, IMAP, SSHY, FTP, SNMP, Telnet, RDP</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Presentation</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Session</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Transport</td>
+            <td>Transport</td>
+            <td>TCP, UDP</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Network</td>
+            <td>Network</td>
+            <td>IPv4, IPv6, ICMP, IPsec</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Data Link</td>
+            <td rowspan=2>Link</td>
+            <td rowspan=2>ARP, Ethernet (802.3), WiFi (802.11), DSL, Bluetooth</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Physical</td>
+        </tr>
+    </tbody>
+</table>
 
-Before we discuss how scanners can use each in detail, we will briefly review these four protocols. ARP has one purpose: sending a frame to the broadcast address on the network segment and asking the computer with a specific IP address to respond by providing its MAC (hardware) address.
-ICMP has many types. ICMP ping uses Type 8 (Echo) and Type 0 (Echo Reply).
-If you want to ping a system on the same subnet, an ARP query should precede the ICMP Echo.
-Although TCP and UDP are transport layers, for network scanning purposes, a scanner can send a specially-crafted packet to common TCP or UDP ports to check whether the target will respond. This method is efficient, especially when ICMP Echo is blocked.
-Nmap Host Discovery Using ARP
+## Discovering Live Hosts
+| Layer | OSI | TCP/IP | Protocols
+| --- | --- | --- | ---
+| 7 | Application | 
+| 6 | Presentation |
+| 5 | Session | 
+| 4 | Transport | 
+| 3 | Network | Network | 
+| 2 | Data link | Link | 
+| 1 | Physical | Link | 
+
+
+* We will leverage the protocols to discover the live hosts.
+* Starting from bottom to top, we can use:
+* ARP from Link Layer
+* ICMP from Network Layer
+* TCP from Transport Layer
+* UDP from Transport Layer
+* Before we discuss how scanners can use each in detail, we will briefly review these four protocols.
+* ARP has one purpose: sending a frame to the broadcast address on the network segment and asking the computer with a specific IP address to respond by providing its MAC (hardware) address.
+* ICMP has [many types](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml).
+  * ICMP ping uses Type 8 (Echo) and Type 0 (Echo Reply).
+* If you want to ping a system on the same subnet, an ARP query should precede the ICMP Echo.
+* Although TCP and UDP are transport layers, for network scanning purposes, a scanner can send a specially-crafted packet to common TCP or UDP ports to check whether the target will respond.
+* This method is efficient, especially when ICMP Echo is blocked.
+
+## Nmap Host Discovery Using ARP
 How would you know which hosts are up and running? It is essential to avoid wasting our time port-scanning an offline host or an IP address not in use. There are various ways to discover online hosts. When no host discovery options are provided, Nmap follows the following approaches to discover live hosts:
 When a privileged user tries to scan targets on a local network (Ethernet), Nmap uses ARP requests. A privileged user is root or a user who belongs to sudoers and can run sudo.
 When a privileged user tries to scan targets outside the local network, Nmap uses ICMP echo requests, TCP ACK (Acknowledge) to port 80, TCP SYN (Synchronise) to port 443, and ICMP timestamp request.
