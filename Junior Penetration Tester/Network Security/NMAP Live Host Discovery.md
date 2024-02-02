@@ -280,18 +280,23 @@ Nmap done: 256 IP addresses (0 hosts up) scanned in 52.17 seconds
 
 ## Nmap Host Discovery Using TCP and UDP
 ### TCP SYN Ping
-* We can send a packet with the SYN (Synchronise) flag set to a TCP port, 80 by default, and wait for a response.
-* An open port should reply with a SYN/ACK (Acknowledge); a closed port would result in an RST (Reset).
-* In this case, we only check whether we will get any response to infer whether the host is up.
-* The specific state of the port is not significant here.
-* The figure below is a reminder of how a TCP 3-way handshake usually works.
-* If you want Nmap to use TCP SYN ping, you can do so via the option -PS followed by the port number, range, list, or a combination of them.
-* For example, -PS21 will target port 21, while -PS21-25 will target ports 21, 22, 23, 24, and 25.
-* Finally -PS80,443,8080 will target the three ports 80, 443, and 8080.
-* Privileged users (root and sudoers) can send TCP SYN packets and don’t need to complete the TCP 3-way handshake even if the port is open, as shown in the figure below.
-* Unprivileged users have no choice but to complete the 3-way handshake if the port is open.
-* We will run nmap -PS -sn 10.10.68.220/24 to scan the target VM subnet.
-* As we can see in the output below, we were able to discover five hosts.
+* Can send a packet with the SYN (Synchronise) flag set to a TCP port (80 by default) and wait for a response.
+  * Open port should reply with a SYN/ACK (Acknowledge).
+  * Closed port would result in an RST (Reset).
+* Reminder of how TCP 3-way handshake works.
+
+| Source | Destination
+| --- | ---
+| SYN -> |
+| | <- SYN ACK
+| ACK -> |
+
+* Use Nmap TCP SYN ping via the option `-PS` followed by the port number, range, list, or a combination of them.
+  * `-PS21` will target port 21.
+  * `-PS21-25` will target ports 21, 22, 23, 24, and 25.
+  * `-PS80,443,8080` will target ports 80, 443, and 8080.
+* Privileged users (`root` and `sudoers`) can send TCP SYN packets and do not need to complete the TCP 3-way handshake even if the port is open.
+* Unprivileged users have to complete the 3-way handshake if the port is open.
 ```
 sudo nmap -PS -sn 10.10.68.220/24
 
@@ -308,9 +313,8 @@ Nmap scan report for 10.10.68.220
 Host is up (0.11s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 17.38 seconds     
 ```
-* Let’s take a closer look at what happened behind the scenes by looking at the network traffic on Wireshark in the figure below.
-* Technically speaking, since we didn’t specify any TCP ports to use in the TCP ping scan, Nmap used common ports; in this case, it is TCP port 80.
-* Any service listening on port 80 is expected to reply, indirectly indicating that the host is online.
+* Wireshark analysis shows that TCP port 80 was used as no TCP ports were specified in the TCP SYN scan.
+  * Any service listening on port 80 is expected to reply indirectly indicating that the host is online.
 
 ### TCP ACK Ping
 * As you have guessed, this sends a packet with an ACK flag set.
