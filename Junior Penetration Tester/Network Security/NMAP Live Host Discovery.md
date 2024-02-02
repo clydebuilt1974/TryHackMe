@@ -347,13 +347,13 @@ Nmap done: 256 IP addresses (5 hosts up) scanned in 29.89 seconds
   * The systems that do not respond are offline or inaccessible.
 
 ### UDP Ping
-* Finally, we can use UDP to discover if the host is online.
-* Contrary to TCP SYN ping, sending a UDP packet to an open port is not expected to lead to any reply.
-* However, if we send a UDP packet to a closed UDP port, we expect to get an ICMP port unreachable packet; this indicates that the target system is up and available.
-* In the following figure, we see a UDP packet sent to an open UDP port and not triggering any response.
-* However, sending a UDP packet to any closed UDP port can trigger a response indirectly indicating that the target is online.
-* The syntax to specify the ports is similar to that of TCP SYN ping and TCP ACK ping; Nmap uses -PU for UDP ping.
-* In the following example, we use a UDP scan, and we discover five live hosts.
+* Use UDP to discover if a host is online.
+* Sending a UDP packet to an open port is not expected to lead to any reply.
+* An ICMP port unreachable packet is expected if a UDP packet is sent to a closed UDP port.
+  * This indicates that the target system is up and available.
+* UDP packet sent to an open UDP port does not trigger a response.
+* Nmap uses `-PU` for UDP ping.
+  * The syntax to specify the ports is similar to that of TCP SYN ping and TCP ACK ping.
 ```
 sudo nmap -PU -sn 10.10.68.220/24
 
@@ -370,9 +370,6 @@ Nmap scan report for 10.10.68.220
 Host is up (0.11s latency).
 Nmap done: 256 IP addresses (5 hosts up) scanned in 9.20 seconds      
 ```
-* Let’s inspect the UDP packets generated.
-* In the following Wireshark screenshot, we notice Nmap sending UDP packets to UDP ports that are most likely closed.
-* The image below shows that Nmap uses an uncommon UDP port to trigger an ICMP destination unreachable (port unreachable) error.
 
 ## Masscan
 * On a side note, Masscan uses a similar approach to discover the available systems.
