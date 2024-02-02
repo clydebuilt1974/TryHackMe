@@ -55,8 +55,8 @@ ping example.com
 
 ## Traceroute
 * Traces the route taken by the packets from source system to another host.
-* On Linux and macOS use `traceroute MACHINE_IP`.
-* On MS Windows use `tracert MACHINE_IP`. 
+* On Linux and macOS use `traceroute TARGET_IP`.
+* On MS Windows use `tracert TARGET_IP`. 
 * Purpose is to find the IP addresses of the routers (or hops) that a packet traverses.  
 * Route taken by the packets may change as many routers use dynamic routing protocols that adapt to network changes.
 * Relies on ICMP to 'trick' the routers into revealing their IP addresses.
@@ -78,15 +78,28 @@ ping example.com
 * Some routers do not return a reply.
 
 ## Telnet
-The TELNET (Teletype Network) protocol was developed in 1969 to communicate with a remote system via a command-line interface (CLI). Hence, the command telnet uses the TELNET protocol for remote administration. The default port used by telnet is 23. From a security perspective, telnet sends all the data, including usernames and passwords, in cleartext. Sending in cleartext makes it easy for anyone, who has access to the communication channel, to steal the login credentials. The secure alternative is SSH (Secure SHell) protocol.
-However, the telnet client, with its simplicity, can be used for other purposes. Knowing that telnet client relies on the TCP protocol, you can use Telnet to connect to any service and grab its banner. Using telnet 10.10.190.23 PORT, you can connect to any service running on TCP and even exchange a few messages unless it uses encryption.
-Let’s say we want to discover more information about a web server, listening on port 80. We connect to the server at port 80, and then we communicate using the HTTP protocol. You don’t need to dive into the HTTP protocol; you just need to issue GET / HTTP/1.1. To specify something other than the default index page, you can issue GET /page.html HTTP/1.1, which will request page.html. We also specified to the remote web server that we want to use HTTP version 1.1 for communication. To get a valid response, instead of an error, you need to input some value for the host host: example and hit enter twice. Executing these steps will provide the requested index page.
+* TELNET (Teletype Network) protocol was developed in 1969 to communicate with a remote system via a command-line interface (CLI).
+* `telnet` uses the TELNET protocol for remote administration.
+* Default port used by telnet is TCP/23.
+* `telnet` sends all the data including usernames and passwords in cleartext.
+  * Sending in cleartext makes it easy for anyone who has access to the communication channel to steal login credentials.
+* Secure alternative is SSH (Secure SHell) protocol.
+* Use Telnet to connect to any service and grab its banner.
+* `telnet TARGET_IP PORT` can connect to any service running on TCP and even exchange a few messages unless it uses encryption.
+```
 telnet 10.10.190.23 80
 
 Trying 10.10.190.23...
 Connected to 10.10.190.23.
 Escape character is '^]'.
+```
+* Request to use HTTP version 1.1 for communication.
+* `GET /page.html HTTP/1.1` to specify something other than the default index page.
+```
 GET / HTTP/1.1
+```
+* To get a valid response instead of an error input a value for the host `host: telnet` and hit enter twice.
+```
 host: telnet
 
 HTTP/1.1 200 OK
@@ -98,9 +111,11 @@ Last-Modified: Tue, 17 Aug 2021 11:12:16 GMT
 Connection: keep-alive
 ETag: "611b9990-363"
 Accept-Ranges: bytes
-...      
-Of particular interest for us is discovering the type and version of the installed web server, Server: nginx/1.6.2. In this example, we communicated with a web server, so we used basic HTTP commands. If we connect to a mail server, we need to use proper commands based on the protocol, such as SMTP and POP3.
-Netcat
+```    
+* Type and version of the installed web server is discovered `Server: nginx/1.6.2`.
+* Need to use proper commands based on the protocol such as SMTP and POP3 when connecting to a mail server.
+
+## Netcat
 Netcat or simply nc has different applications that can be of great value to a pentester. Netcat supports both TCP and UDP protocols. It can function as a client that connects to a listening port; alternatively, it can act as a server that listens on a port of your choice. Hence, it is a convenient tool that you can use as a simple client or server over TCP or UDP.
 First, you can connect to a server, as you did with Telnet, to collect its banner using nc 10.10.190.23 PORT, which is quite similar to our previous telnet 10.10.190.23 PORT. Note that you might need to press SHIFT+ENTER after the GET line.
 nc 10.10.190.23 80
