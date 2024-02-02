@@ -45,6 +45,8 @@
   * Names might reveal various information to the pentester.
   * To prevent Nmap from perfroming DNS lookups add `-n`.
 
+## Discovering Live Hosts
+
 <table>
     <thead>
         <tr>
@@ -94,31 +96,16 @@
     </tbody>
 </table>
 
-## Discovering Live Hosts
-| Layer | OSI | TCP/IP | Protocols
-| --- | --- | --- | ---
-| 7 | Application | 
-| 6 | Presentation |
-| 5 | Session | 
-| 4 | Transport | 
-| 3 | Network | Network | 
-| 2 | Data link | Link | 
-| 1 | Physical | Link | 
-
-
-* We will leverage the protocols to discover the live hosts.
-* Starting from bottom to top, we can use:
-* ARP from Link Layer
-* ICMP from Network Layer
-* TCP from Transport Layer
-* UDP from Transport Layer
-* Before we discuss how scanners can use each in detail, we will briefly review these four protocols.
-* ARP has one purpose: sending a frame to the broadcast address on the network segment and asking the computer with a specific IP address to respond by providing its MAC (hardware) address.
-* ICMP has [many types](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml).
-  * ICMP ping uses Type 8 (Echo) and Type 0 (Echo Reply).
-* If you want to ping a system on the same subnet, an ARP query should precede the ICMP Echo.
-* Although TCP and UDP are transport layers, for network scanning purposes, a scanner can send a specially-crafted packet to common TCP or UDP ports to check whether the target will respond.
-* This method is efficient, especially when ICMP Echo is blocked.
+* Leverage protocols to discover live hosts.
+  * ARP from Link Layer.
+    * One purpose: sending a frame to the broadcast address on the network segment and asking the computer with a specific IP address to respond by providing its MAC (hardware) address.
+    * ARP query should precede the ICMP Echo when pinging a system on the same subnet.
+  * ICMP from Network Layer.
+    * Has [many types](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml).
+    * ICMP ping uses Type 8 (Echo) and Type 0 (Echo Reply).
+  * TCP and UDP from Transport Layer.
+    * Scanner can send a specially-crafted packet to common TCP or UDP ports to check whether the target will respond.
+    * This method is efficient especially when ICMP Echo is blocked.
 
 ## Nmap Host Discovery Using ARP
 How would you know which hosts are up and running? It is essential to avoid wasting our time port-scanning an offline host or an IP address not in use. There are various ways to discover online hosts. When no host discovery options are provided, Nmap follows the following approaches to discover live hosts:
