@@ -108,12 +108,24 @@
     * This method is efficient especially when ICMP Echo is blocked.
 
 ## Nmap Host Discovery Using ARP
-How would you know which hosts are up and running? It is essential to avoid wasting our time port-scanning an offline host or an IP address not in use. There are various ways to discover online hosts. When no host discovery options are provided, Nmap follows the following approaches to discover live hosts:
-When a privileged user tries to scan targets on a local network (Ethernet), Nmap uses ARP requests. A privileged user is root or a user who belongs to sudoers and can run sudo.
-When a privileged user tries to scan targets outside the local network, Nmap uses ICMP echo requests, TCP ACK (Acknowledge) to port 80, TCP SYN (Synchronise) to port 443, and ICMP timestamp request.
-When an unprivileged user tries to scan targets outside the local network, Nmap resorts to a TCP 3-way handshake by sending SYN packets to ports 80 and 443.
-Nmap, by default, uses a ping scan to find live hosts, then proceeds to scan live hosts only. If you want to use Nmap to discover online hosts without port-scanning the live systems, you can issue nmap -sn TARGETS. Let’s dig deeper to gain a solid understanding of the different techniques used.
-ARP scan is possible only if you are on the same subnet as the target systems. On an Ethernet (802.3) and WiFi (802.11), you need to know the MAC address of any system before you can communicate with it. The MAC address is necessary for the link-layer header; the header contains the source MAC address and the destination MAC address among other fields. To get the MAC address, the OS sends an ARP query. A host that replies to ARP queries is up. The ARP query only works if the target is on the same subnet as yourself, i.e., on the same Ethernet/WiFi. You should expect to see many ARP queries generated during a Nmap scan of a local network. If you want Nmap only to perform an ARP scan without port-scanning, you can use nmap -PR -sn TARGETS, where -PR indicates that you only want an ARP scan. The following example shows Nmap using ARP for host discovery without any port scanning. We run nmap -PR -sn MACHINE_IP/24 to discover all the live systems on the same subnet as our target machine.
+* It is essential to avoid wasting time port-scanning an offline host or an IP address not in use.
+1. ARP Requests used when a privileged user scans targets on a local network (Ethernet).
+   * Privileged user is `root` or a user who belongs to `sudoers` and can run `sudo`.
+   * Live hosts respond to ARP Request with an ARP Reply.
+2. ICMP echo requests, TCP ACK (Acknowledge) to port 80, TCP SYN (Synchronise) to port 443, and ICMP timestamp request used when a privileged user scans targets outside the local network.
+3. TCP 3-way handshake used by sending SYN packets to ports 80 and 443 when an unprivileged user scans targets outside the local network.
+* Uses ping scan to find live hosts then scans them.
+  * To discover live hosts without port-scanning them issue `nmap -sn TARGETS`.
+* ARP scan is possible only if the source is on the same subnet as the target systems.
+  * MAC address of any system must be known before it can be communicated with on an Ethernet (802.3) and WiFi (802.11).
+    * MAC address is necessary for the link-layer header.
+      * Header contains source MAC address and destination MAC address.
+  * Source OS sends an ARP query to get MAC address of the destination.
+    * Host that replies to ARP queries is up.
+  * Expect to see many ARP queries generated during a Nmap scan of a local network.
+    * To perform an ARP scan without port-scanning use `nmap -PR -sn TARGETS`.
+* Run nmap -PR -sn 10.10.210.6/24 to discover all the live systems on the same subnet.
+```
 sudo nmap -PR -sn 10.10.210.6/24
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-09-02 07:12 BST
@@ -128,14 +140,22 @@ Host is up (0.00025s latency).
 MAC Address: 02:59:79:4F:17:B7 (Unknown)
 Nmap scan report for ip-10-10-210-6.eu-west-1.compute.internal (10.10.210.6)
 Host is up.
-Nmap done: 256 IP addresses (4 hosts up) scanned in 3.12 seconds       
-In this case, the AttackBox had the IP address 10.10.210.6, and it used ARP requests to discover the live hosts on the same subnet. ARP scan works, as shown in the figure below. Nmap sends ARP requests to all the target computers, and those online should send an ARP reply back.
-
-If we look at the packets generated using a tool such as tcpdump or Wireshark, we will see network traffic similar to the figure below. In the figure below, Wireshark displays the source MAC address, destination MAC address, protocol, and query related to each ARP request. The source address is the MAC address of our AttackBox, while the destination is the broadcast address as we don’t know the MAC address of the target. However, we see the target’s IP address, which appears in the Info column. In the figure, we can see that we are requesting the MAC addresses of all the IP addresses on the subnet, starting with 10.10.210.1. The host with the IP address we are asking about will send an ARP reply with its MAC address, and that’s how we will know that it is online.
-
-Talking about ARP scans, we should mention a scanner built around ARP queries: arp-scan; it provides many options to customise your scan. Visit the arp-scan wiki for detailed information. One popular choice is arp-scan --localnet or simply arp-scan -l. This command will send ARP queries to all valid IP addresses on your local networks. Moreover, if your system has more than one interface and you are interested in discovering the live hosts on one of them, you can specify the interface using -I. For instance, sudo arp-scan -I eth0 -l will send ARP queries for all valid IP addresses on the eth0 interface.
-Note that if arp-scan is not installed, it can be installed using apt install arp-scan.
-In the example below, we scanned the subnet of the AttackBox using arp-scan 10.10.210.6/24. Since we ran this scan at a time frame close to the previous one nmap -PR -sn 10.10.210.6/24, we obtained the same three live targets.
+Nmap done: 256 IP addresses (4 hosts up) scanned in 3.12 seconds
+```  
+* Nmap sends ARP requests to all target computers and those online should send an ARP reply back.
+* Viewing ARP scan packet data in Wireshark.
+  * Source address is the MAC address of the source.
+  * Destination is broadcast address (`FF.FF.FF.FF.FF.FF`) as we the MAC address of the target is unkown.
+  * Target’s IP address appears in the Info column.
+    * MAC addresses of all the IP addresses on the subnet are being requested.
+  * Host with the IP address being asked about will send an ARP reply with its MAC address.
+    * Verification that it is online.
+* `arp-scan` is a scanner built around ARP queries.
+  * Visit the [arp-scan wiki](http://www.royhills.co.uk/wiki/index.php/Main_Page) for detailed information.
+  * `arp-scan --localnet` or simply `arp-scan -l` will send ARP queries to all valid IP addresses on your local networks.
+  * `sudo arp-scan -I eth0 -l` will send ARP queries for all valid IP addresses on the `eth0` interface.
+  * `arp-scan` can be installed using `apt install arp-scan`.
+```
 sudo arp-scan 10.10.210.6/24
 
 Interface: eth0, datalink type: EN10MB (Ethernet)
@@ -146,10 +166,12 @@ Starting arp-scan 1.9 with 256 hosts (http://www.nta-monitor.com/tools/arp-scan/
 10.10.210.165	02:59:79:4f:17:b7	(Unknown)
 
 4 packets received by filter, 0 packets dropped by kernel
-Ending arp-scan 1.9: 256 hosts scanned in 2.726 seconds (93.91 hosts/sec). 3 responded      
-Similarly, the command arp-scan will generate many ARP queries that we can see using tcpdump, Wireshark, or a similar tool. We can notice that the packet capture for arp-scan and nmap -PR -sn yield similar traffic patterns. Below is the Wireshark output.
+Ending arp-scan 1.9: 256 hosts scanned in 2.726 seconds (93.91 hosts/sec). 3 responded
+```   
+* `arp-scan` will generate many ARP queries that can be see using tcpdump, Wireshark, or a similar tool.
+* Packet capture for `arp-scan` and `nmap -PR -sn` yield similar traffic patterns.
 
-Nmap Host Discovery Using ICMP
+## Nmap Host Discovery Using ICMP
 We can ping every IP address on a target network and see who would respond to our ping (ICMP Type 8/Echo) requests with a ping reply (ICMP Type 0). Simple, isn’t it? Although this would be the most straightforward approach, it is not always reliable. Many firewalls block ICMP echo; new versions of MS Windows are configured with a host firewall that blocks ICMP echo requests by default. Remember that an ARP query will precede the ICMP request if your target is on the same subnet.
 To use ICMP echo request to discover live hosts, add the option -PE. (Remember to add -sn if you don’t want to follow that with a port scan.) As shown in the following figure, an ICMP echo scan works by sending an ICMP echo request and expects the target to reply with an ICMP echo reply if it is online.
 
