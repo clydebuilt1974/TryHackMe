@@ -372,28 +372,26 @@ Nmap done: 256 IP addresses (5 hosts up) scanned in 9.20 seconds
 ```
 
 ## Masscan
-* On a side note, Masscan uses a similar approach to discover the available systems.
-* However, to finish its network scan quickly, Masscan is quite aggressive with the rate of packets it generates.
-* The syntax is quite similar: -p can be followed by a port number, list, or range. Consider the following examples:
+* Quite aggressive with the rate of packets it generates to finish its network scan quickly.
+* `-p` can be followed by a port number, list, or range.
 ```
 masscan 10.10.68.220/24 -p443
 masscan 10.10.68.220/24 -p80,443
 masscan 10.10.68.220/24 -p22-25
 masscan 10.10.68.220/24 ‐‐top-ports 100
 ```
-* If Masscan is not installed, it can be installed using apt install masscan.
+* Can be installed using `apt install masscan`.
 
 ## Using Reverse-DNS Lookup
 * Nmap’s default behaviour is to use reverse-DNS online hosts.
-* Because the hostnames can reveal a lot, this can be a helpful step.
-* However, if you don’t want to send such DNS queries, you use -n to skip this step.
-* By default, Nmap will look up online hosts; however, you can use the option -R to query the DNS server even for offline hosts.
-* If you want to use a specific DNS server, you can add the --dns-servers DNS_SERVER option.
+* This can be helpful because the hostnames can reveal a lot.
+  * Use `-n` to skip this.
+* Nmap will look up online hosts by default.
+  * Use `-R` to query the DNS server even for offline hosts.
+* Use `--dns-servers DNS_SERVER` to use a specific DNS server.
 
 ## Summary
-* You have learned how ARP, ICMP, TCP, and UDP can detect live hosts by completing this room.
-* Any response from a host is an indication that it is online.
-* Below is a quick summary of the command-line options for Nmap that we have covered.
+* Below is a quick summary of the command-line options for Nmap.
 
 | Scan Type | Example Command
 | --- | ---
@@ -405,8 +403,8 @@ masscan 10.10.68.220/24 ‐‐top-ports 100
 | TCP ACK Ping Scan | `sudo nmap -PA22,80,443 -sn MACHINE_IP/30`
 | UDP Ping Scan | `sudo nmap -PU53,161,162 -sn MACHINE_IP/30`
 
-* Remember to add -sn if you are only interested in host discovery without port-scanning.
-* Omitting -sn will let Nmap default to port-scanning the live hosts.
+* Add `-sn` if only interested in host discovery without port-scanning.
+  * Omitting -`sn` will let Nmap default to port-scanning the live hosts.
 
 | Option | Purpose
 | --- | ---
