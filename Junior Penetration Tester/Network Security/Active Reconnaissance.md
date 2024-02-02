@@ -3,9 +3,9 @@
 * Active reconnaissance requires some kind of contact to be made with the target.
   * Social engineering.
   * Direct connection to a target system.
-    * A connection might leave information in the logs.
+    * Connection might leave information in the logs.
       * Hide active reconnaissance as regular client activity.
-        * No one should suspect a browser connected to a target web server among hundreds of other legitimate users.
+        * No-one should suspect a browser connected to a target web server among hundreds of other legitimate users.
 
 ## Web Browser
 * TCP/80 by default when a website is accessed over HTTP.
@@ -155,9 +155,9 @@ Accept-Ranges: bytes
 | `-l` | Listen mode
 | `-p` | Specify the Port number
 | `-n` | Numeric only; no resolution of hostnames via DNS
-| -v | Verbose output (optional, yet useful to discover any bugs)
-| -vv | Very Verbose (optional)
-| -k | Keep listening after client disconnects
+| `-v` | Verbose output (optional, yet useful to discover any bugs)
+| `-vv` | Very Verbose (optional)
+| `-k` | Keep listening after client disconnects
 
 * Notes:
   * `-p` should appear just before the port number to listen on.
