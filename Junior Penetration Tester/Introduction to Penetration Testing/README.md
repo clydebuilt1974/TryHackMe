@@ -1,15 +1,16 @@
 # Penetration Testing Fundamentals
 ## What is Penetration Testing?
-* An ethically-driven attempt to test and analyse security defences to protect assets and pieces of information. 
-  * Involves using the same tools, techniques, and methodologies that someone with malicious intent would use and is similar to an audit.
+* Ethically-driven attempt to test security defences to protect assets and pieces of information. 
+* Involves using the same tools, techniques, and methodologies that an attacker would use.
 ## Penetration Testing Ethics
-* Ethics is the moral debate between right and wrong; where an action may be legal, it may go against an individual's belief system of right and wrong.
+* Moral debate between right and wrong.
+  * Where an action may be legal, it may go against an individual's belief system of right and wrong.
 * A formal discussion occurs between the penetration tester and the system owner before the test begins. 
-  * Various tools, techniques, and systems to be tested are agreed on. 
+  * Various tools, techniques, and systems to be tested are agreed upon. 
   * This discussion forms the scope of the penetration testing agreement and will determine the course the penetration test takes.
 * Companies that provide penetration testing services are held against legal frameworks and industry accreditation. 
   * The National Cyber Security Centre (NCSC) has the CHECK accreditation scheme in the UK. 
-    * This means that only "[CHECK]  approved companies can conduct authorised penetration tests of public sector and CNI systems and networks." (NCSC).  
+    * This means that only "[CHECK] approved companies can conduct authorised penetration tests of public sector and CNI systems and networks." (NCSC).  
 * Penetration testers will often be faced with potentially morally questionable decisions during a penetration test. 
   * Gaining access to a database and being presented with potentially sensitive data. 
   * Performing a phishing attack on an employee to test an organisation's human security. 
