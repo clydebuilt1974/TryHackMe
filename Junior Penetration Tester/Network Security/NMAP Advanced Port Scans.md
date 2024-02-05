@@ -55,12 +55,12 @@ Nmap done: 1 IP address (1 host up) scanned in 96.52 seconds
 ```
 
 ### Xmas Scan
-* The Xmas scan gets its name after Christmas tree lights. An Xmas scan sets the FIN, PSH, and URG flags simultaneously. You can select Xmas scan with the option -sX.
-Like the Null scan and FIN scan, if an RST packet is received, it means that the port is closed. Otherwise, it will be reported as open|filtered.
-The following two figures show the case when the TCP port is open and the case when the TCP port is closed.
-
-
-The console output below shows an example of a Xmas scan against a Linux server. The obtained results are pretty similar to that of the null scan and the FIN scan.
+* Gets its name after Christmas tree lights.
+* Sets the FIN, PSH, and URG flags simultaneously.
+* Select with the option `-sX`.
+* Like the Null and FIN scan it means that the port is closed if an RST packet is received.
+* Otherwise it will be reported as open|filtered.
+```
 sudo nmap -sX 10.10.203.206
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-08-30 10:34 BST
@@ -77,8 +77,13 @@ PORT    STATE         SERVICE
 MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 84.85 seconds      
-One scenario where these three scan types can be efficient is when scanning a target behind a stateless (non-stateful) firewall. A stateless firewall will check if the incoming packet has the SYN flag set to detect a connection attempt. Using a flag combination that does not match the SYN packet makes it possible to deceive the firewall and reach the system behind it. However, a stateful firewall will practically block all such crafted packets and render this kind of scan useless.
-TCP Maimon Scan
+```
+* One scenario where these three scan types can be efficient is when scanning a target behind a stateless (non-stateful) firewall.
+  * A stateless firewall will check if the incoming packet has the SYN flag set to detect a connection attempt.
+  * Using a flag combination that does not match the SYN packet makes it possible to deceive the firewall and reach the system behind it.
+    * Stateful firewalls will practically block all such crafted packets and render this kind of scan useless.
+
+## TCP Maimon Scan
 Uriel Maimon first described this scan in 1996. In this scan, the FIN and ACK bits are set. The target should send an RST packet as a response. However, certain BSD-derived systems drop the packet if it is an open port exposing the open ports. This scan won’t work on most targets encountered in modern networks; however, we include it in this room to better understand the port scanning mechanism and the hacking mindset. To select this scan type, use the -sM option.
 Most target systems respond with an RST packet regardless of whether the TCP port is open. In such a case, we won’t be able to discover the open ports. The figure below shows the expected behaviour in the cases of both open and closed TCP ports.
 
