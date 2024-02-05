@@ -29,11 +29,13 @@ Nmap done: 1 IP address (1 host up) scanned in 96.50 seconds
   * Use `sudo` using the `-sN` option unless running Nmap as `root`.
 
 ### FIN Scan
-The FIN scan sends a TCP packet with the FIN flag set. You can choose this scan type using the -sF option. Similarly, no response will be sent if the TCP port is open. Again, Nmap cannot be sure if the port is open or if a firewall is blocking the traffic related to this TCP port.
-
-However, the target system should respond with an RST if the port is closed. Consequently, we will be able to know which ports are closed and use this knowledge to infer the ports that are open or filtered. It's worth noting some firewalls will 'silently' drop the traffic without sending an RST.
-
-Below is an example of a FIN scan against a Linux server. The result is quite similar to the result we obtained earlier using a null scan.
+* Sends TCP packet with FIN flag set.
+* Choose this scan type using `-sF`.
+* No response will be sent if the TCP port is open.
+  * Nmap cannot be sure if the port is open or if a firewall is blocking (filtering) the traffic related to this TCP port.
+* Target system should respond with a RST if the port is closed.
+  * Some firewalls will 'silently' drop the traffic without sending an RST.
+```
 sudo nmap -sF 10.10.203.206
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-08-30 10:32 BST
@@ -50,8 +52,10 @@ PORT    STATE         SERVICE
 MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 96.52 seconds
-Xmas Scan
-The Xmas scan gets its name after Christmas tree lights. An Xmas scan sets the FIN, PSH, and URG flags simultaneously. You can select Xmas scan with the option -sX.
+```
+
+### Xmas Scan
+* The Xmas scan gets its name after Christmas tree lights. An Xmas scan sets the FIN, PSH, and URG flags simultaneously. You can select Xmas scan with the option -sX.
 Like the Null scan and FIN scan, if an RST packet is received, it means that the port is closed. Otherwise, it will be reported as open|filtered.
 The following two figures show the case when the TCP port is open and the case when the TCP port is closed.
 
