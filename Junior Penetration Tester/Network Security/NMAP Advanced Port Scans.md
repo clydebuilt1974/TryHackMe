@@ -268,8 +268,7 @@ Nmap done: 1 IP address (1 host up) scanned in 14.84 seconds
 * If the “idle host” is busy, all the returned IP IDs would be useless.
 
 ## Getting More Details
-* You might consider adding --reason if you want Nmap to provide more details regarding its reasoning and conclusions.
-* Consider the two scans below to the system; however, the latter adds --reason.
+* Add `--reason` to provide more details regarding Nmap's reasoning and conclusions.
 ```
 sudo nmap -sS 10.10.252.27
 
@@ -307,10 +306,10 @@ MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.59 seconds
 ```
-* Providing the --reason flag gives us the explicit reason why Nmap concluded that the system is up or a particular port is open.
-* In this console output above, we can see that this system is considered online because Nmap “received arp-response.”
-* On the other hand, we know that the SSH port is deemed to be open because Nmap received a “syn-ack” packet back.
-* For more detailed output, you can consider using -v for verbose output or -vv for even more verbosity.
+* Providing `--reason` gives the explicit reason why Nmap concluded that the system is up or a particular port is open.
+  * Can see that this system is considered online because Nmap 'received arp-response.'
+  * Know that the SSH port is deemed to be open because Nmap received 'syn-ack' packet back.
+* Use `-v` for verbose output or `-vv` for even more verbosity.
 ```
 sudo nmap -sS -vv 10.10.252.27
 
@@ -347,8 +346,7 @@ Read data files from: /usr/bin/../share/nmap
 Nmap done: 1 IP address (1 host up) scanned in 1.59 seconds
            Raw packets sent: 1002 (44.072KB) | Rcvd: 1002 (40.092KB)    
 ```
-* If `-vv` does not satisfy your curiosity, you can use -d for debugging details or -dd for even more details.
-* You can guarantee that using -d will create an output that extends beyond a single screen.
+* Use `-d` for debugging details or `-dd` for even more details.
 
 ## Summary
 
