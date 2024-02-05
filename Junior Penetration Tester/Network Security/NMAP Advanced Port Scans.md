@@ -224,27 +224,16 @@ Nmap done: 1 IP address (1 host up) scanned in 14.84 seconds
 
 ### Fragmented Packets
 * Nmap provides the option `-f` to fragment packets.
-* Once chosen, the IP data will be divided into 8 bytes or less.
+* IP data will be divided into 8 bytes or less.
 * Adding another `-f` (`-f` -`f` or `-ff`) will split the data into 16 byte-fragments instead of 8.
-* You can change the default value by using the `--mtu`; however, you should always choose a multiple of 8.
-* To properly understand fragmentation, we need to look at the IP header.
-* In particular, notice the source address taking 32 bits (4 bytes) on the fourth row, while the destination address is taking another 4 bytes on the fifth row.
-* The data that we will fragment across multiple packets is highlighted in red.
-* To aid in the reassembly on the recipient side, IP uses the identification (ID) and fragment offset, shown on the second row of the figure below.
-* Let’s compare running `sudo nmap -sS -p80 10.20.30.144` and `sudo nmap -sS -p80 -f 10.20.30.144`.
-* As you know by now, this will use stealth TCP SYN scan on port 80; however, in the second command, we are requesting Nmap to fragment the IP packets.
-* In the first two lines, we can see an ARP query and response.
-* Nmap issued an ARP query because the target is on the same Ethernet.
-* The second two lines show a TCP SYN ping and a reply.
-* The fifth line is the beginning of the port scan; Nmap sends a TCP SYN packet to port 80.
-* In this case, the IP header is 20 bytes, and the TCP header is 24 bytes.
-* Note that the minimum size of the TCP header is 20 bytes.
-* With fragmentation requested via `-f`, the 24 bytes of the TCP header will be divided into multiples of 8 bytes, with the last fragment containing 8 bytes or less of the TCP header.
-* Since 24 is divisible by 8, we got 3 IP fragments; each has 20 bytes of IP header and 8 bytes of TCP header.
-* We can see the three fragments between the fifth and the seventh lines.
-* Note that if you added `-ff` (or `-f` `-f`), the fragmentation of the data will be multiples of 16.
-* In other words, the 24 bytes of the TCP header, in this case, would be divided over two IP fragments, the first containing 16 bytes and the second containing 8 bytes of the TCP header.
-* On the other hand, if you prefer to increase the size of your packets to make them look innocuous, you can use the option --data-length NUM, where num specifies the number of bytes you want to append to your packets.
+* Can change the default value by using the `--mtu`.
+  * Always choose a multiple of 8.
+![IP Header](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/IPv4_Header.svg/1022px-IPv4_Header.svg.png?20111002121853)
+* Source address takes 32 bits (4 bytes) on the fourth row.
+* Destination address takes another 4 bytes on the fifth row.
+* IP uses the identification (ID) and fragment offset to aid in the reassembly on the recipient side.
+* Can increase the size of the packets to make them look innocuous using `--data-length NUM`.
+  * NUM specifies the number of bytes to append to the packets.
 
 ### Idle/Zombie Scan
 * Spoofing the source IP address can be a great approach to scanning stealthily.
@@ -358,7 +347,7 @@ Read data files from: /usr/bin/../share/nmap
 Nmap done: 1 IP address (1 host up) scanned in 1.59 seconds
            Raw packets sent: 1002 (44.072KB) | Rcvd: 1002 (40.092KB)    
 ```
-* If -vv does not satisfy your curiosity, you can use -d for debugging details or -dd for even more details.
+* If `-vv` does not satisfy your curiosity, you can use -d for debugging details or -dd for even more details.
 * You can guarantee that using -d will create an output that extends beyond a single screen.
 
 ## Summary
@@ -384,7 +373,8 @@ Nmap done: 1 IP address (1 host up) scanned in 1.59 seconds
 | `--source-port PORT_NUM` | specify source port number
 | `--data-length NUM` | append random data to reach given length
 
-These scan types rely on setting TCP flags in unexpected ways to prompt ports for a reply. Null, FIN, and Xmas scans provoke a response from closed ports, while Maimon, ACK, and Window scans provoke a response from open and closed ports.
+* These scan types rely on setting TCP flags in unexpected ways to prompt ports for a reply.
+* Null, FIN, and Xmas scans provoke a response from closed ports, while Maimon, ACK, and Window scans provoke a response from open and closed ports.
 
 | Option | Purpose
 | --- | ---
