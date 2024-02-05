@@ -20,34 +20,33 @@
 | Closed | No service is listening on the specified port although the port is accessible.  Port is reachable and is not blocked by a firewall or other security appliances/programs.
 | Filtered | Nmap cannot determine if the port is open or closed because the port is not accessible.  Usually due to a firewall preventing Nmap from reaching that port.
 | Unfiltered | Nmap cannot determine if the port is open or closed although the port is accessible. This state is encountered when using an ACK scan `-sA`.
-| Open|Filtered | Nmap cannot determine whether the port is open or filtered.
-| Closed|Filtered | Nmap cannot decide whether a port is closed or filtered.
+| Open Filtered | Nmap cannot determine whether the port is open or filtered.
+| Closed Filtered | Nmap cannot decide whether a port is closed or filtered.
 
 ## TCP Flags
 * Nmap supports different types of TCP port scans.
 * TCP header is the first 24 bytes of a TCP segment.
 * TCP header defined in [RFC 793](https://datatracker.ietf.org/doc/html/rfc793.html).
 
+![TCP Header](https://upload.wikimedia.org/wikipedia/commons/c/c8/Ntwk_tcp_header123.jpg?20091215232927)
 
-
-* In the first row, we have the source TCP port number and the destination port number.
-* We can see that the port number is allocated 16 bits (2 bytes).
-* In the second and third rows, we have the sequence number and the acknowledgement number.
-* Each row has 32 bits (4 bytes) allocated, with six rows total, making up 24 bytes.
-* In particular, we need to focus on the flags that Nmap can set or unset.
-* We have highlighted the TCP flags in red. Setting a flag bit means setting its value to 1.
-* From left to right, the TCP header flags are:
-URG: Urgent flag indicates that the urgent pointer filed is significant.
-The urgent pointer indicates that the incoming data is urgent, and that a TCP segment with the URG flag set is processed immediately without consideration of having to wait on previously sent TCP segments.
-ACK: Acknowledgement flag indicates that the acknowledgement number is significant.
-It is used to acknowledge the receipt of a TCP segment.
-PSH: Push flag asking TCP to pass the data to the application promptly.
-RST: Reset flag is used to reset the connection.
-Another device, such as a firewall, might send it to tear a TCP connection.
-This flag is also used when data is sent to a host and there is no service on the receiving end to answer.
-SYN: Synchronise flag is used to initiate a TCP 3-way handshake and synchronise sequence numbers with the other host.
-The sequence number should be set randomly during TCP connection establishment.
-FIN: The sender has no more data to send.
+* In the first row is source TCP port number and the destination port number.
+* Port number is allocated 16 bits (2 bytes).
+* In the second and third rows is the sequence number and the acknowledgement number.
+* Each row has 32 bits (4 bytes) allocated with six rows total making up 24 bytes.
+* Setting a flag bit means setting its value to 1.
+* TCP header flags.
+  * URG: Urgent flag indicates that the urgent pointer filed is significant.
+    * Urgent pointer indicates that the incoming data is urgent and that a TCP segment with the URG flag set is processed immediately without consideration of having to wait on previously sent TCP segments.
+  * ACK: Acknowledgement flag indicates that the acknowledgement number is significant.
+    * Used to acknowledge the receipt of a TCP segment.
+  * PSH: Push flag asking TCP to pass the data to the application promptly.
+  * RST: Reset flag is used to reset the connection.
+    * Another device such as a firewal, might send a Reset to tear a TCP connection.
+    * This flag is also used when data is sent to a host and there is no service on the receiving end to answer.
+  * SYN: Synchronise flag is used to initiate a TCP 3-way handshake and synchronise sequence numbers with the other host.
+    * Sequence number should be set randomly during TCP connection establishment.
+  * FIN: The sender has no more data to send.
 
 ## TCP Connect Scan
 TCP connect scan works by completing the TCP 3-way handshake.
