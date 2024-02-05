@@ -211,17 +211,16 @@ Nmap done: 1 IP address (1 host up) scanned in 14.84 seconds
 
 ## Fragmented Packets
 ### Firewall
-* A firewall is a piece of software or hardware that permits packets to pass through or blocks them.
-* It functions based on firewall rules, summarised as blocking all traffic with exceptions or allowing all traffic with exceptions.
-* For instance, you might block all traffic to your server except those coming to your web server.
-* A traditional firewall inspects, at least, the IP header and the transport layer header.
-* A more sophisticated firewall would also try to examine the data carried by the transport layer.
+* Piece of software or hardware that permits packets to pass through or blocks them.
+* Functions based on firewall rules.
+  * Summarised as blocking all traffic with exceptions or allowing all traffic with exceptions.
+* Traditional firewall inspects the IP header and the transport layer header.
+* More sophisticated firewalls also try to examine the data carried by the transport layer.
 
 ### IDS
-* An intrusion detection system (IDS) inspects network packets for select behavioural patterns or specific content signatures.
-* It raises an alert whenever a malicious rule is met. In addition to the IP header and transport layer header, an IDS would inspect the data contents in the transport layer and check if it matches any malicious patterns.
-* How can you make it less likely for a traditional firewall/IDS to detect your Nmap activity?
-* It is not easy to answer this; however, depending on the type of firewall/IDS, you might benefit from dividing the packet into smaller packets.
+* Intrusion detection system (IDS) inspects network packets for select behavioural patterns or specific content signatures.
+* Raises an alert whenever a malicious rule is met.
+* Inspects data contents in the transport layer and checks if it matches any malicious patterns.
 
 ### Fragmented Packets
 * Nmap provides the option -f to fragment packets.
