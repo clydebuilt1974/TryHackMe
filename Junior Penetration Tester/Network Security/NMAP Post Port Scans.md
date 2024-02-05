@@ -1,15 +1,5 @@
-Nmap Post Port Scans
-Learn how to leverage Nmap for service and OS detection, use Nmap Scripting Engine (NSE), and save the results.
-
-In the last room, as shown in the figure below, we focus on how Nmap can be used to:
-Detect versions of the running services (on all open ports)
-Detect the OS based on any signs revealed by the target
-Run Nmap’s traceroute
-Run select Nmap scripts
-Save the scan results in various formats
-
-This room will focus on these steps and how to execute them after the port scan.
-Service Detection
+# Nmap Post Port Scans
+## Service Detection
 Once Nmap discovers open ports, you can probe the available port to detect the running service. Further investigation of open ports is an essential piece of information as the pentester can use it to learn if there are any known vulnerabilities of the service.
 Adding -sV to your Nmap command will collect and determine service and version information for the open ports. You can control the intensity with --version-intensity LEVEL where the level ranges between 0, the lightest, and 9, the most complete. -sV --version-light has an intensity of 2, while -sV --version-all has an intensity of 9.
 It is important to note that using -sV will force Nmap to proceed with the TCP 3-way handshake and establish the connection. The connection establishment is necessary because Nmap cannot discover the version without establishing a connection fully and communicating with the listening service. In other words, stealth SYN scan -sS is not possible when the -sV option is chosen.
