@@ -104,16 +104,13 @@ Nmap done: 1 IP address (1 host up) scanned in 1.60 seconds
 ```
 
 ## UDP Scan
-* UDP is a connectionless protocol, and hence it does not require any handshake for connection establishment.
-* We cannot guarantee that a service listening on a UDP port would respond to our packets.
-* However, if a UDP packet is sent to a closed port, an ICMP port unreachable error (type 3, code 3) is returned.
-* You can select UDP scan using the -sU option; moreover, you can combine it with another TCP scan.
-* The following figure shows that if we send a UDP packet to an open UDP port, we cannot expect any reply in return.
-* Therefore, sending a UDP packet to an open port won’t tell us anything.
-* However, as shown in the figure below, we expect to get an ICMP packet of type 3, destination unreachable, and code 3, port unreachable.
-* In other words, the UDP ports that don’t generate any response are the ones that Nmap will state as open.
-* In the Wireshark capture below, we can see that every closed port will generate an ICMP packet destination unreachable (port unreachable).
-* Launching a UDP scan against this Linux server proved valuable, and indeed, we learned that port 111 is open. On the other hand, Nmap cannot determine whether UDP port 68 is open or filtered.
+* UDP is a connectionless protocol.
+* Does not require any handshake for connection establishment.
+* Cannot guarantee that a service listening on a UDP port would respond to Nmap packets.
+* Cannot expect any reply in return if a UDP packet is sent to an open UDP port.
+  * UDP ports that do not generate any response are the ones that Nmap will state as open.
+* If a UDP packet is sent to a closed port an ICMP packet of type 3, destination unreachable, and code 3, port unreachable is returned.
+* Select UDP scan using the `-sU` option.
 ```
 sudo nmap -sU 10.10.145.131
 
@@ -128,8 +125,8 @@ MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1085.05 seconds
 ```
-* Use the terminal on the attackbox to execute nmap -sU -F -v 10.10.145.131.
 * A new service has been installed on the target since the last scan.
+* Use the terminal on the attacking machine to execute `nmap -sU -F -v 10.10.145.131`.
 ```
 Starting Nmap 7.60 ( https://nmap.org ) at 2023-12-15 11:11 GMT
 Initiating ARP Ping Scan at 11:11
@@ -163,30 +160,33 @@ Nmap done: 1 IP address (1 host up) scanned in 98.92 seconds
 ```
 
 ## Fine-Tuning Scope and Performance
-* You can specify the ports you want to scan instead of the default 1000 ports.
-* Specifying the ports is intuitive by now. Let’s see some examples:
-* port list: -p22,80,443 will scan ports 22, 80 and 443.
-* port range: -p1-1023 will scan all ports between 1 and 1023 inclusive, while -p20-25 will scan ports between 20 and 25 inclusive.
-* You can request the scan of all ports by using -p-, which will scan all 65535 ports.
-* If you want to scan the most common 100 ports, add -F.
-* Using --top-ports 10 will check the ten most common ports.
-* You can control the scan timing using -T<0-5>. -T0 is the slowest (paranoid), while -T5 is the fastest.
-* According to Nmap manual page, there are six templates:
-paranoid (0)
-sneaky (1)
-polite (2)
-normal (3)
-aggressive (4)
-insane (5)
-* To avoid IDS alerts, you might consider -T0 or -T1.
-* For instance, -T0 scans one port at a time and waits 5 minutes between sending each probe, so you can guess how long scanning one target would take to finish.
-* If you don’t specify any timing, Nmap uses normal -T3. Note that -T5 is the most aggressive in terms of speed; however, this can affect the accuracy of the scan results due to the increased likelihood of packet loss.
-* Note that -T4 is often used during CTFs and when learning to scan on practice targets, whereas -T1 is often used during real engagements where stealth is more important.
-* Alternatively, you can choose to control the packet rate using --min-rate <number> and --max-rate <number>.
-* For example, --max-rate 10 or --max-rate=10 ensures that your scanner is not sending more than ten packets per second.
-* Moreover, you can control probing parallelization using --min-parallelism <numprobes> and --max-parallelism <numprobes>.
-* Nmap probes the targets to discover which hosts are live and which ports are open; probing parallelization specifies the number of such probes that can be run in parallel.
-* For instance, --min-parallelism=512 pushes Nmap to maintain at least 512 probes in parallel; these 512 probes are related to host discovery and open ports.
+* Specify the ports to scan instead of the default 1000 ports.
+  * port list: `-p22,80,443`.
+  * port range: `-p1-1023` will scan all ports between 1 and 1023 inclusive.
+    * `-p20-25` will scan ports between 20 and 25 inclusive.
+* Scan of all 65535 ports using `-p-`.
+* Scan the most common 100 ports using `-F`.
+* `--top-ports 10` will check the ten most common ports.
+* Control the scan timing using `-T<0-5>`.
+  * Six scan timing templates available.
+    * Paranoid (0)
+      * `-T0` scans one port at a time and waits 5 minutes between sending each probe.
+    * Sneaky (1)
+      * Often used during real engagements where stealth is important.
+    * Polite (2)
+    * Normal (3)
+      * Default timing.
+    * Aggressive (4)
+      * Often used during CTFs and when learning to scan on practice targets.
+    * Insane (5)
+      *  Can affect the accuracy of the scan results due to the increased likelihood of packet loss.
+  * Use `-T0` or `-T1` to avoid IDS alerts.
+* Control packet rate using `--min-rate <number>` and `--max-rate <number>`.
+  * `--max-rate 10` or `--max-rate=10` ensures that the scanner is not sending more than ten packets per second.
+* Control probing parallelisation using `--min-parallelism <numprobes>` and `--max-parallelism <numprobes>`.
+  * Nmap probes the targets to discover which hosts are live and which ports are open.
+  * Probing parallelisation specifies the number of such probes that can be run in parallel.
+  * `--min-parallelism=512` pushes Nmap to maintain at least 512 probes in parallel.
 
 ## Summary
 
