@@ -1,28 +1,28 @@
-Nmap Basic Port Scans
-Learn in-depth how nmap TCP connect scan, TCP SYN port scan, and UDP port scan work.
-In the previous room, we focused on discovering online systems. So far, we have covered three steps of a Nmap scan:
-Enumerate targets
-Discover live hosts
-Reverse-DNS lookup
+# Nmap Basic Port Scans
+## TCP and UDP Ports
+* TCP or UDP ports identify network services running on a host.
+  * Providing time.
+  * Responding to DNS queries.
+  * Serving web pages.
+* No more than one service can listen on any TCP or UDP port (on the same IP address).
+  * HTTP server would bind to TCP port 80 by default.
+    * If the HTTP server supports SSL/TLS it would listen on TCP port 443.
+* Ports are classified in two states:
+1. Open port indicates that there is some service listening on that port.
+2. Closed port indicates that there is no service listening on that port.
+* Consider the impact of firewalls.
+  * Port might be open but a firewall might be blocking the packets.
+  * Nmap considers six states due to firewall filtering:
+| State | Meaning
+| --- | ---
+| Open | A service is listening on the specified port.
+| Closed | No service is listening on the specified port although the port is accessible.  The port is reachable and is not blocked by a firewall or other security appliances/programs.
+| Filtered | Nmap cannot determine if the port is open or closed because the port is not accessible.  Usually due to a firewall preventing Nmap from reaching that port. Packets may be blocked from reaching the port or the responses blocked from reaching Nmap host.
+| Unfiltered | Nmap cannot determine if the port is open or closed although the port is accessible. This state is encountered when using an ACK scan `-sA`.
+| Open|Filtered | Nmap cannot determine whether the port is open or filtered.
+| Closed|Filtered | Nmap cannot decide whether a port is closed or filtered.
 
-The next step would be checking which ports are open and listening and which ports are closed. Therefore, in this room and the next one, we focus on port scanning and the different types of port scans used by nmap. This room explains:
-TCP connect port scan
-TCP SYN port scan
-UDP port scan
-Moreover, we discuss the different options to specify the ports, the scan rate, and the number of parallel probes.
-TCP and UDP Ports
-In the same sense that an IP address specifies a host on a network among many others, a TCP port or UDP port is used to identify a network service running on that host. A server provides the network service, and it adheres to a specific network protocol. Examples include providing time, responding to DNS queries, and serving web pages. A port is usually linked to a service using that specific port number. For instance, an HTTP server would bind to TCP port 80 by default; moreover, if the HTTP server supports SSL/TLS, it would listen on TCP port 443. (TCP ports 80 and 443 are the default ports for HTTP and HTTPS; however, the webserver administrator might choose other port numbers if necessary.) Furthermore, no more than one service can listen on any TCP or UDP port (on the same IP address).
-At the risk of oversimplification, we can classify ports in two states:
-Open port indicates that there is some service listening on that port.
-Closed port indicates that there is no service listening on that port.
-However, in practical situations, we need to consider the impact of firewalls. For instance, a port might be open, but a firewall might be blocking the packets. Therefore, Nmap considers the following six states:
-Open: indicates that a service is listening on the specified port.
-Closed: indicates that no service is listening on the specified port, although the port is accessible. By accessible, we mean that it is reachable and is not blocked by a firewall or other security appliances/programs.
-Filtered: means that Nmap cannot determine if the port is open or closed because the port is not accessible. This state is usually due to a firewall preventing Nmap from reaching that port. Nmap’s packets may be blocked from reaching the port; alternatively, the responses are blocked from reaching Nmap’s host.
-Unfiltered: means that Nmap cannot determine if the port is open or closed, although the port is accessible. This state is encountered when using an ACK scan -sA.
-Open|Filtered: This means that Nmap cannot determine whether the port is open or filtered.
-Closed|Filtered: This means that Nmap cannot decide whether a port is closed or filtered.
-TCP Flags
+## TCP Flags
 Nmap supports different types of TCP port scans. To understand the difference between these port scans, we need to review the TCP header. The TCP header is the first 24 bytes of a TCP segment. The following figure shows the TCP header as defined in RFC 793. This figure looks sophisticated at first; however, it is pretty simple to understand. In the first row, we have the source TCP port number and the destination port number. We can see that the port number is allocated 16 bits (2 bytes). In the second and third rows, we have the sequence number and the acknowledgement number. Each row has 32 bits (4 bytes) allocated, with six rows total, making up 24 bytes.
 
 In particular, we need to focus on the flags that Nmap can set or unset. We have highlighted the TCP flags in red. Setting a flag bit means setting its value to 1. From left to right, the TCP header flags are:
