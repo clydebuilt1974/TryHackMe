@@ -84,10 +84,15 @@ Nmap done: 1 IP address (1 host up) scanned in 84.85 seconds
     * Stateful firewalls will practically block all such crafted packets and render this kind of scan useless.
 
 ## TCP Maimon Scan
-Uriel Maimon first described this scan in 1996. In this scan, the FIN and ACK bits are set. The target should send an RST packet as a response. However, certain BSD-derived systems drop the packet if it is an open port exposing the open ports. This scan won’t work on most targets encountered in modern networks; however, we include it in this room to better understand the port scanning mechanism and the hacking mindset. To select this scan type, use the -sM option.
-Most target systems respond with an RST packet regardless of whether the TCP port is open. In such a case, we won’t be able to discover the open ports. The figure below shows the expected behaviour in the cases of both open and closed TCP ports.
-
-The console output below is an example of a TCP Maimon scan against a Linux server. As mentioned, because open ports and closed ports are behaving the same way, the Maimon scan could not discover any open ports on the target system.
+* Uriel Maimon first described this scan in 1996.
+* FIN and ACK bits are set.
+* Most target systems respond with an RST packet regardless of whether the TCP port is open.
+  * Will not be able to discover the open ports.
+  * Certain BSD-derived systems drop the packet if it is an open port.
+    *  This exposes the open ports.
+* This scan won’t work on most targets encountered in modern networks.
+* Use this scan with the `-sM` option.
+```
 sudo nmap -sM 10.10.252.27
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-08-30 10:36 BST
@@ -97,9 +102,10 @@ All 1000 scanned ports on ip-10-10-252-27.eu-west-1.compute.internal (10.10.252.
 MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.61 seconds     
-This type of scan is not the first scan one would pick to discover a system; however, it is important to know about it as you don’t know when it could come in handy.
-TCP ACK, Window, and Custom Scan
-TCP ACK Scan
+```
+
+## TCP ACK, Window, and Custom Scan
+### TCP ACK Scan
 Let’s start with the TCP ACK scan. As the name implies, an ACK scan will send a TCP packet with the ACK flag set. Use the -sA option to choose this scan. As we show in the figure below, the target would respond to the ACK with RST regardless of the state of the port. This behaviour happens because a TCP packet with the ACK flag set should be sent only in response to a received TCP packet to acknowledge the receipt of some data, unlike our case. Hence, this scan won’t tell us whether the target port is open in a simple setup.
 
 In the following example, we scanned the target VM before installing a firewall on it. As expected, we couldn’t learn which ports were open.
