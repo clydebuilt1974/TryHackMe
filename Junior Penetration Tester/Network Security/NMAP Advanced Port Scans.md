@@ -146,13 +146,11 @@ MAC Address: 02:78:C0:D0:4E:E9 (Unknown)
 Nmap done: 1 IP address (1 host up) scanned in 15.45 seconds
 ```
 ### Window Scan
-* Another similar scan is the TCP window scan.
-* The TCP window scan is almost the same as the ACK scan; however, it examines the TCP Window field of the RST packets returned.
-* On specific systems, this can reveal that the port is open.
-* You can select this scan type with the option -sW.
-* As shown in the figure below, we expect to get an RST packet in reply to our “uninvited” ACK packets, regardless of whether the port is open or closed.
-* Similarly, launching a TCP window scan against a Linux system with no firewall will not provide much information.
-* As we can see in the console output below, the results of the window scan against a Linux server with no firewall didn’t give any extra information compared to the ACK scan executed earlier.
+* Almost the same as the ACK scan.
+  * Examines the TCP Window field of the RST packets returned.
+* Can reveal that the port is open on specific systems.
+* Select this scan type using `-sW`.
+* Expect to get an RST packet in reply to the “uninvited” ACK packets regardless of whether the port is open or closed.
 ```
 sudo nmap -sW 10.10.252.27
 
@@ -164,10 +162,10 @@ MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.60 seconds  
 ```
-* However, as you would expect, if we repeat our TCP window scan against a server behind a firewall, we expect to get more satisfying results.
-* In the console output shown below, the TCP window scan pointed out that three ports are detected as closed.
-* (This is in contrast with the ACK scan that labelled the same three ports as unfiltered.)
-* Although we know that these three ports are not closed, we realise they responded differently, indicating that the firewall does not block them.
+* Repeating the TCP window scan against a server behind a firewall can provide more satisfying results.
+  * TCP window scan pointed out that three ports are detected as closed.
+    * This is in contrast with the ACK scan that labelled the same three ports as unfiltered.
+* Ports responded differently indicating that the firewall does not block them.
 ```
 sudo nmap -sW 10.10.252.27
 
@@ -184,13 +182,11 @@ MAC Address: 02:78:C0:D0:4E:E9 (Unknown)
 Nmap done: 1 IP address (1 host up) scanned in 14.84 seconds      
 ```
 ### Custom Scan
-* If you want to experiment with a new TCP flag combination beyond the built-in TCP scan types, you can do so using --scanflags.
-* For instance, if you want to set SYN, RST, and FIN simultaneously, you can do so using --scanflags RSTSYNFIN.
-* As shown in the figure below, if you develop your custom scan, you need to know how the different ports will behave to interpret the results in different scenarios correctly.
-* Finally, it is essential to note that the ACK scan and the window scan were very efficient at helping us map out the firewall rules.
-* However, it is vital to remember that just because a firewall is not blocking a specific port, it does not necessarily mean that a service is listening on that port.
-* For example, there is a possibility that the firewall rules need to be updated to reflect recent service changes.
-* Hence, ACK and window scans are exposing the firewall rules, not the services.
+* Use `--scanflags` to experiment with a new TCP flag combination.
+  * Set SYN, RST, and FIN simultaneously using `--scanflags RSTSYNFIN`.
+* Need to know how the different ports will behave to interpret the results in different scenarios correctly.
+* Just because a firewall is not blocking a specific port it does not mean that a service is listening on that port.
+  * ACK and window scans expose the firewall rules not the services.
 
 ### Spoofing and Decoys
 * In some network setups, you will be able to scan a target system using a spoofed IP address and even a spoofed MAC address.
