@@ -106,13 +106,11 @@ Nmap done: 1 IP address (1 host up) scanned in 1.61 seconds
 
 ## TCP ACK, Window, and Custom Scan
 ### TCP ACK Scan
-* Let’s start with the TCP ACK scan. As the name implies, an ACK scan will send a TCP packet with the ACK flag set.
-* Use the -sA option to choose this scan.
-* As we show in the figure below, the target would respond to the ACK with RST regardless of the state of the port.
-* This behaviour happens because a TCP packet with the ACK flag set should be sent only in response to a received TCP packet to acknowledge the receipt of some data, unlike our case.
-* Hence, this scan won’t tell us whether the target port is open in a simple setup.
-* In the following example, we scanned the target VM before installing a firewall on it.
-* As expected, we couldn’t learn which ports were open.
+* ACK scan will send a TCP packet with the ACK flag set.
+* Use `-sA` option.
+* Target would respond to the ACK with RST regardless of the state of the port.
+  * This happens because a TCP packet with the ACK flag set should be sent only in response to a received TCP packet to acknowledge the receipt of some data.
+* This scan will not tell whether the target port is open in a simple setup.
 ```
 sudo nmap -sA 10.10.221.216
 
@@ -124,12 +122,12 @@ MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.68 seconds      
 ```
-* This kind of scan would be helpful if there is a firewall in front of the target.
-* Consequently, based on which ACK packets resulted in responses, you will learn which ports were not blocked by the firewall.
-* In other words, this type of scan is more suitable to discover firewall rule sets and configuration.
-* After setting up the target 10.10.221.216 with a firewall, we repeated the ACK scan.
-* This time, we received some interesting results. As seen in the console output below, we have three ports that aren't being blocked by the firewall.
-* This result indicates that the firewall is blocking all other ports except for these three ports.
+* This kind of scan is helpful if there is a firewall in front of the target.
+  * Can learn which ports were not blocked by the firewall based on which ACK packets resulted in responses.
+  * This type of scan is more suitable to discover firewall rule sets and configuration.
+* Ack scan repeated after setting up the target 10.10.221.216 with a firewall.
+  * Three ports that are not being blocked by the firewall.
+  * This result indicates that the firewall is blocking all other ports except for these three ports.
 ```
 sudo nmap -sA 10.10.221.216
 
