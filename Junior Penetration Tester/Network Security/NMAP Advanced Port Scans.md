@@ -1,31 +1,13 @@
-Nmap Advanced Port Scans
-Learn advanced techniques such as null, FIN, Xmas, and idle (zombie) scans, spoofing, in addition to FW and IDS evasion.
-
-Security researchers and hackers contemplated the TCP flags, shown in the figure below and explained in the previous room, and started to experiment. They wanted to know what would happen if we send a TCP packet, which is not part of any ongoing TCP connection, with one or more flags set.
-
-For instance, an ACK flag is set when you want to acknowledge received data. An ACK scan is like trying to acknowledge data that was neither sent nor received in the first place. Consider this simple analogy, someone coming to you out of nowhere to tell you, “yes, I hear you, please continue.” when you haven’t said anything.
-This room explains advanced types of scans and scan options. Some of these scan types can be useful against specific systems, while others are useful in particular network setups. We will cover the following types of port scans:
-Null Scan
-FIN Scan
-Xmas Scan
-Maimon Scan
-ACK Scan
-Window Scan
-Custom Scan
-Moreover, we will cover the following:
-Spoofing IP
-Spoofing MAC
-Decoy Scan
-Fragmented Packets
-Idle/Zombie Scan
-We will discuss options and techniques to evade firewalls and IDS systems. We also cover options to get more verbose details from Nmap.
-TCP Null Scan, FIN Scan, and Xmas Scan
-Null Scan
-The null scan does not set any flag; all six flag bits are set to zero. You can choose this scan using the -sN option. A TCP packet with no flags set will not trigger any response when it reaches an open port, as shown in the figure below. Therefore, from Nmap’s perspective, a lack of reply in a null scan indicates that either the port is open or a firewall is blocking the packet.
-
-However, we expect the target server to respond with an RST packet if the port is closed. Consequently, we can use the lack of RST response to figure out the ports that are not closed: open or filtered.
-
-Below is an example of a null scan against a Linux server. The null scan we carried out has successfully identified the six open ports on the target system. Because the null scan relies on the lack of a response to infer that the port is not closed, it cannot indicate with certainty that these ports are open; there is a possibility that the ports are not responding due to a firewall rule.
+# Nmap Advanced Port Scans
+## TCP Null Scan, FIN Scan, and Xmas Scan
+### Null Scan
+* All six flag bits are set to zero.
+* Choose this scan using `-sN`.
+* TCP packet with no flags set will not trigger any response when it reaches an open port.
+* Lack of reply indicates that either the port is open or a firewall is blocking the packet.
+* Expect the target server to respond with an RST packet if the port is closed.
+  * Use the lack of RST response to determine that the ports that are either open or filtered.
+```
 sudo nmap -sN 10.10.203.206
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-08-30 10:30 BST
@@ -42,8 +24,11 @@ PORT    STATE         SERVICE
 MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 96.50 seconds
-Note that many Nmap options require root privileges. Unless you are running Nmap as root, you need to use sudo as in the example above using the -sN option.
-FIN Scan
+```
+* Note that many Nmap options require root privileges.
+  * Use `sudo` using the `-sN` option unless running Nmap as `root`.
+
+### FIN Scan
 The FIN scan sends a TCP packet with the FIN flag set. You can choose this scan type using the -sF option. Similarly, no response will be sent if the TCP port is open. Again, Nmap cannot be sure if the port is open or if a firewall is blocking the traffic related to this TCP port.
 
 However, the target system should respond with an RST if the port is closed. Consequently, we will be able to know which ports are closed and use this knowledge to infer the ports that are open or filtered. It's worth noting some firewalls will 'silently' drop the traffic without sending an RST.
