@@ -1,9 +1,18 @@
 # Nmap Post Port Scans
 ## Service Detection
-Once Nmap discovers open ports, you can probe the available port to detect the running service. Further investigation of open ports is an essential piece of information as the pentester can use it to learn if there are any known vulnerabilities of the service.
-Adding -sV to your Nmap command will collect and determine service and version information for the open ports. You can control the intensity with --version-intensity LEVEL where the level ranges between 0, the lightest, and 9, the most complete. -sV --version-light has an intensity of 2, while -sV --version-all has an intensity of 9.
-It is important to note that using -sV will force Nmap to proceed with the TCP 3-way handshake and establish the connection. The connection establishment is necessary because Nmap cannot discover the version without establishing a connection fully and communicating with the listening service. In other words, stealth SYN scan -sS is not possible when the -sV option is chosen.
-The console output below shows a simple Nmap stealth SYN scan with the -sV option. Adding the -sV option leads to a new column in the output showing the version for each detected service. For instance, in the case of TCP port 22 being open, instead of 22/tcp open ssh, we obtain 22/tcp open ssh OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0). Notice that the SSH protocol is guessed as the service because TCP port 22 is open; Nmap didn’t need to connect to port 22 to confirm. However, -sV required connecting to this open port to grab the service banner and any version information it can get, such as nginx 1.6.2. Hence, unlike the service column, the version column is not a guess.
+* Once Nmap discovers open ports, you can probe the available port to detect the running service.
+* Further investigation of open ports is an essential piece of information as the pentester can use it to learn if there are any known vulnerabilities of the service.
+* Adding -sV to your Nmap command will collect and determine service and version information for the open ports.
+* You can control the intensity with --version-intensity LEVEL where the level ranges between 0, the lightest, and 9, the most complete. -sV --version-light has an intensity of 2, while -sV --version-all has an intensity of 9.
+* It is important to note that using -sV will force Nmap to proceed with the TCP 3-way handshake and establish the connection.
+* The connection establishment is necessary because Nmap cannot discover the version without establishing a connection fully and communicating with the listening service.
+* In other words, stealth SYN scan -sS is not possible when the -sV option is chosen.
+* The console output below shows a simple Nmap stealth SYN scan with the -sV option.
+* Adding the -sV option leads to a new column in the output showing the version for each detected service.
+* For instance, in the case of TCP port 22 being open, instead of 22/tcp open ssh, we obtain 22/tcp open ssh OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0).
+* Notice that the SSH protocol is guessed as the service because TCP port 22 is open; Nmap didn’t need to connect to port 22 to confirm.
+* However, -sV required connecting to this open port to grab the service banner and any version information it can get, such as nginx 1.6.2. Hence, unlike the service column, the version column is not a guess.
+```
 sudo nmap -sV 10.10.32.254
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-09-10 05:03 BST
@@ -21,9 +30,11 @@ Service Info: Host:  debra2.thm.local; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 8.40 seconds     
-Note that many Nmap options require root privileges. Unless you are running Nmap as root, you need to use sudo as in the example above.
-OS Detection and Traceroute
-OS Detection
+```
+* Note that many Nmap options require root privileges. Unless you are running Nmap as root, you need to use sudo as in the example above.
+
+## OS Detection and Traceroute
+### OS Detection
 Nmap can detect the Operating System (OS) based on its behaviour and any telltale signs in its responses. OS detection can be enabled using -O; this is an uppercase O as in OS. In this example, we ran nmap -sS -O 10.10.193.9 on the AttackBox. Nmap detected the OS to be Linux 3.X, and then it guessed further that it was running kernel 3.13.
 sudo nmap -sS -O 10.10.193.9
 
@@ -334,5 +345,3 @@ save output in grepable format
 save output in XML format
 -oA
 save output in normal, XML and Grepable formats
-
-
