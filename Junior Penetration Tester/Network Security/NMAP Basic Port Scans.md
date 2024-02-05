@@ -13,36 +13,58 @@
 * Consider the impact of firewalls.
   * Port might be open but a firewall might be blocking the packets.
   * Nmap considers six states due to firewall filtering:
+    
 | State | Meaning
 | --- | ---
 | Open | A service is listening on the specified port.
-| Closed | No service is listening on the specified port although the port is accessible.  The port is reachable and is not blocked by a firewall or other security appliances/programs.
-| Filtered | Nmap cannot determine if the port is open or closed because the port is not accessible.  Usually due to a firewall preventing Nmap from reaching that port. Packets may be blocked from reaching the port or the responses blocked from reaching Nmap host.
+| Closed | No service is listening on the specified port although the port is accessible.  Port is reachable and is not blocked by a firewall or other security appliances/programs.
+| Filtered | Nmap cannot determine if the port is open or closed because the port is not accessible.  Usually due to a firewall preventing Nmap from reaching that port.
 | Unfiltered | Nmap cannot determine if the port is open or closed although the port is accessible. This state is encountered when using an ACK scan `-sA`.
 | Open|Filtered | Nmap cannot determine whether the port is open or filtered.
 | Closed|Filtered | Nmap cannot decide whether a port is closed or filtered.
 
 ## TCP Flags
-Nmap supports different types of TCP port scans. To understand the difference between these port scans, we need to review the TCP header. The TCP header is the first 24 bytes of a TCP segment. The following figure shows the TCP header as defined in RFC 793. This figure looks sophisticated at first; however, it is pretty simple to understand. In the first row, we have the source TCP port number and the destination port number. We can see that the port number is allocated 16 bits (2 bytes). In the second and third rows, we have the sequence number and the acknowledgement number. Each row has 32 bits (4 bytes) allocated, with six rows total, making up 24 bytes.
+* Nmap supports different types of TCP port scans.
+* TCP header is the first 24 bytes of a TCP segment.
+* TCP header defined in [RFC 793](https://datatracker.ietf.org/doc/html/rfc793.html).
 
-In particular, we need to focus on the flags that Nmap can set or unset. We have highlighted the TCP flags in red. Setting a flag bit means setting its value to 1. From left to right, the TCP header flags are:
-URG: Urgent flag indicates that the urgent pointer filed is significant. The urgent pointer indicates that the incoming data is urgent, and that a TCP segment with the URG flag set is processed immediately without consideration of having to wait on previously sent TCP segments.
-ACK: Acknowledgement flag indicates that the acknowledgement number is significant. It is used to acknowledge the receipt of a TCP segment.
+
+
+* In the first row, we have the source TCP port number and the destination port number.
+* We can see that the port number is allocated 16 bits (2 bytes).
+* In the second and third rows, we have the sequence number and the acknowledgement number.
+* Each row has 32 bits (4 bytes) allocated, with six rows total, making up 24 bytes.
+* In particular, we need to focus on the flags that Nmap can set or unset.
+* We have highlighted the TCP flags in red. Setting a flag bit means setting its value to 1.
+* From left to right, the TCP header flags are:
+URG: Urgent flag indicates that the urgent pointer filed is significant.
+The urgent pointer indicates that the incoming data is urgent, and that a TCP segment with the URG flag set is processed immediately without consideration of having to wait on previously sent TCP segments.
+ACK: Acknowledgement flag indicates that the acknowledgement number is significant.
+It is used to acknowledge the receipt of a TCP segment.
 PSH: Push flag asking TCP to pass the data to the application promptly.
-RST: Reset flag is used to reset the connection. Another device, such as a firewall, might send it to tear a TCP connection. This flag is also used when data is sent to a host and there is no service on the receiving end to answer.
-SYN: Synchronise flag is used to initiate a TCP 3-way handshake and synchronise sequence numbers with the other host. The sequence number should be set randomly during TCP connection establishment.
+RST: Reset flag is used to reset the connection.
+Another device, such as a firewall, might send it to tear a TCP connection.
+This flag is also used when data is sent to a host and there is no service on the receiving end to answer.
+SYN: Synchronise flag is used to initiate a TCP 3-way handshake and synchronise sequence numbers with the other host.
+The sequence number should be set randomly during TCP connection establishment.
 FIN: The sender has no more data to send.
-TCP Connect Scan
-TCP connect scan works by completing the TCP 3-way handshake. In standard TCP connection establishment, the client sends a TCP packet with SYN flag set, and the server responds with SYN/ACK if the port is open; finally, the client completes the 3-way handshake by sending an ACK.
 
-We are interested in learning whether the TCP port is open, not establishing a TCP connection. Hence the connection is torn as soon as its state is confirmed by sending a RST/ACK. You can choose to run TCP connect scan using -sT.
-
+## TCP Connect Scan
+TCP connect scan works by completing the TCP 3-way handshake.
+In standard TCP connection establishment, the client sends a TCP packet with SYN flag set, and the server responds with SYN/ACK if the port is open; finally, the client completes the 3-way handshake by sending an ACK.
+We are interested in learning whether the TCP port is open, not establishing a TCP connection.
+Hence the connection is torn as soon as its state is confirmed by sending a RST/ACK.
+You can choose to run TCP connect scan using -sT.
 It is important to note that if you are not a privileged user (root or sudoer), a TCP connect scan is the only possible option to discover open TCP ports.
-In the following Wireshark packet capture window, we see Nmap sending TCP packets with SYN flag set to various ports, 256, 443, 143, and so on. By default, Nmap will attempt to connect to the 1000 most common ports. A closed TCP port responds to a SYN packet with RST/ACK to indicate that it is not open. This pattern will repeat for all the closed ports as we attempt to initiate a TCP 3-way handshake with them.
-
-We notice that port 143 is open, so it replied with a SYN/ACK, and Nmap completed the 3-way handshake by sending an ACK. The figure below shows all the packets exchanged between our Nmap host and the target system’s port 143. The first three packets are the TCP 3-way handshake being completed. Then, the fourth packet tears it down with an RST/ACK packet.
-
+In the following Wireshark packet capture window, we see Nmap sending TCP packets with SYN flag set to various ports, 256, 443, 143, and so on.
+By default, Nmap will attempt to connect to the 1000 most common ports.
+A closed TCP port responds to a SYN packet with RST/ACK to indicate that it is not open.
+This pattern will repeat for all the closed ports as we attempt to initiate a TCP 3-way handshake with them.
+We notice that port 143 is open, so it replied with a SYN/ACK, and Nmap completed the 3-way handshake by sending an ACK.
+The figure below shows all the packets exchanged between our Nmap host and the target system’s port 143. 
+he first three packets are the TCP 3-way handshake being completed. Then, the fourth packet tears it down with an RST/ACK packet.
 To illustrate the -sT (TCP connect scan), the following command example returned a detailed list of the open ports.
+```
 nmap -sT 10.10.190.11
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-08-30 09:53 BST
@@ -58,9 +80,11 @@ PORT    STATE SERVICE
 MAC Address: 02:45:BF:8A:2D:6B (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 0.40 seconds      
-Note that we can use -F to enable fast mode and decrease the number of scanned ports from 1000 to 100 most common ports.
+```
+* Note that we can use -F to enable fast mode and decrease the number of scanned ports from 1000 to 100 most common ports.
 It is worth mentioning that the -r option can also be added to scan the ports in consecutive order instead of random order. This option is useful when testing whether ports open in a consistent manner, for instance, when a target boots up.
-TCP SYN Scan
+
+## TCP SYN Scan
 Unprivileged users are limited to TCP connect scans. However, the default scan mode is SYN scan, and it requires a privileged (root or sudoer) user to run it. SYN scan does not need to complete the TCP 3-way handshake; instead, it tears down the connection once it receives a response from the server. Because we didn’t establish a TCP connection, this decreases the chances of the scan being logged. We can select this scan type by using the -sS option. The figure below shows how the TCP SYN scan works without completing the TCP 3-way handshake.
 
 The following screenshot from Wireshark shows a TCP SYN scan. The behaviour in the case of closed TCP ports is similar to that of the TCP connect scan.
