@@ -336,15 +336,9 @@ Connection closed by foreign host.
 * Consider IMAP to keep all mailboxes synchronised.
 
 ## Internet Message Access Protocol (IMAP)
-* Internet Message Access Protocol (IMAP) is more sophisticated than POP3.
-* IMAP makes it possible to keep your email synchronised across multiple devices (and mail clients).
-* In other words, if you mark an email message as read when checking your email on your smartphone, the change will be saved on the IMAP server (MDA) and replicated on your laptop when you synchronise your inbox.
-* Let’s take a look at sample IMAP commands.
-* In the console output below, we use Telnet to connect to the IMAP server’s default port, and then we authenticate using LOGIN username password.
-* IMAP requires each command to be preceded by a random string to be able to track the reply.
-* So we added c1, then c2, and so on.
-* Then we listed our mail folders using LIST "" "*", before checking if we have any new messages in the inbox using EXAMINE INBOX.
-* We don’t need to memorise these commands; however, we are simply providing the example below to give a vivid image of what happens when the mail client communicates with an IMAP server.
+* More sophisticated than POP3.
+* IMAP makes it possible to keep email synchronised across multiple mail clients.
+* Marking an email message as read when checking email on your smartphone will save the change on the IMAP server (MDA) and replicate on other devices when the inbox is syncronised.
 ```
 telnet 10.10.249.0 143
 
@@ -352,9 +346,16 @@ Trying 10.10.249.0...
 Connected to 10.10.249.0.
 Escape character is '^]'.
 * OK [CAPABILITY IMAP4rev1 UIDPLUS CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THREAD=REFERENCES SORT QUOTA IDLE ACL ACL2=UNION STARTTLS ENABLE UTF8=ACCEPT] Courier-IMAP ready. Copyright 1998-2018 Double Precision, Inc.  See COPYING for distribution information.
+```
+* Authenticate using `LOGIN username password`.
+* IMAP requires each command to be preceded by a random string (c1, c2) to be able to track the reply.
+```
 c1 LOGIN frank D2xc9CgD
 * OK [ALERT] Filesystem notification initialization error -- contact your mail administrator (check for configuration errors with the FAM/Gamin library)
 c1 OK LOGIN Ok.
+```
+* Listed the mail folders using `LIST "" "*"`.
+```
 c2 LIST "" "*"
 * LIST (\HasNoChildren) "." "INBOX.Trash"
 * LIST (\HasNoChildren) "." "INBOX.Drafts"
@@ -362,6 +363,9 @@ c2 LIST "" "*"
 * LIST (\HasNoChildren) "." "INBOX.Sent"
 * LIST (\Unmarked \HasChildren) "." "INBOX"
 c2 OK LIST completed
+```
+* Check if there are any new messages in the inbox using `EXAMINE INBOX`.
+```
 c3 EXAMINE INBOX
 * FLAGS (\Draft \Answered \Flagged \Deleted \Seen \Recent)
 * OK [PERMANENTFLAGS ()] No permanent flags permitted
@@ -375,7 +379,8 @@ c4 LOGOUT
 c4 OK LOGOUT completed
 Connection closed by foreign host.
 ```
-* It is clear that IMAP sends the login credentials in cleartext, as we can see in the command LOGIN frank D2xc9CgD. Anyone watching the network traffic would be able to know Frank’s username and password.
+* Login credentials sent in cleartext.
+* Anyone watching the network traffic would be able to know Frank’s username and password.
 
 ## Summary
 
