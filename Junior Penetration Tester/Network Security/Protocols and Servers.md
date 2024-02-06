@@ -393,29 +393,26 @@ Connection closed by foreign host.
 | SMTP | 25 | Email (MTA) | Cleartext
 | Telnet | 23 | Remote Access | Cleartext
 
-* Servers implementing the protocols above are subject to attacks.
-  * Sniffing Attack (Network Packet Capture).
-  * Man-in-the-Middle (MITM) Attack.
-  * Password Attack (Authentication Attack).
-
-## Vulnerabilities
-From a security perspective, we always need to think about what we aim to protect; consider the security triad: Confidentiality, Integrity, and Availability (CIA). Confidentiality refers to keeping the contents of the communications accessible to the intended parties. Integrity is the idea of assuring any data sent is accurate, consistent, and complete when reaching its destination. Finally, availability refers to being able to access the service when we need it. Different parties will put varying emphasis on these three. For instance, confidentiality would be the highest priority for an intelligence agency. Online banking will put more emphasis on the integrity of transactions. Availability is of the highest importance for any platform making money by serving ads.
-Knowing that we are protecting the Confidentiality, Integrity, and Availability (CIA), an attack aims to cause Disclosure, Alteration, and Destruction (DAD). The figures below reflect this.
-
-These attacks directly affect the security of the system. For instance, network packet capture violates confidentiality and leads to the disclosure of information. A successful password attack can also lead to disclosure. On the other hand, a Man-in-the-Middle (MITM) attack breaks the system’s integrity as it can alter the communicated data. We will focus on these three attacks in this room as these attacks are integral to the protocol design and server implementation.
-Vulnerabilities are of a broader spectrum, and exploited vulnerabilities have different impacts on the target systems. For instance, exploiting a Denial of Service (DoS) vulnerability can affect the system’s availability, while exploiting a Remote Code Execution (RCE) vulnerability can lead to more severe damages. It is important to note that a vulnerability by itself creates a risk; damage can occur only when the vulnerability is exploited.
-This room will focus on how a protocol can be upgraded or replaced to protect against disclosure and alteration, i.e. protecting the confidentiality and integrity of the transmitted data. We will be recommending other modules that cover additional topics.
-Moreover, we introduce Hydra to find weak passwords.
-
 ## Sniffing Attack
-Sniffing attack refers to using a network packet capture tool to collect information about the target. When a protocol communicates in cleartext, the data exchanged can be captured by a third party to analyse. A simple network packet capture can reveal information, such as the content of private messages and login credentials, if the data isn't encrypted in transit.
-A sniffing attack can be conducted using an Ethernet (802.3) network card, provided that the user has proper permissions (root permissions on Linux and administrator privileges on MS Windows). There are many programs available to capture network packets. We consider the following:
-Tcpdump is a free open source command-line interface (CLI) program that has been ported to work on many operating systems.
-Wireshark is a free open source graphical user interface (GUI) program available for several operating systems, including Linux, macOS and MS Windows.
-Tshark is a CLI alternative to Wireshark.
-There are several specialised tools for capturing passwords and even complete messages; however, this can still be achieved by Tcpdump and Wireshark with some added effort.
-Consider a user checking his email messages using POP3. First, we are going to use Tcpdump to attempt to capture the username and password. In the terminal output below, we used the command sudo tcpdump port 110 -A. Before explaining this command, we should mention that this attack requires access to the network traffic, for example, via a wiretap or a switch with port mirroring. Alternatively, we can access the traffic exchanged if we launch a successful Man-in-the-Middle (MITM) attack.
-We need sudo as packet captures require root privileges. We wanted to limit the number of captured and displayed packets to those exchanged with the POP3 server. We know that POP3 uses port 110, so we filtered our packets using port 110. Finally, we wanted to display the contents of the captured packets in ASCII format, so we added -A.
+* Sniffing attack refers to using a network packet capture tool to collect information about the target.
+* When a protocol communicates in cleartext, the data exchanged can be captured by a third party to analyse.
+* A simple network packet capture can reveal information, such as the content of private messages and login credentials, if the data isn't encrypted in transit.
+* A sniffing attack can be conducted using an Ethernet (802.3) network card, provided that the user has proper permissions (root permissions on Linux and administrator privileges on MS Windows).
+* There are many programs available to capture network packets.
+* We consider the following:
+* Tcpdump is a free open source command-line interface (CLI) program that has been ported to work on many operating systems.
+* Wireshark is a free open source graphical user interface (GUI) program available for several operating systems, including Linux, macOS and MS Windows.
+* Tshark is a CLI alternative to Wireshark.
+* There are several specialised tools for capturing passwords and even complete messages; however, this can still be achieved by Tcpdump and Wireshark with some added effort.
+* Consider a user checking his email messages using POP3.
+* First, we are going to use Tcpdump to attempt to capture the username and password.
+* In the terminal output below, we used the command sudo tcpdump port 110 -A.
+* Before explaining this command, we should mention that this attack requires access to the network traffic, for example, via a wiretap or a switch with port mirroring.
+* Alternatively, we can access the traffic exchanged if we launch a successful Man-in-the-Middle (MITM) attack.
+* We need sudo as packet captures require root privileges.
+* We wanted to limit the number of captured and displayed packets to those exchanged with the POP3 server.
+* We know that POP3 uses port 110, so we filtered our packets using port 110. Finally, we wanted to display the contents of the captured packets in ASCII format, so we added -A.
+```
 sudo tcpdump port 110 -A
 
 [...]
@@ -446,11 +443,19 @@ E..C.X@.@.g.
 ...
 ......n......".....6......
 .<.....iPASS D2xc9CgD
-[...]       
-In the terminal output above, we have removed the unimportant packets to help you better focus on the ones that matter. In particular, the username and password were each sent in their own packet. The first packet explicitly displays “USER frank”, while the last packet reveals the password “PASS D2xc9CgD”.
-We could also use Wireshark to achieve the same results. In the Wireshark window below, we can see that we have entered pop in the filter field. Now that we've filtered just the traffic we're interested in, we can see a username and password were captured.
-
-In brief, any protocol that uses cleartext communication is susceptible to this kind of attack. The only requirement for this attack to succeed is to have access to a system between the two communicating systems. This attack requires attention; the mitigation lies in adding an encryption layer on top of any network protocol. In particular, Transport Layer Security (TLS) has been added to HTTP, FTP, SMTP, POP3, IMAP and many others. For remote access, Telnet has been replaced by the secure alternative Secure Shell (SSH).
+[...]     
+```
+* In the terminal output above, we have removed the unimportant packets to help you better focus on the ones that matter.
+* In particular, the username and password were each sent in their own packet.
+* The first packet explicitly displays “USER frank”, while the last packet reveals the password “PASS D2xc9CgD”.
+* We could also use Wireshark to achieve the same results.
+* In the Wireshark window below, we can see that we have entered pop in the filter field.
+* Now that we've filtered just the traffic we're interested in, we can see a username and password were captured.
+* In brief, any protocol that uses cleartext communication is susceptible to this kind of attack.
+* The only requirement for this attack to succeed is to have access to a system between the two communicating systems.
+* This attack requires attention; the mitigation lies in adding an encryption layer on top of any network protocol.
+* In particular, Transport Layer Security (TLS) has been added to HTTP, FTP, SMTP, POP3, IMAP and many others. 
+* For remote access, Telnet has been replaced by the secure alternative Secure Shell (SSH).
 
 ## Man-in-the-Middle (MITM) Attack
 A Man-in-the-Middle (MITM) attack occurs when a victim (A) believes they are communicating with a legitimate destination (B) but is unknowingly communicating with an attacker (E). In the figure below, we have A requesting the transfer of $20 to M; however, E altered this message and replaced the original value with a new one. B received the modified message and acted on it.
@@ -630,62 +635,22 @@ MITM Attack
 Password Attack
 For each of the above, we focused both on the attack details and the mitigation steps. Note that many other attacks can be conducted against specific servers and protocols. 
 It is good to remember the default port number for common protocols. For convenience, the services we covered are listed in the following table sorted by alphabetical order.
-Protocol
-TCP Port
-Application(s)
-Data Security
-FTP
-21
-File Transfer
-Cleartext
-FTPS
-990
-File Transfer
-Encrypted
-HTTP
-80
-World Wide Web
-Cleartext
-HTTPS
-443
-World Wide Web
-Encrypted
-IMAP
-143
-Email (MDA)
-Cleartext
-IMAPS
-993
-Email (MDA)
-Encrypted
-POP3
-110
-Email (MDA)
-Cleartext
-POP3S
-995
-Email (MDA)
-Encrypted
-SFTP
-22
-File Transfer
-Encrypted
-SSH
-22
-Remote Access and File Transfer
-Encrypted
-SMTP
-25
-Email (MTA)
-Cleartext
-SMTPS
-465
-Email (MTA)
-Encrypted
-Telnet
-23
-Remote Access
-Cleartext
+
+| Protocol | TCP Port | Application(s) | Data Security
+| --- | --- | --- | ---
+| FTP | 21 | File Transfer | Cleartext
+| FTPS | 990 | File Transfer | Encrypted
+| HTTP | 80 | World Wide Web | Cleartext
+| HTTPS | 443 | World Wide Web | Encrypted
+| IMAP | 143 | Email (MDA) | Cleartext
+| IMAPS | 993 | Email (MDA) | Encrypted
+| POP3 | 110 | Email (MDA) | Cleartext
+| POP3S | 995 | Email (MDA) | Encrypted
+| SFTP | 22 | File Transfer | Encrypted
+| SSH | 22 | Remote Access and File Transfer | Encrypted
+| SMTP | 25 | Email (MTA) | Cleartext
+| SMTPS | 465 | Email (MTA) | Encrypted
+| Telnet | 23 | Remote Access | Cleartext
 
 Hydra remains a very efficient tool that you can launch from the terminal to try the different passwords. We summarise its main options in the following table.
 Option
