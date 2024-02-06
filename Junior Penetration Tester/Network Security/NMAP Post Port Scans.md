@@ -67,9 +67,12 @@ Nmap done: 1 IP address (1 host up) scanned in 3.91 seconds
   * Guest OS fingerprints might get distorted due to the rising use of virtualization and similar technologies.
 * Always take the OS version as a best guess.
 
-## Traceroute
-If you want Nmap to find the routers between you and the target, just add --traceroute. In the following example, Nmap appended a traceroute to its scan results. Note that Nmap’s traceroute works slightly differently than the traceroute command found on Linux and macOS or tracert found on MS Windows. Standard traceroute starts with a packet of low TTL (Time to Live) and keeps increasing until it reaches the target. Nmap’s traceroute starts with a packet of high TTL and keeps decreasing.
-In the following example, we executed nmap -sS --traceroute 10.10.193.9 on the AttackBox. We can see that there are no routers/hops between the two as they are connected directly.
+### Traceroute
+* Add `--traceroute` to Nmap to find the routers between source and target.
+* Nmap’s traceroute works slightly differently than the `traceroute` command found on Linux and macOS or `tracert` found on MS Windows.
+  * Standard traceroute starts with a packet of low TTL (Time to Live) and keeps increasing until it reaches the target.
+  * Nmap’s traceroute starts with a packet of high TTL and keeps decreasing.
+```
 sudo nmap -sS --traceroute 10.10.193.9
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-09-10 05:05 BST
@@ -90,11 +93,20 @@ HOP RTT     ADDRESS
 1   1.48 ms MACHINE_IP
 
 Nmap done: 1 IP address (1 host up) scanned in 1.59 seconds
-       
-It is worth mentioning that many routers are configured not to send ICMP Time-to-Live exceeded, which would prevent us from discovering their IP addresses.
-Nmap Scripting Engine (NSE)
-A script is a piece of code that does not need to be compiled. In other words, it remains in its original human-readable form and does not need to be converted to machine language. Many programs provide additional functionality via scripts; moreover, scripts make it possible to add custom functionality that did not exist via the built-in commands. Similarly, Nmap provides support for scripts using the Lua language. A part of Nmap, Nmap Scripting Engine (NSE) is a Lua interpreter that allows Nmap to execute Nmap scripts written in Lua language. However, we don’t need to learn Lua to make use of Nmap scripts.
-Your Nmap default installation can easily contain close to 600 scripts. Take a look at your Nmap installation folder. On the AttackBox, check the files at /usr/share/nmap/scripts, and you will notice that there are hundreds of scripts conveniently named starting with the protocol they target. We listed all the scripts starting with the HTTP on the AttackBox in the console output below; we found around 130 scripts starting with http. With future updates, you can only expect the number of installed scripts to increase.
+```       
+* Many routers are configured not to send ICMP Time-to-Live exceeded that would prevent the discovery of their IP addresses.
+
+## Nmap Scripting Engine (NSE)
+* A script is a piece of code that does not need to be compiled. In other words, it remains in its original human-readable form and does not need to be converted to machine language.
+* Many programs provide additional functionality via scripts; moreover, scripts make it possible to add custom functionality that did not exist via the built-in commands.
+* Similarly, Nmap provides support for scripts using the Lua language.
+* A part of Nmap, Nmap Scripting Engine (NSE) is a Lua interpreter that allows Nmap to execute Nmap scripts written in Lua language.
+* However, we don’t need to learn Lua to make use of Nmap scripts.
+* Your Nmap default installation can easily contain close to 600 scripts.
+* Take a look at your Nmap installation folder. On the AttackBox, check the files at /usr/share/nmap/scripts, and you will notice that there are hundreds of scripts conveniently named starting with the protocol they target.
+* We listed all the scripts starting with the HTTP on the AttackBox in the console output below; we found around 130 scripts starting with http.
+* With future updates, you can only expect the number of installed scripts to increase.
+```
 ls /usr/share/nmap/scripts/http*
 
 http-adobe-coldfusion-apsa1301.nse      http-passwd.nse
@@ -162,7 +174,12 @@ http-mobileversion-checker.nse          http-wordpress-enum.nse
 http-ntlm-info.nse                      http-wordpress-users.nse
 http-open-proxy.nse                     http-xssed.nse
 http-open-redirect.nse       
-You can specify to use any or a group of these installed scripts; moreover, you can install other user’s scripts and use them for your scans. Let’s begin with the default scripts. You can choose to run the scripts in the default category using --script=default or simply adding -sC. In addition to default, categories include auth, broadcast, brute, default, discovery, dos, exploit, external, fuzzer, intrusive, malware, safe, version, and vuln. A brief description is shown in the following table.
+```
+* You can specify to use any or a group of these installed scripts; moreover, you can install other user’s scripts and use them for your scans.
+* Let’s begin with the default scripts. You can choose to run the scripts in the default category using --script=default or simply adding -sC.
+* In addition to default, categories include auth, broadcast, brute, default, discovery, dos, exploit, external, fuzzer, intrusive, malware, safe, version, and vuln.
+* A brief description is shown in the following table.
+
 Script Category
 Description
 auth
@@ -194,8 +211,15 @@ Retrieve service versions
 vuln
 Checks for vulnerabilities or exploit vulnerable services
 
-Some scripts belong to more than one category. Moreover, some scripts launch brute-force attacks against services, while others launch DoS attacks and exploit systems. Hence, it is crucial to be careful when selecting scripts to run if you don’t want to crash services or exploit them.
-We use Nmap to run a SYN scan against 10.10.161.170 and execute the default scripts in the console shown below. The command is sudo nmap -sS -sC 10.10.161.170, where -sC will ensure that Nmap will execute the default scripts following the SYN scan. There are new details that appear below. Take a look at the SSH service at port 22; Nmap recovered all four public keys related to the running server. Consider another example, the HTTP service at port 80; Nmap retrieved the default page title. We can see that the page has been left as default.
+* Some scripts belong to more than one category.
+* Moreover, some scripts launch brute-force attacks against services, while others launch DoS attacks and exploit systems.
+* Hence, it is crucial to be careful when selecting scripts to run if you don’t want to crash services or exploit them.
+* We use Nmap to run a SYN scan against 10.10.161.170 and execute the default scripts in the console shown below.
+* The command is sudo nmap -sS -sC 10.10.161.170, where -sC will ensure that Nmap will execute the default scripts following the SYN scan.
+* There are new details that appear below.
+* Take a look at the SSH service at port 22; Nmap recovered all four public keys related to the running server.
+* Consider another example, the HTTP service at port 80; Nmap retrieved the default page title. We can see that the page has been left as default.
+```
 sudo nmap -sS -sC 10.10.161.170
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-09-10 05:08 BST
@@ -231,8 +255,16 @@ PORT    STATE SERVICE
 MAC Address: 02:A0:E7:B5:B6:C5 (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 2.21 seconds   
-You can also specify the script by name using --script "SCRIPT-NAME" or a pattern such as --script "ftp*", which would include ftp-brute. If you are unsure what a script does, you can open the script file with a text reader, such as less, or a text editor. In the case of ftp-brute, it states: “Performs brute force password auditing against FTP servers.” You have to be careful as some scripts are pretty intrusive. Moreover, some scripts might be for a specific server and, if chosen at random, will waste your time with no benefit. As usual, make sure that you are authorised to launch such tests on the target server.
-Let’s consider a benign script, http-date, which we guess would retrieve the http server date and time, and this is indeed confirmed in its description: “Gets the date from HTTP-like services. Also, it prints how much the date differs from local time…” On the AttackBox, we execute sudo nmap -sS -n --script "http-date" 10.10.34.180 as shown in the console below.
+```
+* You can also specify the script by name using --script "SCRIPT-NAME" or a pattern such as --script "ftp*", which would include ftp-brute.
+* If you are unsure what a script does, you can open the script file with a text reader, such as less, or a text editor.
+* In the case of ftp-brute, it states: “Performs brute force password auditing against FTP servers.”
+* You have to be careful as some scripts are pretty intrusive.
+* Moreover, some scripts might be for a specific server and, if chosen at random, will waste your time with no benefit.
+* As usual, make sure that you are authorised to launch such tests on the target server.
+* Let’s consider a benign script, http-date, which we guess would retrieve the http server date and time, and this is indeed confirmed in its description: “Gets the date from HTTP-like services.
+* Also, it prints how much the date differs from local time…” On the AttackBox, we execute sudo nmap -sS -n --script "http-date" 10.10.34.180 as shown in the console below.
+```
 sudo nmap -sS -n --script "http-date" 10.10.34.180
 
 Starting Nmap 7.60 ( https://nmap.org ) at 2021-09-10 08:04 BST
@@ -250,9 +282,12 @@ PORT    STATE SERVICE
 MAC Address: 02:44:87:82:AC:83 (Unknown)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.78 seconds
-       
-Finally, you might expand the functionality of Nmap beyond the official Nmap scripts; you can write your script or download Nmap scripts from the Internet. Downloading and using a Nmap script from the Internet holds a certain level of risk. So it is a good idea not to run a script from an author you don’t trust.
-Saving the Output
+```     
+* Finally, you might expand the functionality of Nmap beyond the official Nmap scripts; you can write your script or download Nmap scripts from the Internet.
+* Downloading and using a Nmap script from the Internet holds a certain level of risk.
+* So it is a good idea not to run a script from an author you don’t trust.
+
+## Saving the Output
 Whenever you run a Nmap scan, it is only reasonable to save the results in a file. Selecting and adopting a good naming convention for your filenames is also crucial. The number of files can quickly grow and hinder your ability to find a previous scan result. The three main formats are:
 Normal
 Grepable (grepable)
