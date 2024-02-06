@@ -394,24 +394,22 @@ Connection closed by foreign host.
 | Telnet | 23 | Remote Access | Cleartext
 
 ## Sniffing Attack
-* Sniffing attack refers to using a network packet capture tool to collect information about the target.
-* When a protocol communicates in cleartext, the data exchanged can be captured by a third party to analyse.
-* A simple network packet capture can reveal information, such as the content of private messages and login credentials, if the data isn't encrypted in transit.
-* A sniffing attack can be conducted using an Ethernet (802.3) network card, provided that the user has proper permissions (root permissions on Linux and administrator privileges on MS Windows).
-* There are many programs available to capture network packets.
-* We consider the following:
-* Tcpdump is a free open source command-line interface (CLI) program that has been ported to work on many operating systems.
-* Wireshark is a free open source graphical user interface (GUI) program available for several operating systems, including Linux, macOS and MS Windows.
-* Tshark is a CLI alternative to Wireshark.
-* There are several specialised tools for capturing passwords and even complete messages; however, this can still be achieved by Tcpdump and Wireshark with some added effort.
+* Refers to using a network packet capture tool to collect information about the target.
+* Data exchanged can be captured (private messages and login credentials) by a third party to analyse when a protocol communicates in cleartext.
+* Can be conducted using an Ethernet (802.3) network card provided that the user has proper permissions (`root` permissions on Linux and administrator privileges on MS Windows).
+1. Tcpdump is a free open source command-line interface (CLI) program.
+2. Wireshark is a free open source graphical user interface (GUI) program.
+3. Tshark is a CLI alternative to Wireshark.
 * Consider a user checking his email messages using POP3.
-* First, we are going to use Tcpdump to attempt to capture the username and password.
-* In the terminal output below, we used the command sudo tcpdump port 110 -A.
-* Before explaining this command, we should mention that this attack requires access to the network traffic, for example, via a wiretap or a switch with port mirroring.
-* Alternatively, we can access the traffic exchanged if we launch a successful Man-in-the-Middle (MITM) attack.
-* We need sudo as packet captures require root privileges.
-* We wanted to limit the number of captured and displayed packets to those exchanged with the POP3 server.
-* We know that POP3 uses port 110, so we filtered our packets using port 110. Finally, we wanted to display the contents of the captured packets in ASCII format, so we added -A.
+* Use Tcpdump to attempt to capture the username and password.
+  * `sudo tcpdump port 110 -A`.
+    * Need `sudo` as packet captures require root privileges.
+    * Limit the number of captured and displayed packets to those exchanged with the POP3 server using `port 110`.
+    * Display the contents of the captured packets in ASCII format using `-A`.
+* Requires access to the network traffic.
+  * Wiretap.
+  * Switch with port mirroring.
+* Can also ccess the traffic exchanged if a successful Man-in-the-Middle (MITM) attack is launched.
 ```
 sudo tcpdump port 110 -A
 
@@ -445,17 +443,15 @@ E..C.X@.@.g.
 .<.....iPASS D2xc9CgD
 [...]     
 ```
-* In the terminal output above, we have removed the unimportant packets to help you better focus on the ones that matter.
-* In particular, the username and password were each sent in their own packet.
-* The first packet explicitly displays “USER frank”, while the last packet reveals the password “PASS D2xc9CgD”.
-* We could also use Wireshark to achieve the same results.
-* In the Wireshark window below, we can see that we have entered pop in the filter field.
-* Now that we've filtered just the traffic we're interested in, we can see a username and password were captured.
-* In brief, any protocol that uses cleartext communication is susceptible to this kind of attack.
-* The only requirement for this attack to succeed is to have access to a system between the two communicating systems.
-* This attack requires attention; the mitigation lies in adding an encryption layer on top of any network protocol.
-* In particular, Transport Layer Security (TLS) has been added to HTTP, FTP, SMTP, POP3, IMAP and many others. 
-* For remote access, Telnet has been replaced by the secure alternative Secure Shell (SSH).
+* First packet explicitly displays `USER frank` while the last packet reveals the password `PASS D2xc9CgD`.
+* Could also use Wireshark to achieve the same results.
+  * Enter `pop` in the filter field.
+  * Can now see a username and password were captured.
+* Any protocol that uses cleartext communication is susceptible to this kind of attack.
+* Only requirement is to have access to a system between the two communicating systems.
+* Mitigation lies in adding an encryption layer on top of any network protocol.
+  * Transport Layer Security (TLS) has been added to HTTP, FTP, SMTP, POP3, IMAP and many others. 
+  * Telnet has been replaced by the secure alternative Secure Shell (SSH).
 
 ## Man-in-the-Middle (MITM) Attack
 A Man-in-the-Middle (MITM) attack occurs when a victim (A) believes they are communicating with a legitimate destination (B) but is unknowingly communicating with an attacker (E). In the figure below, we have A requesting the transfer of $20 to M; however, E altered this message and replaced the original value with a new one. B received the modified message and acted on it.
