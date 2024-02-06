@@ -174,8 +174,7 @@ http-ntlm-info.nse                      http-wordpress-users.nse
 http-open-proxy.nse                     http-xssed.nse
 http-open-redirect.nse       
 ```
-* Run the scripts in the default category using `--script=default` or adding -`sC`..
-* A brief description is shown in the following table.
+* Run the scripts in the default category using `--script=default` or adding -`sC`.
 
 | Script Category | Description
 | --- | ---
@@ -325,7 +324,7 @@ Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (proto
 
 ### Script Kiddie
 * This format is useless if needing to search the output for any interesting keywords or keep the results for future reference.
-* However, you can use it to save the output of the scan `nmap -sS 127.0.0.1 -oS FILENAME` and look 31337 in front of friends who are not tech-savvy.
+* Can use it to save the output of the scan `nmap -sS 127.0.0.1 -oS FILENAME` and look 31337 in front of friends who are not tech-savvy.
 ```
 cat 10.10.99.102_scan.kiddie 
 
