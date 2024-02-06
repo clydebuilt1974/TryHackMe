@@ -472,43 +472,32 @@ E..C.X@.@.g.
 | POP3 | 110 | POP3S | 995
 | IMAP | 143 | IMAPS | 993
 
-* Considering the case of HTTP.
-* Initially, to retrieve a web page over HTTP, the web browser would need at least perform the following two steps:
-* Establish a TCP connection with the remote web server
-* Send HTTP requests to the web server, such as GET and POST requests.
-* HTTPS requires an additional step to encrypt the traffic.
-* The new step takes place after establishing a TCP connection and before sending HTTP requests.
-* This extra step can be inferred from the ISO/OSI model in the image presented earlier.
-* Consequently, HTTPS requires at least the following three steps:
-* Establish a TCP connection
-* Establish SSL/TLS connection
-* Send HTTP requests to the webserver
-* To establish an SSL/TLS connection, the client needs to perform the proper handshake with the server.
-* Based on RFC 6101, the SSL connection establishment will look like the figure below.
-* After establishing a TCP connection with the server, the client establishes an SSL/TLS connection, as shown in the figure above.
-* The terms might look complicated depending on your knowledge of cryptography, but we can simplify the four steps as:
-* The client sends a ClientHello to the server to indicate its capabilities, such as supported algorithms.
-* The server responds with a ServerHello, indicating the selected connection parameters.
-* The server provides its certificate if server authentication is required.
-* The certificate is a digital file to identify itself; it is usually digitally signed by a third party.
-* Moreover, it might send additional information necessary to generate the master key, in its ServerKeyExchange message, before sending the ServerHelloDone message to indicate that it is done with the negotiation.
-* The client responds with a ClientKeyExchange, which contains additional information required to generate the master key.
-* Furthermore, it switches to use encryption and informs the server using the ChangeCipherSpec message.
-* The server switches to use encryption as well and informs the client in the ChangeCipherSpec message.
-* If this still sounds sophisticated, don’t worry; we only need the gist of it.
-* A client was able to agree on a secret key with a server that has a public certificate.
-* This secret key was securely generated so that a third party monitoring the channel wouldn’t be able to discover it.
-* Further communication between the client and the server will be encrypted using the generated key.
-* Consequently, once an SSL/TLS handshake has been established, HTTP requests and exchanged data won’t be accessible to anyone watching the communication channel.
-* As a final note, for SSL/TLS to be effective, especially when browsing the web over HTTPS, we rely on public certificates signed by certificate authorities trusted by our systems.
-* In other words, when we browse to TryHackMe over HTTPS, our browser expects the TryHackMe web server to provide a signed certificate from a trusted certificate authority, as per the example below.
-* This way, our browser ensures that it is communicating with the correct server, and a MITM attack cannot occur.
-* In the figure above, we can see the following information:
-* To whom is the certificate issued? That is the name of the company that will use this certificate.
-* Who issued the certificate? This is the certificate authority that issued this certificate.
-* Validity period. You don’t want to use a certificate that has expired, for instance.
-* Luckily, we don’t have to check the certificate manually for every site we visit; our web browser will do it for us.
-* Our web browser will ensure that we are talking with the correct server and ensure that our communication is secure, thanks to the server’s certificate.
+* HTTPS steps.
+1. Establish a TCP connection
+2. Establish SSL/TLS connection
+3. Send GET and POST HTTP requests to the webserver
+* Client needs to perform the proper handshake with the server to establish an SSL/TLS connection.
+* SSL connection establishment based on [RFC 6101](https://datatracker.ietf.org/doc/html/rfc6101).
+1. Client sends a 'ClientHello' to the server to indicate its capabilities such as supported algorithms.
+2. Server responds with a 'ServerHello' indicating the selected connection parameters.
+   * Server provides its certificate if server authentication is required.
+     * Certificate is a digital file to identify itself.
+     * Usually digitally signed by a third party.
+   * Might send additional information necessary to generate master key in its 'ServerKeyExchange' message.
+   * Sends 'ServerHelloDone' message to indicate that server is done with the negotiation.
+3. Client responds with 'ClientKeyExchange' which contains additional information required to generate the master key.
+   * Switches to use encryption and informs the server using the 'ChangeCipherSpec' message.
+4. Server switches to use encryption as well and informs the client in the 'ChangeCipherSpec' message.
+* Client was able to agree on a secret key with a server that has a public certificate.
+  * Secret key was securely generated so that a third party monitoring the channel wouldn’t be able to discover it.
+  * Further communication between the client and the server is encrypted using the generated key.
+* SSL/TLS relies on public certificates signed by trusted certificate authorities to be effective when browsing the web over HTTPS.
+  * Browser expects the web server to provide a signed certificate from a trusted certificate authority.
+  * MITM attack cannot occur.
+  * Browser will automatically ensure that the communication is secure thanks to the server’s certificate.
+    * To whom is the certificate issued? That is the name of the company that will use this certificate.
+    * Who issued the certificate? This is the certificate authority that issued this certificate.
+   * Validity period. Do not want to use a certificate that has expired.
 
 ## Secure Shell (SSH)
 * Secure Shell (SSH) was created to provide a secure way for remote system administration.
