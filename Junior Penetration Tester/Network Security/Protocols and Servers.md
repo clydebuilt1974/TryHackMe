@@ -48,11 +48,10 @@ Last login: Fri Oct  1 12:17:25 UTC 2021 from meiyo on pts/3
 You have mail.
 ```
 * Remote server grants a command prompt
-* The $ indicates that this is not a root terminal.
+* `$` indicates that this is not a root terminal.
 ```
 frank@bento:~$
 ```
-* Not a reliable protocol for remote administration as all the data is sent in cleartext.
 * No longer considered a secure option as anyone capturing the network traffic will be able to discover usernames and passwords which would grant them access to the remote system.
 * The secure alternative is SSH.
 
@@ -111,16 +110,22 @@ Accept-Ranges: bytes
   * Safari by Apple.
 
 ## File Transfer Protocol (FTP)
-File Transfer Protocol (FTP) was developed to make the transfer of files between different computers with different systems efficient.
-FTP also sends and receives data as cleartext; therefore, we can use Telnet (or Netcat) to communicate with an FTP server and act as an FTP client. In the example below, we carried out the following steps:
-We connected to an FTP server using a Telnet client. Since FTP servers listen on port 21 by default, we had to specify to our Telnet client to attempt connection to port 21 instead of the default Telnet port.
-We needed to provide the username with the command USER frank.
-Then, we provided the password with the command PASS D2xc9CgD.
-Because we supplied the correct username and password, we got logged in.
-A command like STAT can provide some added information. The SYST command shows the System Type of the target (UNIX in this case). PASV switches the mode to passive. It is worth noting that there are two modes for FTP:
-Active: In the active mode, the data is sent over a separate channel originating from the FTP server’s port 20.
-Passive: In the passive mode, the data is sent over a separate channel originating from an FTP client’s port above port number 1023.
-The command TYPE A switches the file transfer mode to ASCII, while TYPE I switches the file transfer mode to binary. However, we cannot transfer a file using a simple client such as Telnet because FTP creates a separate connection for file transfer.
+* File Transfer Protocol (FTP) was developed to make the transfer of files between different computers with different systems efficient.
+* FTP also sends and receives data as cleartext; therefore, we can use Telnet (or Netcat) to communicate with an FTP server and act as an FTP client.
+* In the example below, we carried out the following steps:
+* We connected to an FTP server using a Telnet client.
+* Since FTP servers listen on port 21 by default, we had to specify to our Telnet client to attempt connection to port 21 instead of the default Telnet port.
+* We needed to provide the username with the command USER frank.
+* Then, we provided the password with the command PASS D2xc9CgD.
+* Because we supplied the correct username and password, we got logged in.
+* A command like STAT can provide some added information.
+* The SYST command shows the System Type of the target (UNIX in this case).
+* PASV switches the mode to passive.
+* It is worth noting that there are two modes for FTP:
+* Active: In the active mode, the data is sent over a separate channel originating from the FTP server’s port 20.
+* Passive: In the passive mode, the data is sent over a separate channel originating from an FTP client’s port above port number 1023.
+* The command TYPE A switches the file transfer mode to ASCII, while TYPE I switches the file transfer mode to binary. However, we cannot transfer a file using a simple client such as Telnet because FTP creates a separate connection for file transfer.
+```
 telnet 10.10.249.0 21
 
 Trying 10.10.249.0...
@@ -152,9 +157,18 @@ STAT
 QUIT
 221 Goodbye.
 Connection closed by foreign host.      
-The image below shows how an actual file transfer would be conducted using FTP. To keep things simple in this figure, let’s only focus on the fact that the FTP client will initiate a connection to an FTP server, which listens on port 21 by default. All commands will be sent over the control channel. Once the client requests a file, another TCP connection will be established between them. (The details of establishing the data connection/channel is beyond the scope of this room.)
-
-Considering the sophistication of the data transfer over FTP, let’s use an actual FTP client to download a text file. We only needed a small number of commands to retrieve the file. After logging in successfully, we get the FTP prompt, ftp>, to execute various FTP commands. We used ls to list the files and learn the file name; then, we switched to ascii since it is a text file (not binary). Finally, get FILENAME made the client and server establish another channel for file transfer.
+```
+* The image below shows how an actual file transfer would be conducted using FTP.
+* To keep things simple in this figure, let’s only focus on the fact that the FTP client will initiate a connection to an FTP server, which listens on port 21 by default.
+* All commands will be sent over the control channel.
+* Once the client requests a file, another TCP connection will be established between them.
+* (The details of establishing the data connection/channel is beyond the scope of this room.)
+* Considering the sophistication of the data transfer over FTP, let’s use an actual FTP client to download a text file.
+* We only needed a small number of commands to retrieve the file.
+* After logging in successfully, we get the FTP prompt, ftp>, to execute various FTP commands.
+* We used ls to list the files and learn the file name; then, we switched to ascii since it is a text file (not binary).
+* Finally, get FILENAME made the client and server establish another channel for file transfer.
+```
 ftp 10.10.249.0
 
 Connected to 10.10.249.0.
@@ -181,14 +195,19 @@ File may not have transferred correctly.
 226 Transfer complete.
 4006 bytes received in 0.000269 secs (14892.19 Kbytes/sec)
 ftp> exit
-221 Goodbye.       
-FTP servers and FTP clients use the FTP protocol. There are various FTP server software that you can select from if you want to host your FTP file server. Examples of FTP server software include:
-vsftpd
-ProFTPD
-uFTP
-For FTP clients, in addition to the console FTP client commonly found on Linux systems, you can use an FTP client with GUI such as FileZilla. Some web browsers also support FTP protocol.
-Because FTP sends the login credentials along with the commands and files in cleartext, FTP traffic can be an easy target for attackers.
-Simple Mail Transfer Protocol (SMTP)
+221 Goodbye.
+```     
+* FTP servers and FTP clients use the FTP protocol.
+* There are various FTP server software that you can select from if you want to host your FTP file server.
+* Examples of FTP server software include:
+* vsftpd
+* ProFTPD
+* uFTP
+* For FTP clients, in addition to the console FTP client commonly found on Linux systems, you can use an FTP client with GUI such as FileZilla.
+* Some web browsers also support FTP protocol.
+* Because FTP sends the login credentials along with the commands and files in cleartext, FTP traffic can be an easy target for attackers.
+
+## Simple Mail Transfer Protocol (SMTP)
 Email is one of the most used services on the Internet. There are various configurations for email servers; for instance, you may set up an email system to allow local users to exchange emails with each other with no access to the Internet. However, we will consider the more general setup where different email servers connect over the Internet.
 Email delivery over the Internet requires the following components:
 Mail Submission Agent (MSA)
