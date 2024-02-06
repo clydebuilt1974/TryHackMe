@@ -283,25 +283,41 @@ quit
 Connection closed by foreign host.
 ```   
 ## Post Office Protocol 3 (POP3)
-Post Office Protocol version 3 (POP3) is a protocol used to download the email messages from a Mail Delivery Agent (MDA) server, as shown in the figure below. The mail client connects to the POP3 server, authenticates, downloads the new email messages before (optionally) deleting them.
-
-The example below shows what a POP3 session would look like if conducted via a Telnet client. First, the user connects to the POP3 server at the POP3 default port 110. Authentication is required to access the email messages; the user authenticates by providing his username USER frank and password PASS D2xc9CgD. Using the command STAT, we get the reply +OK 1 179; based on RFC 1939, a positive response to STAT has the format +OK nn mm, where nn is the number of email messages in the inbox, and mm is the size of the inbox in octets (byte). The command LIST provided a list of new messages on the server, and RETR 1 retrieved the first message in the list. We don’t need to concern ourselves with memorising these commands; however, it is helpful to strengthen our understanding of such protocol.
+* Protocol used to download the email messages from a Mail Delivery Agent (MDA) server.
+* The mail client connects to the POP3 server, authenticates, downloads the new email messages before (optionally) deleting them.nt.
+* POP3 default port is TCP/110.
+```
 telnet 10.10.249.0 110
 
 Trying 10.10.249.0...
 Connected to 10.10.249.0.
 Escape character is '^]'.
-+OK 10.10.249.0 Mail Server POP3 Wed, 15 Sep 2021 11:05:34 +0300 
++OK 10.10.249.0 Mail Server POP3 Wed, 15 Sep 2021 11:05:34 +0300
+```
+* Authentication is required to access the email messages.
+* User authenticates by providing username `USER frank` and password `PASS D2xc9CgD`.
+```
 USER frank
 +OK frank
 PASS D2xc9CgD
 +OK 1 messages (179) octets
+```
+* Positive response to `STAT` has the format `+OK nn mm`.
+  * `nn` is the number of email messages in the inbox.
+  * `mm` is the size of the inbox in octets (byte).
+```
 STAT
 +OK 1 179
+```
+* The command `LIST` provided a list of new messages on the server.
+```
 LIST
 +OK 1 messages (179) octets
 1 179
 .
+```
+* `RETR 1` retrieved the first message in the list.
+```
 RETR 1
 +OK
 From: Mail Server 
@@ -313,11 +329,13 @@ I am just writing to say hi!
 QUIT
 +OK 10.10.249.0 closing connection
 Connection closed by foreign host.
+```
+* Commands are sent in cleartext.
+* Any third party watching the network traffic can steal the login credentials.
+* MUA deletes the mail message after it downloads it by default.
+* Consider IMAP to keep all mailboxes synchronised.
 
-The example above shows that the commands are sent in cleartext. Using Telnet was enough to authenticate and retrieve an email message. As the username and password are sent in cleartext, any third party watching the network traffic can steal the login credentials.
-In general, your mail client (MUA) will connect to the POP3 server (MDA), authenticate, and download the messages. Although the communication using the POP3 protocol will be hidden behind a sleek interface, similar commands will be issued, as shown in the Telnet session above.
-Based on the default settings, the mail client deletes the mail message after it downloads it. The default behaviour can be changed from the mail client settings if you wish to download the emails again from another mail client. Accessing the same mail account via multiple clients using POP3 is usually not very convenient as one would lose track of read and unread messages. To keep all mailboxes synchronised, we need to consider other protocols, such as IMAP.
-Internet Message Access Protocol (IMAP)
+## Internet Message Access Protocol (IMAP)
 Internet Message Access Protocol (IMAP) is more sophisticated than POP3. IMAP makes it possible to keep your email synchronised across multiple devices (and mail clients). In other words, if you mark an email message as read when checking your email on your smartphone, the change will be saved on the IMAP server (MDA) and replicated on your laptop when you synchronise your inbox.
 Let’s take a look at sample IMAP commands. In the console output below, we use Telnet to connect to the IMAP server’s default port, and then we authenticate using LOGIN username password. IMAP requires each command to be preceded by a random string to be able to track the reply. So we added c1, then c2, and so on. Then we listed our mail folders using LIST "" "*", before checking if we have any new messages in the inbox using EXAMINE INBOX. We don’t need to memorise these commands; however, we are simply providing the example below to give a vivid image of what happens when the mail client communicates with an IMAP server.
 telnet 10.10.249.0 143
