@@ -223,16 +223,16 @@ ftp> exit
 
 ## Simple Mail Transfer Protocol (SMTP)
 * Email is one of the most used services on the Internet.
-* Mail Submission Agent (MSA) 
+* Mail Submission Agent **(MSA)**. 
   * Receives messages from MUAs.
   * Checks for any errors before transferring them to the MTA.
     * MSA and MTA are commonly hosted on the same server.
-* Mail Transfer Agent (MTA) 
+* Mail Transfer Agent **(MTA)**. 
   * Sends email message to the MTA of the recipient.
   * Typically also functions as MDA
-* Mail Delivery Agent (MDA)
+* Mail Delivery Agent **(MDA)**.
   * Recipients collect email from MDA using MUAs.
-* Mail User Agent (MUA)
+* Mail User Agent **(MUA)**.
   * An email client.
   * Connects to MSA to send messages.
 
