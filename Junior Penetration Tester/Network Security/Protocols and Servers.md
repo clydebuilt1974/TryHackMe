@@ -136,12 +136,12 @@ USER frank
 PASS D2xc9CgD
 230 Login successful.
 ```
-* The SYST command shows the System Type of the target (UNIX in this case).
+* The `SYST` command shows the System Type of the target (UNIX in this case).
 ```
 SYST
 215 UNIX Type: L8
 ```
-* PASV switches the mode to passive.
+* `PASV` switches the mode to passive.
 ```
 PASV
 227 Entering Passive Mode (10,10,0,148,78,223).
@@ -222,28 +222,34 @@ ftp> exit
 * FTP traffic can be an easy target for attackers because the login credentials along with the commands and files are sent in cleartext.
 
 ## Simple Mail Transfer Protocol (SMTP)
-Email is one of the most used services on the Internet. There are various configurations for email servers; for instance, you may set up an email system to allow local users to exchange emails with each other with no access to the Internet. However, we will consider the more general setup where different email servers connect over the Internet.
-Email delivery over the Internet requires the following components:
-Mail Submission Agent (MSA)
-Mail Transfer Agent (MTA)
-Mail Delivery Agent (MDA)
-Mail User Agent (MUA)
-The above four terms may look cryptic, but they are more straightforward than they appear. We will explain these terms using the figure below.
+* Email is one of the most used services on the Internet.
+* There are various configurations for email servers; for instance, you may set up an email system to allow local users to exchange emails with each other with no access to the Internet.
+* However, we will consider the more general setup where different email servers connect over the Internet.
+* Email delivery over the Internet requires the following components:
+* Mail Submission Agent (MSA)
+* Mail Transfer Agent (MTA)
+* Mail Delivery Agent (MDA)
+* Mail User Agent (MUA)
+* The above four terms may look cryptic, but they are more straightforward than they appear.
+* We will explain these terms using the figure below.
+* The figure shows the following five steps that an email needs to go through to reach the recipient’s inbox:
+* A Mail User Agent (MUA), or simply an email client, has an email message to be sent.
+* The MUA connects to a Mail Submission Agent (MSA) to send its message.
+* The MSA receives the message, checks for any errors before transferring it to the Mail Transfer Agent (MTA) server, commonly hosted on the same server.
+* The MTA will send the email message to the MTA of the recipient.
+* The MTA can also function as a Mail Submission Agent (MSA).
+* A typical setup would have the MTA server also functioning as a Mail Delivery Agent (MDA).
+* The recipient will collect its email from the MDA using their email client.
+* If the above steps sound confusing, consider the following analogy:
+* You (MUA) want to send postal mail.
+* The post office employee (MSA) checks the postal mail for any issues before your local post office (MTA) accepts it.
+* The local post office checks the mail destination and sends it to the post office (MTA) in the correct country.
+* The post office (MTA) delivers the mail to the recipient mailbox (MDA).
+* The recipient (MUA) regularly checks the mailbox for new mail.
+* They notice the new mail, and they take it.
+* In the same way, we need to follow a protocol to communicate with an HTTP server, and we need to rely on email protocols to talk with an MTA and an MDA. The protocols are:
 
-The figure shows the following five steps that an email needs to go through to reach the recipient’s inbox:
-A Mail User Agent (MUA), or simply an email client, has an email message to be sent. The MUA connects to a Mail Submission Agent (MSA) to send its message.
-The MSA receives the message, checks for any errors before transferring it to the Mail Transfer Agent (MTA) server, commonly hosted on the same server.
-The MTA will send the email message to the MTA of the recipient. The MTA can also function as a Mail Submission Agent (MSA).
-A typical setup would have the MTA server also functioning as a Mail Delivery Agent (MDA).
-The recipient will collect its email from the MDA using their email client.
-If the above steps sound confusing, consider the following analogy:
-You (MUA) want to send postal mail.
-The post office employee (MSA) checks the postal mail for any issues before your local post office (MTA) accepts it.
-The local post office checks the mail destination and sends it to the post office (MTA) in the correct country.
-The post office (MTA) delivers the mail to the recipient mailbox (MDA).
-The recipient (MUA) regularly checks the mailbox for new mail. They notice the new mail, and they take it.
-In the same way, we need to follow a protocol to communicate with an HTTP server, and we need to rely on email protocols to talk with an MTA and an MDA. The protocols are:
-Simple Mail Transfer Protocol (SMTP)
+## Simple Mail Transfer Protocol (SMTP)
 Post Office Protocol version 3 (POP3) or Internet Message Access Protocol (IMAP)
 Simple Mail Transfer Protocol (SMTP) is used to communicate with an MTA server. Because SMTP uses cleartext, where all commands are sent without encryption, we can use a basic Telnet client to connect to an SMTP server and act as an email client (MUA) sending a message.
 SMTP server listens on port 25 by default. To see basic communication with an SMTP server, we used Telnet to connect to it. Once connected, we issue helo hostname and then start typing our email.
@@ -369,14 +375,12 @@ Telnet
 Remote Access
 Cleartext
 
-Protocols and Servers 2
-Learn about attacks against passwords and cleartext traffic; explore options for mitigation via SSH and SSL/TLS.
-Introduction
-Servers implementing the protocols discussed in the previous section are subject to different kinds of attacks. To name a few, consider:
+Servers implementing the protocols above are subject to different kinds of attacks. To name a few, consider:
 Sniffing Attack (Network Packet Capture)
 Man-in-the-Middle (MITM) Attack
 Password Attack (Authentication Attack)
-Vulnerabilities
+
+## Vulnerabilities
 From a security perspective, we always need to think about what we aim to protect; consider the security triad: Confidentiality, Integrity, and Availability (CIA). Confidentiality refers to keeping the contents of the communications accessible to the intended parties. Integrity is the idea of assuring any data sent is accurate, consistent, and complete when reaching its destination. Finally, availability refers to being able to access the service when we need it. Different parties will put varying emphasis on these three. For instance, confidentiality would be the highest priority for an intelligence agency. Online banking will put more emphasis on the integrity of transactions. Availability is of the highest importance for any platform making money by serving ads.
 Knowing that we are protecting the Confidentiality, Integrity, and Availability (CIA), an attack aims to cause Disclosure, Alteration, and Destruction (DAD). The figures below reflect this.
 
@@ -384,7 +388,8 @@ These attacks directly affect the security of the system. For instance, network 
 Vulnerabilities are of a broader spectrum, and exploited vulnerabilities have different impacts on the target systems. For instance, exploiting a Denial of Service (DoS) vulnerability can affect the system’s availability, while exploiting a Remote Code Execution (RCE) vulnerability can lead to more severe damages. It is important to note that a vulnerability by itself creates a risk; damage can occur only when the vulnerability is exploited.
 This room will focus on how a protocol can be upgraded or replaced to protect against disclosure and alteration, i.e. protecting the confidentiality and integrity of the transmitted data. We will be recommending other modules that cover additional topics.
 Moreover, we introduce Hydra to find weak passwords.
-Sniffing Attack
+
+## Sniffing Attack
 Sniffing attack refers to using a network packet capture tool to collect information about the target. When a protocol communicates in cleartext, the data exchanged can be captured by a third party to analyse. A simple network packet capture can reveal information, such as the content of private messages and login credentials, if the data isn't encrypted in transit.
 A sniffing attack can be conducted using an Ethernet (802.3) network card, provided that the user has proper permissions (root permissions on Linux and administrator privileges on MS Windows). There are many programs available to capture network packets. We consider the following:
 Tcpdump is a free open source command-line interface (CLI) program that has been ported to work on many operating systems.
@@ -428,7 +433,8 @@ In the terminal output above, we have removed the unimportant packets to help yo
 We could also use Wireshark to achieve the same results. In the Wireshark window below, we can see that we have entered pop in the filter field. Now that we've filtered just the traffic we're interested in, we can see a username and password were captured.
 
 In brief, any protocol that uses cleartext communication is susceptible to this kind of attack. The only requirement for this attack to succeed is to have access to a system between the two communicating systems. This attack requires attention; the mitigation lies in adding an encryption layer on top of any network protocol. In particular, Transport Layer Security (TLS) has been added to HTTP, FTP, SMTP, POP3, IMAP and many others. For remote access, Telnet has been replaced by the secure alternative Secure Shell (SSH).
-Man-in-the-Middle (MITM) Attack
+
+## Man-in-the-Middle (MITM) Attack
 A Man-in-the-Middle (MITM) attack occurs when a victim (A) believes they are communicating with a legitimate destination (B) but is unknowingly communicating with an attacker (E). In the figure below, we have A requesting the transfer of $20 to M; however, E altered this message and replaced the original value with a new one. B received the modified message and acted on it.
 
 This attack is relatively simple to carry out if the two parties do not confirm the authenticity and integrity of each message. In some cases, the chosen protocol does not provide secure authentication or integrity checking; moreover, some protocols have inherent insecurities that make them susceptible to this kind of attack.
@@ -489,7 +495,8 @@ To whom is the certificate issued? That is the name of the company that will use
 Who issued the certificate? This is the certificate authority that issued this certificate.
 Validity period. You don’t want to use a certificate that has expired, for instance.
 Luckily, we don’t have to check the certificate manually for every site we visit; our web browser will do it for us. Our web browser will ensure that we are talking with the correct server and ensure that our communication is secure, thanks to the server’s certificate.
-Secure Shell (SSH)
+
+## Secure Shell (SSH)
 Secure Shell (SSH) was created to provide a secure way for remote system administration. In other words, it lets you securely connect to another system over the network and execute commands on the remote system. Put simply, the “S” in SSH stands for secure, which can be summarised simply as:
 You can confirm the identity of the remote server
 Exchanged messages are encrypted and can only be decrypted by the intended recipient
@@ -521,7 +528,8 @@ scp document.txt mark@10.10.158.132:/home/mark
 mark@10.10.158.132's password: 
 document.txt                                        100% 1997KB  70.4MB/s   00:00       
 As a closing note, FTP could be secured using SSL/TLS by using the FTPS protocol which uses port 990. It is worth mentioning that FTP can also be secured using the SSH protocol which is the SFTP protocol. By default this service listens on port 22, just like SSH.
-Password Attack
+
+## Password Attack
 We discussed network packet captures and MITM attacks as well as how these attacks can be mitigated using TLS and SSH. The third type of attack that we will cover is a password attack.
 Many protocols require you to authenticate. Authentication is proving who you claim to be. When we are using protocols such as POP3, we should not be given access to the mailbox before verifying our identity. In the POP3 example below, we are identified as the user frank, and the server authenticated us because we provided the correct password. In other words, the password is one way to authenticate.
 telnet 10.10.158.132 110
@@ -596,7 +604,8 @@ Requiring the use of a public certificate for authentication. This approach work
 Two-Factor Authentication: Ask the user to provide a code available via other means, such as email, smartphone app or SMS.
 There are many other approaches that are more sophisticated or might require some established knowledge about the user, such as IP-based geolocation.
 Using a combination of the above approaches is an excellent approach to protect against password attacks.
-Summary
+
+## Summary
 This room covered various protocols, their usage, and how they work under the hood. Three common attacks are:
 Sniffing Attack
 MITM Attack
@@ -675,6 +684,3 @@ Use in case of non-default service port number
 Show the username and password combinations being tried
 -d
 Display debugging output if the verbose output is not helping
-
-
-
