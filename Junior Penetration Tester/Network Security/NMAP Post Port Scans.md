@@ -315,30 +315,18 @@ Host: 10.10.99.102	Status: Up
 Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)/, 25/open/tcp//smtp//Postfix smtpd/, 80/open/tcp//http//nginx 1.6.2/, 110/open/tcp//pop3//Dovecot pop3d/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 143/open/tcp//imap//Dovecot imapd/	Ignored State: closed (994)	OS: Linux 3.13	Seq Index: 257	IP ID Seq: All zeros
 # Nmap done at Fri Sep 10 05:14:28 2021 -- 1 IP address (1 host up) scanned in 9.99 seconds
 ```
-* An example use of grep is grep KEYWORD TEXT_FILE; this command will display all the lines containing the provided keyword.
-* Let’s compare the output of using grep on normal output and grepable output.
-* You will notice that the former does not provide the IP address of the host.
-* Instead, it returned 80/tcp open http nginx 1.6.2, making it very inconvenient if you are sifting through the scan results of multiple systems.
-* However, the latter provides enough information, such as the host’s IP address, in each line to make it complete.
-```
-grep http 10.10.99.102_scan.nmap 
-
-80/tcp  open  http    nginx 1.6.2
-OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-```
-```       
-grep http 10.10.99.102_scan.gnmap
- 
-Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)/, 25/open/tcp//smtp//Postfix smtpd/, 80/open/tcp//http//nginx 1.6.2/, 110/open/tcp//pop3//Dovecot pop3d/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 143/open/tcp//imap//Dovecot imapd/	Ignored State: closed (994)	OS: Linux 3.13	Seq Index: 257	IP ID Seq: All zeros
-```
+* An example use of `grep` is `grep KEYWORD TEXT_FILE`.
+  * Displays all the lines containing the provided keyword.
 
 ### XML
-* The third format is XML. You can save the scan results in XML format using -oX FILENAME.
-* The XML format would be most convenient to process the output in other programs.
-* Conveniently enough, you can save the scan output in all three formats using -oA FILENAME to combine -oN, -oG, and -oX for normal, grepable, and XML.
+* Save the scan results in XML format using `-oX FILENAME`.
+* Most convenient to process output in other programs.
+* Save the scan output in all three formats using `-oA FILENAME` to combine `-oN`, `-oG`, and `-oX` for normal, grepable, and XML.
 
 ### Script Kiddie
-A fourth format is script kiddie. You can see that this format is useless if you want to search the output for any interesting keywords or keep the results for future reference. However, you can use it to save the output of the scan nmap -sS 127.0.0.1 -oS FILENAME, display the output filename, and look 31337 in front of friends who are not tech-savvy.
+* This format is useless if needing to search the output for any interesting keywords or keep the results for future reference.
+* However, you can use it to save the output of the scan `nmap -sS 127.0.0.1 -oS FILENAME` and look 31337 in front of friends who are not tech-savvy.
+```
 cat 10.10.99.102_scan.kiddie 
 
 $tart!ng nMaP 7.60 ( httpz://nMap.0rG ) at 2021-09-10 05:17 B$T
@@ -358,31 +346,20 @@ $3rv1c3 InFO: Ho$t:  dEBra2.thM.lOcal; 0s: Linux; cPe: cP3:/0:linux:l|nux_k3rnel
 
 0S and servIc3 D3tEcti0n pErf0rm3d. Plea$e r3p0rt any !nc0RrecT rE$ultz at hTtpz://nmap.0rg/$ubmit/ .
 Nmap d0nE: 1 |P addr3SS (1 hoSt up) $CaNnEd !n 21.80 s3c0Ndz       
-Summary
-In this room, we learned how to detect the running services and their versions along with the host operating system. We learned how to enable traceroute and we covered selecting one or more scripts to aid in penetration testing. Finally, we covered the different formats to save the scan results for future reference. The table below summarises the most important options we covered in this room.
-Option
-Meaning
--sV
-determine service/version info on open ports
--sV --version-light
-try the most likely probes (2)
--sV --version-all
-try all available probes (9)
--O
-detect OS
---traceroute
-run traceroute to target
---script=SCRIPTS
-Nmap scripts to run
--sC or --script=default
-run default scripts
--A
-equivalent to -sV -O -sC --traceroute
--oN
-save output in normal format
--oG
-save output in grepable format
--oX
-save output in XML format
--oA
-save output in normal, XML and Grepable formats
+```
+## Summary
+
+| Option | Meaning
+| --- | ---
+| `-sV` | determine service/version info on open ports
+| `-sV` --version-light` | try the most likely probes (2)
+| `-sV` --version-all` | try all available probes (9)
+| `-O` | detect OS
+| `--traceroute` | run traceroute to target
+| `--script=SCRIPTS` | Nmap scripts to run
+| `-sC` or `--script=default` | run default scripts
+| `-A` | equivalent to `-sV` `-O` `-sC` `--traceroute`
+| `-oN` | save output in normal format
+| `-oG` | save output in grepable format
+| `-oX`  | save output in XML format
+| `-oA` | save output in normal, XML and Grepable formats
