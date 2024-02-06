@@ -336,8 +336,16 @@ Connection closed by foreign host.
 * Consider IMAP to keep all mailboxes synchronised.
 
 ## Internet Message Access Protocol (IMAP)
-Internet Message Access Protocol (IMAP) is more sophisticated than POP3. IMAP makes it possible to keep your email synchronised across multiple devices (and mail clients). In other words, if you mark an email message as read when checking your email on your smartphone, the change will be saved on the IMAP server (MDA) and replicated on your laptop when you synchronise your inbox.
-Let’s take a look at sample IMAP commands. In the console output below, we use Telnet to connect to the IMAP server’s default port, and then we authenticate using LOGIN username password. IMAP requires each command to be preceded by a random string to be able to track the reply. So we added c1, then c2, and so on. Then we listed our mail folders using LIST "" "*", before checking if we have any new messages in the inbox using EXAMINE INBOX. We don’t need to memorise these commands; however, we are simply providing the example below to give a vivid image of what happens when the mail client communicates with an IMAP server.
+* Internet Message Access Protocol (IMAP) is more sophisticated than POP3.
+* IMAP makes it possible to keep your email synchronised across multiple devices (and mail clients).
+* In other words, if you mark an email message as read when checking your email on your smartphone, the change will be saved on the IMAP server (MDA) and replicated on your laptop when you synchronise your inbox.
+* Let’s take a look at sample IMAP commands.
+* In the console output below, we use Telnet to connect to the IMAP server’s default port, and then we authenticate using LOGIN username password.
+* IMAP requires each command to be preceded by a random string to be able to track the reply.
+* So we added c1, then c2, and so on.
+* Then we listed our mail folders using LIST "" "*", before checking if we have any new messages in the inbox using EXAMINE INBOX.
+* We don’t need to memorise these commands; however, we are simply providing the example below to give a vivid image of what happens when the mail client communicates with an IMAP server.
+```
 telnet 10.10.249.0 143
 
 Trying 10.10.249.0...
@@ -366,42 +374,24 @@ c4 LOGOUT
 * BYE Courier-IMAP server shutting down
 c4 OK LOGOUT completed
 Connection closed by foreign host.
-It is clear that IMAP sends the login credentials in cleartext, as we can see in the command LOGIN frank D2xc9CgD. Anyone watching the network traffic would be able to know Frank’s username and password.
-Summary
-It is good to remember the default port number for common protocols. Below is a summary of the protocols we covered, sorted in alphabetical order, along with their default port numbers.
-Protocol
-TCP Port
-Application(s)
-Data Security
-FTP
-21
-File Transfer
-Cleartext
-HTTP
-80
-World Wide Web
-Cleartext
-IMAP
-143
-Email (MDA)
-Cleartext
-POP3
-110
-Email (MDA)
-Cleartext
-SMTP
-25
-Email (MTA)
-Cleartext
-Telnet
-23
-Remote Access
-Cleartext
+```
+* It is clear that IMAP sends the login credentials in cleartext, as we can see in the command LOGIN frank D2xc9CgD. Anyone watching the network traffic would be able to know Frank’s username and password.
 
-Servers implementing the protocols above are subject to different kinds of attacks. To name a few, consider:
-Sniffing Attack (Network Packet Capture)
-Man-in-the-Middle (MITM) Attack
-Password Attack (Authentication Attack)
+## Summary
+
+| Protocol | TCP Port | Application(s) | Data Security
+| --- | --- | --- | ---
+| FTP | 21 | File Transfer | Cleartext
+| HTTP | 80 | World Wide Web | Cleartext
+| IMAP | 143 | Email (MDA) | Cleartext
+| POP3 | 110 | Email (MDA) | Cleartext
+| SMTP | 25 | Email (MTA) | Cleartext
+| Telnet | 23 | Remote Access | Cleartext
+
+* Servers implementing the protocols above are subject to attacks.
+  * Sniffing Attack (Network Packet Capture).
+  * Man-in-the-Middle (MITM) Attack.
+  * Password Attack (Authentication Attack).
 
 ## Vulnerabilities
 From a security perspective, we always need to think about what we aim to protect; consider the security triad: Confidentiality, Integrity, and Availability (CIA). Confidentiality refers to keeping the contents of the communications accessible to the intended parties. Integrity is the idea of assuring any data sent is accurate, consistent, and complete when reaching its destination. Finally, availability refers to being able to access the service when we need it. Different parties will put varying emphasis on these three. For instance, confidentiality would be the highest priority for an intelligence agency. Online banking will put more emphasis on the integrity of transactions. Availability is of the highest importance for any platform making money by serving ads.
