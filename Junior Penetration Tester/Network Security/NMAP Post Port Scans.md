@@ -264,14 +264,21 @@ Nmap done: 1 IP address (1 host up) scanned in 1.78 seconds
   * Downloading and using a Nmap script from the Internet holds a certain level of risk.
 
 ## Saving the Output
-Whenever you run a Nmap scan, it is only reasonable to save the results in a file. Selecting and adopting a good naming convention for your filenames is also crucial. The number of files can quickly grow and hinder your ability to find a previous scan result. The three main formats are:
-Normal
-Grepable (grepable)
-XML
-There is a fourth one that we cannot recommend:
-Script Kiddie
-Normal
-As the name implies, the normal format is similar to the output you get on the screen when scanning a target. You can save your scan in normal format by using -oN FILENAME; N stands for normal. Here is an example of the result.
+* Save the results in a file whenever an Nmap scan is run.
+* Selecting and adopting a good naming convention for the filenames is also crucial.
+  * Number of files can quickly grow and hinder the ability to find a previous scan result.
+* Four main formats.
+1. Normal
+2. Grepable (grepable)
+3. XML
+4. Script Kiddie
+   * This format is not recommended.
+
+### Normal
+* Similar to the screen output when scanning a target.
+* Save in normal format using -`oN FILENAME`.
+  * N stands for normal.
+```
 cat 10.10.99.102_scan.nmap 
 
 # Nmap 7.60 scan initiated Fri Sep 10 05:14:19 2021 as: nmap -sS -sV -O -oN 10.10.99.102_scan 10.10.99.102
@@ -295,7 +302,8 @@ Service Info: Host:  debra2.thm.local; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 # Nmap done at Fri Sep 10 05:14:28 2021 -- 1 IP address (1 host up) scanned in 9.99 seconds
-Grepable
+```
+### Grepable
 The grepable format has its name from the command grep; grep stands for Global Regular Expression Printer. In simple terms, it makes filtering the scan output for specific keywords or terms efficient. You can save the scan result in grepable format using -oG FILENAME. The scan output, displayed above in normal format, is shown in the console below using grepable format. The normal output is 21 lines; however, the grepable output is only 4 lines. The main reason is that Nmap wants to make each line meaningful and complete when the user applies grep. As a result, in grepable output, the lines are so long and are not convenient to read compared to normal output.
 cat 10.10.99.102_scan.gnmap 
 
