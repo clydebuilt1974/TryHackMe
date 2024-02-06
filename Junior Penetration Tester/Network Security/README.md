@@ -1,3 +1,7 @@
 ## 1. [Passive Reconnaissance](Passive%20Reconnaissance.md)
 ## 2. [Active Reconnaissance](Active%20Reconnaissance.md)
 ## 3. [Live Host Discovery](NMAP%20Live%20Host%20Discovery.md)
+## 4. [NMAP Basic Port Scans](NMAP%20Basic%20Port%20Scans.md)
+## 5. [NMAP Advanced Port Scans](NMAP%20Advanced%20Port%20Scans.md)
+## 6. [NMAP Post Port Scans](NMAP%20Post%20Port%20Scans.md)
+## 7. [Protocols and Servers](Protocols%20and%20Servers.md)
