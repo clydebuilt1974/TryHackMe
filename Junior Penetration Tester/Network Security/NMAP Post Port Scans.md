@@ -304,25 +304,40 @@ OS and Service detection performed. Please report any incorrect results at https
 # Nmap done at Fri Sep 10 05:14:28 2021 -- 1 IP address (1 host up) scanned in 9.99 seconds
 ```
 ### Grepable
-The grepable format has its name from the command grep; grep stands for Global Regular Expression Printer. In simple terms, it makes filtering the scan output for specific keywords or terms efficient. You can save the scan result in grepable format using -oG FILENAME. The scan output, displayed above in normal format, is shown in the console below using grepable format. The normal output is 21 lines; however, the grepable output is only 4 lines. The main reason is that Nmap wants to make each line meaningful and complete when the user applies grep. As a result, in grepable output, the lines are so long and are not convenient to read compared to normal output.
+* Grep stands for Global Regular Expression Printer.
+* Makes filtering the scan output for specific keywords or terms efficient.
+* Save the scan result using `-oG FILENAME`.
+```
 cat 10.10.99.102_scan.gnmap 
 
 # Nmap 7.60 scan initiated Fri Sep 10 05:14:19 2021 as: nmap -sS -sV -O -oG 10.10.99.102_scan 10.10.99.102
 Host: 10.10.99.102	Status: Up
 Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)/, 25/open/tcp//smtp//Postfix smtpd/, 80/open/tcp//http//nginx 1.6.2/, 110/open/tcp//pop3//Dovecot pop3d/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 143/open/tcp//imap//Dovecot imapd/	Ignored State: closed (994)	OS: Linux 3.13	Seq Index: 257	IP ID Seq: All zeros
 # Nmap done at Fri Sep 10 05:14:28 2021 -- 1 IP address (1 host up) scanned in 9.99 seconds
-An example use of grep is grep KEYWORD TEXT_FILE; this command will display all the lines containing the provided keyword. Let’s compare the output of using grep on normal output and grepable output. You will notice that the former does not provide the IP address of the host. Instead, it returned 80/tcp open http nginx 1.6.2, making it very inconvenient if you are sifting through the scan results of multiple systems. However, the latter provides enough information, such as the host’s IP address, in each line to make it complete.
+```
+* An example use of grep is grep KEYWORD TEXT_FILE; this command will display all the lines containing the provided keyword.
+* Let’s compare the output of using grep on normal output and grepable output.
+* You will notice that the former does not provide the IP address of the host.
+* Instead, it returned 80/tcp open http nginx 1.6.2, making it very inconvenient if you are sifting through the scan results of multiple systems.
+* However, the latter provides enough information, such as the host’s IP address, in each line to make it complete.
+```
 grep http 10.10.99.102_scan.nmap 
 
 80/tcp  open  http    nginx 1.6.2
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-       
+```
+```       
 grep http 10.10.99.102_scan.gnmap
  
-Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)/, 25/open/tcp//smtp//Postfix smtpd/, 80/open/tcp//http//nginx 1.6.2/, 110/open/tcp//pop3//Dovecot pop3d/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 143/open/tcp//imap//Dovecot imapd/	Ignored State: closed (994)	OS: Linux 3.13	Seq Index: 257	IP ID Seq: All zeros       
-XML
-The third format is XML. You can save the scan results in XML format using -oX FILENAME. The XML format would be most convenient to process the output in other programs. Conveniently enough, you can save the scan output in all three formats using -oA FILENAME to combine -oN, -oG, and -oX for normal, grepable, and XML.
-Script Kiddie
+Host: 10.10.99.102	Ports: 22/open/tcp//ssh//OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)/, 25/open/tcp//smtp//Postfix smtpd/, 80/open/tcp//http//nginx 1.6.2/, 110/open/tcp//pop3//Dovecot pop3d/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 143/open/tcp//imap//Dovecot imapd/	Ignored State: closed (994)	OS: Linux 3.13	Seq Index: 257	IP ID Seq: All zeros
+```
+
+### XML
+* The third format is XML. You can save the scan results in XML format using -oX FILENAME.
+* The XML format would be most convenient to process the output in other programs.
+* Conveniently enough, you can save the scan output in all three formats using -oA FILENAME to combine -oN, -oG, and -oX for normal, grepable, and XML.
+
+### Script Kiddie
 A fourth format is script kiddie. You can see that this format is useless if you want to search the output for any interesting keywords or keep the results for future reference. However, you can use it to save the output of the scan nmap -sS 127.0.0.1 -oS FILENAME, display the output filename, and look 31337 in front of friends who are not tech-savvy.
 cat 10.10.99.102_scan.kiddie 
 
