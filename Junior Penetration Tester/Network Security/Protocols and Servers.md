@@ -453,25 +453,16 @@ E..C.X@.@.g.
   * Transport Layer Security (TLS) protects from MITM attacks with the help of Public Key Infrastructure (PKI) and trusted root certificates.
 
 ## Transport Layer Security (TLS)
-* In this task, we learn about a standard solution to protect the confidentiality and integrity of the exchanged packets.
-* The following approach can protect against password sniffing and MITM attacks.
-* SSL (Secure Sockets Layer) started when the world wide web started to see new applications, such as online shopping and sending payment information.
-* Netscape introduced SSL in 1994, with SSL 3.0 being released in 1996.
-* But eventually, more security was needed, and the TLS (Transport Layer Security) protocol was introduced in 1999.
-* Before we explain what TLS and SSL provide, let’s see how they fit the networking model.
-* The common protocols we have covered so far send the data in cleartext; this makes it possible for anyone with access to the network to capture, save and analyse the exchanged messages.
-* The image below shows the ISO/OSI network layers.
-* The protocols we have covered so far in this room are on the application layer.
-* Consider the ISO/OSI model; we can add encryption to our protocols via the presentation layer.
-* Consequently, data will be presented in an encrypted format (ciphertext) instead of its original form.
-* Because of the close relation between SSL and TLS, one might be used instead of the other.
-* However, TLS is more secure than SSL, and it has practically replaced SSL.
-* We could have dropped SSL and just written TLS instead of SSL/TLS, but we will continue to mention the two to avoid any ambiguity because the term SSL is still in wide use.
-* However, we can expect all modern servers to be using TLS.
-* An existing cleartext protocol can be upgraded to use encryption via SSL/TLS.
-* We can use TLS to upgrade HTTP, FTP, SMTP, POP3, and IMAP, to name a few. T
-* he following table lists the protocols we have covered and their default ports before and after the encryption upgrade via SSL/TLS.
-* The list is not exhaustive; however, the purpose is to help us better understand the process.
+* Standard solution to protect the confidentiality and integrity of exchanged packets.
+* Can protect against password sniffing and MITM attacks.
+* SSL (Secure Sockets Layer) started when the world wide web started to see new applications such as online shopping and sending payment information.
+* Netscape introduced SSL in 1994 with SSL 3.0 being released in 1996.
+* TLS (Transport Layer Security) protocol was introduced in 1999.
+* Encryption can be added to protocols via the presentation layer of the ISO/OSI model.
+* Data will then be presented in an encrypted format (ciphertext) instead of its original form.
+* TLS is more secure than SSL and it has practically replaced it.
+  * Expect all modern servers to be using TLS.
+* Existing cleartext protocol can be upgraded to use encryption via SSL/TLS.
 
 | Protocol | Default Port | Secured Protocol | Default Port with TLS
 | --- | --- | --- | ---
