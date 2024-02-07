@@ -158,8 +158,12 @@ nops/
 ```
 ### Payloads
 * Payloads are codes that will run on the target system.
-* Exploits will leverage a vulnerability on the target system, but to achieve the desired result, we will need a payload. Examples could be; getting a shell, loading a malware or backdoor to the target system, running a command, or launching calc.exe as a proof of concept to add to the penetration test report. Starting the calculator on the target system remotely by launching the calc.exe application is a benign way to show that we can run commands on the target system.
-Running commands on the target system is already an important step but having an interactive connection that allows you to type commands that will be executed on the target system is better. Such an interactive command line is called a "shell". Metasploit offers the ability to send different payloads that can open shells on the target system.
+* Exploits will leverage a vulnerability on the target system, but to achieve the desired result, we will need a payload.
+* Examples could be; getting a shell, loading a malware or backdoor to the target system, running a command, or launching calc.exe as a proof of concept to add to the penetration test report.
+* Starting the calculator on the target system remotely by launching the calc.exe application is a benign way to show that we can run commands on the target system.
+* Running commands on the target system is already an important step but having an interactive connection that allows you to type commands that will be executed on the target system is better.
+* Such an interactive command line is called a "shell". Metasploit offers the ability to send different payloads that can open shells on the target system.
+```
 root@ip-10-10-135-188:/opt/metasploit-framework/embedded/framework/modules# tree -L 1 payloads/
 payloads/
 ├── adapters
@@ -168,20 +172,27 @@ payloads/
 └── stages
 
 4 directories, 0 files   
-You will see four different directories under payloads: adapters, singles, stagers and stages.
-Adapters: An adapter wraps single payloads to convert them into different formats. For example, a normal single payload can be wrapped inside a Powershell adapter, which will make a single powershell command that will execute the payload.
-Singles: Self-contained payloads (add user, launch notepad.exe, etc.) that do not need to download an additional component to run.
-Stagers: Responsible for setting up a connection channel between Metasploit and the target system. Useful when working with staged payloads. “Staged payloads” will first upload a stager on the target system then download the rest of the payload (stage). This provides some advantages as the initial size of the payload will be relatively small compared to the full payload sent at once.
-Stages: Downloaded by the stager. This will allow you to use larger sized payloads.
-Metasploit has a subtle way to help you identify single (also called “inline”) payloads and staged payloads.
-
+```
+* You will see four different directories under payloads: adapters, singles, stagers and stages.
+* Adapters: An adapter wraps single payloads to convert them into different formats.
+* For example, a normal single payload can be wrapped inside a Powershell adapter, which will make a single powershell command that will execute the payload.
+* Singles: Self-contained payloads (add user, launch notepad.exe, etc.) that do not need to download an additional component to run.
+* Stagers: Responsible for setting up a connection channel between Metasploit and the target system. Useful when working with staged payloads.
+* “Staged payloads” will first upload a stager on the target system then download the rest of the payload (stage).
+* This provides some advantages as the initial size of the payload will be relatively small compared to the full payload sent at once.
+* Stages: Downloaded by the stager. This will allow you to use larger sized payloads.
+* Metasploit has a subtle way to help you identify single (also called “inline”) payloads and staged payloads.
+```
 generic/shell_reverse_tcp
 windows/x64/shell/reverse_tcp
+```
+* Both are reverse Windows shells.
+* The former is an inline (or single) payload, as indicated by the “_” between “shell” and “reverse”.
+* While the latter is a staged payload, as indicated by the “/” between “shell” and “reverse”.
 
-Both are reverse Windows shells. The former is an inline (or single) payload, as indicated by the “_” between “shell” and “reverse”. While the latter is a staged payload, as indicated by the “/” between “shell” and “reverse”.
-Post
-Post modules will be useful on the final stage of the penetration testing process listed above, post-exploitation.
-
+### Post
+* Post modules will be useful on the final stage of the penetration testing process listed above, post-exploitation.
+```
 root@ip-10-10-135-188:/opt/metasploit-framework/embedded/framework/modules# tree -L 1 post/
 post/
 ├── aix
@@ -198,14 +209,19 @@ post/
 └── windows
 
 12 directories, 0 files
-     
-If you wish to familiarise yourself further with these modules, you can find them under the modules folder of your Metasploit installation. 
-Msfconsole
-As previously mentioned, the console will be your main interface to the Metasploit Framework. You can launch it using the msfconsole command on your AttackBox terminal or any system the Metasploit Framework is installed on.
+```     
+* If you wish to familiarise yourself further with these modules, you can find them under the modules folder of your Metasploit installation. 
 
-
-Once launched, you will see the command line changes to msf6 (or msf5 depending on the installed version of Metasploit). The Metasploit console (msfconsole) can be used just like a regular command-line shell, as you can see below. The first command is ls which lists the contents of the folder from which Metasploit was launched using the msfconsole command.
-It is followed by a ping sent to Google's DNS IP address (8.8.8.8). As we operate from the AttackBox, which is Linux we had to add the -c 1 option, so only a single ping was sent. Otherwise, the ping process would continue until it is stopped using CTRL+C.
+## Msfconsole
+* As previously mentioned, the console will be your main interface to the Metasploit Framework.
+* You can launch it using the msfconsole command on your AttackBox terminal or any system the Metasploit Framework is installed on.
+* Once launched, you will see the command line changes to msf6 (or msf5 depending on the installed version of Metasploit).
+* The Metasploit console (msfconsole) can be used just like a regular command-line shell, as you can see below.
+* The first command is ls which lists the contents of the folder from which Metasploit was launched using the msfconsole command.
+* It is followed by a ping sent to Google's DNS IP address (8.8.8.8).
+* As we operate from the AttackBox, which is Linux we had to add the -c 1 option, so only a single ping was sent.
+* Otherwise, the ping process would continue until it is stopped using CTRL+C.
+```
 msf6 > ls
 [*] exec: ls
 
@@ -222,22 +238,26 @@ PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 1.335/1.335/1.335/0.000 ms
 msf6 >
-It will support most Linux commands, including clear (to clear the terminal screen), but will not allow you to use some features of a regular command line (e.g. does not support output redirection), as seen below.
+```
+* It will support most Linux commands, including clear (to clear the terminal screen), but will not allow you to use some features of a regular command line (e.g. does not support output redirection), as seen below.
+```
 msf6 > help > help.txt
 [-] No such command
 msf6 >
-While on the subject, the help command can be used on its own or for a specific command. Below is the help menu for the set command we will cover soon.
+```
+* While on the subject, the help command can be used on its own or for a specific command.
+* Below is the help menu for the set command we will cover soon.
+```
 msf6 > help set
 Usage: set [option] [value]
-
-Set the given option to value.  If value is omitted, print the current value.
-If both are omitted, print options that are currently set.
-
-If run from a module context, this will set the value in the module's
-datastore.  Use -g to operate on the global datastore.
-
-If setting a PAYLOAD, this command can take an index from `show payloads'.
-
+```
+* Set the given option to value.
+* If value is omitted, print the current value.
+* If both are omitted, print options that are currently set.
+* If run from a module context, this will set the value in the module's datastore.
+* Use -g to operate on the global datastore.
+* If setting a PAYLOAD, this command can take an index from `show payloads'.
+```
 msf6 >
 You can use the history command to see commands you have typed earlier.
 msf6 > history
@@ -251,15 +271,29 @@ msf6 > history
 8  exit -y
 9  version
 10  use exploit/multi/script/web_delivery
-An important feature of msfconsole is the support of tab completion. This will come in handy later when using Metasploit commands or dealing with modules. For example, if you start typing he and press the tab key, you will see it auto-completes to help.
-Msfconsole is managed by context; this means that unless set as a global variable, all parameter settings will be lost if you change the module you have decided to use. In the example below, we have used the ms17_010_eternalblue exploit, and we have set parameters such as RHOSTS. If we were to switch to another module (e.g. a port scanner), we would need to set the RHOSTS value again as all changes we have made remained in the context of the ms17_010_eternalblue exploit. 
-Let us look at the example below to have a better understanding of this feature. We will use the MS17-010 “Eternalblue” exploit for illustration purposes.
-Once you type the use exploit/windows/smb/ms17_010_eternalblue command, you will see the command line prompt change from msf6 to “msf6 exploit(windows/smb/ms17_010_eternalblue)”. The "EternalBlue" is an exploit allegedly developed by the U.S. National Security Agency (N.S.A.) for a vulnerability affecting the SMBv1 server on numerous Windows systems. The SMB (Server Message Block) is widely used in Windows networks for file sharing and even for sending files to printers. EternalBlue was leaked by the cybercriminal group "Shadow Brokers" in April 2017. In May 2017, this vulnerability was exploited worldwide in the WannaCry ransomware attack.
+```
+* An important feature of msfconsole is the support of tab completion.
+* This will come in handy later when using Metasploit commands or dealing with modules.
+* For example, if you start typing he and press the tab key, you will see it auto-completes to help.
+* Msfconsole is managed by context; this means that unless set as a global variable, all parameter settings will be lost if you change the module you have decided to use.
+* In the example below, we have used the ms17_010_eternalblue exploit, and we have set parameters such as RHOSTS.
+* If we were to switch to another module (e.g. a port scanner), we would need to set the RHOSTS value again as all changes we have made remained in the context of the ms17_010_eternalblue exploit.
+* Let us look at the example below to have a better understanding of this feature.
+* We will use the MS17-010 “Eternalblue” exploit for illustration purposes.
+* Once you type the use exploit/windows/smb/ms17_010_eternalblue command, you will see the command line prompt change from msf6 to “msf6 exploit(windows/smb/ms17_010_eternalblue)”.
+* The "EternalBlue" is an exploit allegedly developed by the U.S. National Security Agency (N.S.A.) for a vulnerability affecting the SMBv1 server on numerous Windows systems.
+* The SMB (Server Message Block) is widely used in Windows networks for file sharing and even for sending files to printers.
+* EternalBlue was leaked by the cybercriminal group "Shadow Brokers" in April 2017.
+* In May 2017, this vulnerability was exploited worldwide in the WannaCry ransomware attack.
+```
 msf6 > use exploit/windows/smb/ms17_010_eternalblue 
 [*] No payload configured, defaulting to windows/x64/meterpreter/reverse_tcp
 msf6 exploit(windows/smb/ms17_010_eternalblue) >       
-The module to be used can also be selected with the use command followed by the number at the beginning of the search result line.
-While the prompt has changed, you will notice we can still run the commands previously mentioned. This means we did not "enter" a folder as you would typically expect in an operating system command line.
+```
+* The module to be used can also be selected with the use command followed by the number at the beginning of the search result line.
+* While the prompt has changed, you will notice we can still run the commands previously mentioned.
+* This means we did not "enter" a folder as you would typically expect in an operating system command line.
+```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > ls
 [*] exec: ls
 
@@ -267,37 +301,46 @@ burpsuite_community_linux_v2021_8_1.sh	Instructions  Scripts
 Desktop	Pictures      thinclient_drives
 Downloads	Postman       Tools
 msf6 exploit(windows/smb/ms17_010_eternalblue) >
-The prompt tells us we now have a context set in which we will work. You can see this by typing the show options command.
-
-This will print options related to the exploit we have chosen earlier. The show options command will have different outputs depending on the context it is used in. The example above shows that this exploit will require we set variables like RHOSTS and RPORT. On the other hand, a post-exploitation module may only need us to set a SESSION ID (see the screenshot below). A session is an existing connection to the target system that the post-exploitation module will use.
-
-The show command can be used in any context followed by a module type (auxiliary, payload, exploit, etc.) to list available modules. The example below lists payloads that can be used with the ms17-010 Eternalblue exploit.
-
-If used from the msfconsole prompt, the show command will list all modules.
-The use and show options commands we have seen so far are identical for all modules in Metasploit.
-You can leave the context using the back command.
+```
+* The prompt tells us we now have a context set in which we will work.
+* You can see this by typing the show options command.
+* This will print options related to the exploit we have chosen earlier.
+* The show options command will have different outputs depending on the context it is used in.
+* The example above shows that this exploit will require we set variables like RHOSTS and RPORT.
+* On the other hand, a post-exploitation module may only need us to set a SESSION ID (see the screenshot below).
+* A session is an existing connection to the target system that the post-exploitation module will use.
+* The show command can be used in any context followed by a module type (auxiliary, payload, exploit, etc.) to list available modules. 
+* The example below lists payloads that can be used with the ms17-010 Eternalblue exploit.
+* If used from the msfconsole prompt, the show command will list all modules.
+* The use and show options commands we have seen so far are identical for all modules in Metasploit.
+* You can leave the context using the back command.
+```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > back
 msf6 > 
-Further information on any module can be obtained by typing the info command within its context.
+```
+* Further information on any module can be obtained by typing the info command within its context.
+* Alternatively, you can use the info command followed by the module’s path from the msfconsole prompt (e.g. info exploit/windows/smb/ms17_010_eternalblue).
+* Info is not a help menu; it will display detailed information on the module such as its author, relevant sources, etc.
 
-Alternatively, you can use the info command followed by the module’s path from the msfconsole prompt (e.g. info exploit/windows/smb/ms17_010_eternalblue). Info is not a help menu; it will display detailed information on the module such as its author, relevant sources, etc.
-Search
-One of the most useful commands in msfconsole is search. This command will search the Metasploit Framework database for modules relevant to the given search parameter. You can conduct searches using CVE numbers, exploit names (eternalblue, heartbleed, etc.), or target system.
+## Search
+* One of the most useful commands in msfconsole is search.
+* This command will search the Metasploit Framework database for modules relevant to the given search parameter.
+* You can conduct searches using CVE numbers, exploit names (eternalblue, heartbleed, etc.), or target system.
+* The output of the search command provides an overview of each returned module.
+* You may notice the “name” column already gives more information than just the module name.
+* You can see the type of module (auxiliary, exploit, etc.) and the category of the module (scanner, admin, windows, Unix, etc.).
+* You can use any module returned in a search result with the command use followed by the number at the beginning of the result line. (e.g. use 0 instead of use auxiliary/admin/smb/ms17_010_command)
+* Another essential piece of information returned is in the “rank” column.
+* Exploits are rated based on their reliability. The table below provides their respective descriptions.
+* Source: https://github.com/rapid7/metasploit-framework/wiki/Exploit-Ranking
+* You can direct the search function using keywords such as type and platform.
+* For example, if we wanted our search results to only include auxiliary modules, we could set the type to auxiliary.
+* The screenshot below shows the output of the search type:auxiliary telnet command.
+* Please remember that exploits take advantage of a vulnerability on the target system and may always show unexpected behaviour.
+* A low-ranking exploit may work perfectly, and an excellent ranked exploit may not, or worse, crash the target system.
 
-       
-The output of the search command provides an overview of each returned module. You may notice the “name” column already gives more information than just the module name. You can see the type of module (auxiliary, exploit, etc.) and the category of the module (scanner, admin, windows, Unix, etc.). You can use any module returned in a search result with the command use followed by the number at the beginning of the result line. (e.g. use 0 instead of use auxiliary/admin/smb/ms17_010_command)
-
-Another essential piece of information returned is in the “rank” column. Exploits are rated based on their reliability. The table below provides their respective descriptions.
-
-Source: https://github.com/rapid7/metasploit-framework/wiki/Exploit-Ranking
-
-You can direct the search function using keywords such as type and platform.
-For example, if we wanted our search results to only include auxiliary modules, we could set the type to auxiliary. The screenshot below shows the output of the search type:auxiliary telnet command.
-
-       
-Please remember that exploits take advantage of a vulnerability on the target system and may always show unexpected behaviour. A low-ranking exploit may work perfectly, and an excellent ranked exploit may not, or worse, crash the target system.
-Working with modules
-Any Metasploit version 5 or 6 will have menus and screens similar to those shown here so you can use the AttackBox or any operating system installed on your local computer.
+## Working with modules
+* Any Metasploit version 5 or 6 will have menus and screens similar to those shown here so you can use the AttackBox or any operating system installed on your local computer.
 Once you have entered the context of a module using the use command followed by the module name, you will need to set parameters. The most common parameters you will use are listed below. Remember, based on the module you use, additional or different parameters may need to be set. It is good practice to use the show options command to list the required parameters.
 All parameters are set using the same command syntax:
 set PARAMETER_NAME VALUE
@@ -347,7 +390,8 @@ The show options command shows the RHOSTS parameter is already populated with th
 
        
 The setg command sets a global value that will be used until you exit Metasploit or clear it using the unsetg command.
-Using modules
+
+## Using modules
 Once all module parameters are set, you can launch the module using the exploit command. Metasploit also supports the run command, which is an alias created for the exploit command as the word exploit did not make sense when using modules that were not exploits (port scanners, vulnerability scanners, etc.).
 
 The exploit command can be used without any parameters or using the “-z” parameter.
@@ -356,17 +400,15 @@ The exploit -z command will run the exploit and background the session as soon a
        
 This will return you the context prompt from which you have run the exploit.
 Some modules support the check option. This will check if the target system is vulnerable without exploiting it.
-Sessions
+
+## Sessions
 Once a vulnerability has been successfully exploited, a session will be created. This is the communication channel established between the target system and Metasploit.
 You can use the background command to background the session prompt and go back to the msfconsole prompt.
-
+```
 meterpreter > background
 [*] Backgrounding session 2...
 msf6 exploit(windows/smb/ms17_010_eternalblue) > 
-      
+```      
 Alternatively, CTRL+Z can be used to background sessions.
 The sessions command can be used from the msfconsole prompt or any context to see the existing sessions.
-
-
-
 To interact with any session, you can use the sessions -i command followed by the desired session number.
