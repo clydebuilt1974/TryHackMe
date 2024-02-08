@@ -310,21 +310,21 @@ msf6 >
 * `Info` is not a help menu but will display detailed information on the module such as its author, relevant sources, etc.
 
 ## Search
-* One of the most useful commands in msfconsole is search.
-* This command will search the Metasploit Framework database for modules relevant to the given search parameter.
-* You can conduct searches using CVE numbers, exploit names (eternalblue, heartbleed, etc.), or target system.
-* The output of the search command provides an overview of each returned module.
-* You may notice the “name” column already gives more information than just the module name.
-* You can see the type of module (auxiliary, exploit, etc.) and the category of the module (scanner, admin, windows, Unix, etc.).
-* You can use any module returned in a search result with the command use followed by the number at the beginning of the result line. (e.g. use 0 instead of use auxiliary/admin/smb/ms17_010_command)
-* Another essential piece of information returned is in the “rank” column.
-* Exploits are rated based on their reliability. The table below provides their respective descriptions.
-* Source: https://github.com/rapid7/metasploit-framework/wiki/Exploit-Ranking
-* You can direct the search function using keywords such as type and platform.
-* For example, if we wanted our search results to only include auxiliary modules, we could set the type to auxiliary.
-* The screenshot below shows the output of the search type:auxiliary telnet command.
-* Please remember that exploits take advantage of a vulnerability on the target system and may always show unexpected behaviour.
-* A low-ranking exploit may work perfectly, and an excellent ranked exploit may not, or worse, crash the target system.
+* One of the most useful commands in msfconsole.
+* Searches the Metasploit Framework database for modules relevant to the given search parameter.
+* Can conduct searches using CVE numbers, exploit names (eternalblue, heartbleed, etc.), or target system.
+* Output of search command provides an overview of each returned module.
+  * 'name' column gives more information than just the module name.
+  * Type of module (auxiliary, exploit, etc.).
+  * Category of the module (scanner, admin, windows, Unix, etc.).
+* Use any module returned in a search result with the command `use` followed by the number at the beginning of the result line.
+  * `Use 0` instead of `use auxiliary/admin/smb/ms17_010_command)`.
+* 'rank' column is also contains essential information.
+  * [Exploits are rated based on their reliability](https://github.com/rapid7/metasploit-framework/wiki/Exploit-Ranking).
+* Can direct the search function using keywords such as `type` and `platform`.
+  * Set `type` to `auxiliary` to only include auxiliary modules.
+* Exploits take advantage of a vulnerability on the target system and may always show unexpected behaviour.
+  * Low-ranking exploit may work perfectly and an excellent ranked exploit may crash the target system.
 
 ## Working with modules
 * Any Metasploit version 5 or 6 will have menus and screens similar to those shown here so you can use the AttackBox or any operating system installed on your local computer.
