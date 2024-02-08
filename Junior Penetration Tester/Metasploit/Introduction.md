@@ -270,27 +270,21 @@ msf6 > history
 9  version
 10  use exploit/multi/script/web_delivery
 ```
-* An important feature of msfconsole is the support of tab completion.
-* This will come in handy later when using Metasploit commands or dealing with modules.
-* For example, if you start typing he and press the tab key, you will see it auto-completes to help.
-* Msfconsole is managed by context; this means that unless set as a global variable, all parameter settings will be lost if you change the module you have decided to use.
-* In the example below, we have used the ms17_010_eternalblue exploit, and we have set parameters such as RHOSTS.
-* If we were to switch to another module (e.g. a port scanner), we would need to set the RHOSTS value again as all changes we have made remained in the context of the ms17_010_eternalblue exploit.
-* Let us look at the example below to have a better understanding of this feature.
-* We will use the MS17-010 “Eternalblue” exploit for illustration purposes.
+* Important feature of msfconsole is the support of tab completion.
+  * Start typing `he` and press the tab key and it auto-completes to `help`.
+* Msfconsole is managed by context.
+  * All parameter settings will be lost if the module is changed unless set as a global variable.
+
 * Once you type the use exploit/windows/smb/ms17_010_eternalblue command, you will see the command line prompt change from msf6 to “msf6 exploit(windows/smb/ms17_010_eternalblue)”.
-* The "EternalBlue" is an exploit allegedly developed by the U.S. National Security Agency (N.S.A.) for a vulnerability affecting the SMBv1 server on numerous Windows systems.
-* The SMB (Server Message Block) is widely used in Windows networks for file sharing and even for sending files to printers.
-* EternalBlue was leaked by the cybercriminal group "Shadow Brokers" in April 2017.
-* In May 2017, this vulnerability was exploited worldwide in the WannaCry ransomware attack.
+> 'EternalBlue' is an exploit allegedly developed by the U.S. National Security Agency (N.S.A.) for a vulnerability affecting the SMBv1 server on numerous Windows systems. The SMB (Server Message Block) is widely used in Windows networks for file sharing and even for sending files to printers. EternalBlue was leaked by the cybercriminal group "Shadow Brokers" in April 2017. In May 2017, this vulnerability was exploited worldwide in the WannaCry ransomware attack.
 ```
 msf6 > use exploit/windows/smb/ms17_010_eternalblue 
 [*] No payload configured, defaulting to windows/x64/meterpreter/reverse_tcp
 msf6 exploit(windows/smb/ms17_010_eternalblue) >       
 ```
-* The module to be used can also be selected with the use command followed by the number at the beginning of the search result line.
-* While the prompt has changed, you will notice we can still run the commands previously mentioned.
-* This means we did not "enter" a folder as you would typically expect in an operating system command line.
+* Module to be used can also be selected with the `use` command followed by the number at the beginning of the search result line.
+* Can still run the commands previously mentioned while the prompt has changed.
+  * Did not 'enter' a folder as would be typically expected in an OS command line.
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > ls
 [*] exec: ls
@@ -300,25 +294,20 @@ Desktop	Pictures      thinclient_drives
 Downloads	Postman       Tools
 msf6 exploit(windows/smb/ms17_010_eternalblue) >
 ```
-* The prompt tells us we now have a context set in which we will work.
-* You can see this by typing the show options command.
-* This will print options related to the exploit we have chosen earlier.
-* The show options command will have different outputs depending on the context it is used in.
-* The example above shows that this exploit will require we set variables like RHOSTS and RPORT.
-* On the other hand, a post-exploitation module may only need us to set a SESSION ID (see the screenshot below).
-* A session is an existing connection to the target system that the post-exploitation module will use.
-* The show command can be used in any context followed by a module type (auxiliary, payload, exploit, etc.) to list available modules. 
-* The example below lists payloads that can be used with the ms17-010 Eternalblue exploit.
-* If used from the msfconsole prompt, the show command will list all modules.
-* The use and show options commands we have seen so far are identical for all modules in Metasploit.
-* You can leave the context using the back command.
+* Prompt now advises that a context is set in which to work.
+  * Verify this by typing the `show options` command.
+  * This will print options related to the chosen exploit.
+  * Can be used in any context followed by a module type (auxiliary, payload, exploit, etc.) to list available modules. 
+    * Will list all modules if used from the msfconsole prompt.
+* Leave the context using the `back` command.
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > back
 msf6 > 
 ```
-* Further information on any module can be obtained by typing the info command within its context.
-* Alternatively, you can use the info command followed by the module’s path from the msfconsole prompt (e.g. info exploit/windows/smb/ms17_010_eternalblue).
-* Info is not a help menu; it will display detailed information on the module such as its author, relevant sources, etc.
+* Further information on any module can be obtained by typing the `info` command.
+* Can use `info` command followed by module’s path from the msfconsole prompt.
+  * `info exploit/windows/smb/ms17_010_eternalblue)`.
+* `Info` is not a help menu but will display detailed information on the module such as its author, relevant sources, etc.
 
 ## Search
 * One of the most useful commands in msfconsole is search.
