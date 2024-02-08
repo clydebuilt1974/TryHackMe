@@ -4,3 +4,4 @@
 ## 4. [Burp Suite](Burp%20Suite/README.md)
 ## 5. [Network Security](Network%20Security/README.md)
 ## 6. [Vulnerability Research](Vulnerability%20Research/README.md)
+## 7. [Metasploit]{Metasploit/README.md}
