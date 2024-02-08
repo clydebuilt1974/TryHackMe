@@ -346,33 +346,36 @@ msf6 >
 * **Shell on the target system**: May have access to a command shell on the target system once the exploit is completed.
     * This is a regular command line and all commands typed here run on the target system.
     * `C:\Windows\system32>`
-
-* As you can see in the screenshot above, some of these parameters require a value for the exploit to work.
-* Some required parameter values will be pre-populated, make sure you check if these should remain the same for your target.
-* For example, a web exploit could have an RPORT (remote port: the port on the target system Metasploit will try to connect to and run the exploit) value preset to 80, but your target web application could be using port 8080.
-* In this example, we will set the RHOSTS parameter to the IP address of our target system using the set command.
-* Once you have set a parameter, you can use the show options command to check the value was set correctly.
-* Parameters you will often use are
-* RHOSTS: “Remote host”, the IP address of the target system.
-* A single IP address or a network range can be set.
-* This will support the CIDR (Classless Inter-Domain Routing) notation (/24, /16, etc.) or a network range (10.10.10.x – 10.10.10.y).
-* You can also use a file where targets are listed, one target per line using file:/path/of/the/target_file.txt, as you can see below.
-* RPORT: “Remote port”, the port on the target system the vulnerable application is running on.
-* PAYLOAD: The payload you will use with the exploit.
-* LHOST: “Localhost”, the attacking machine (your AttackBox or Kali Linux) IP address.
-* LPORT: “Local port”, the port you will use for the reverse shell to connect back to. This is a port on your attacking machine, and you can set it to any port not used by any other application.
-* SESSION: Each connection established to the target system using Metasploit will have a session ID. You will use this with post-exploitation modules that will connect to the target system using an existing connection.
-* You can override any set parameter using the set command again with a different value. You can also clear any parameter value using the unset command or clear all set parameters with the unset all command.
-* You can use the setg command to set values that will be used for all modules.
-* The setg command is used like the set command. The difference is that if you use the set command to set a value using a module and you switch to another module, you will need to set the value again.
-* The setg command allows you to set the value so it can be used by default across different modules. You can clear any value set with setg using unsetg.
-* The example below uses the following flow;
-* We use the ms17_010_eternalblue exploitable
-* We set the RHOSTS variable using the setg command instead of the set command
-* We use the back command to leave the exploit context
-* We use an auxiliary (this module is a scanner to discover MS17-010 vulnerabilities)
-* The show options command shows the RHOSTS parameter is already populated with the IP address of the target system.
-* The setg command sets a global value that will be used until you exit Metasploit or clear it using the unsetg command.
+* Some required parameter values will be pre-populated.
+  * Make sure you check if these should remain the same for the target.
+    * Web exploit could have an RPORT (remote port: the port on the target system Metasploit will try to connect to and run the exploit) value preset to 80 but the target web application could be using port 8080.
+* Can use the `show options` command to check a value was set correctly.
+* **RHOSTS**: 'Remote host'.
+    * IP address of the target system.
+    * Single IP address or a network range can be set.
+    * Supports the CIDR (Classless Inter-Domain Routing) notation (/24, /16, etc.) or a network range (10.10.10.x – 10.10.10.y).
+    * Can also use a file where targets are listed using `file:/path/of/the/target_file.txt`.
+* **RPORT**: 'Remote port'.
+    * Port on the target system the vulnerable application is running on.
+* **PAYLOAD**: The payload to use with the exploit.
+* **LHOST**: 'Localhost'.
+    * The attacking machine IP address.
+* **LPORT**: 'Local port'.
+    * Port used for the reverse shell to connect back to.
+    * This is a port on the attacking machine and can be set to any port not used by any other application.
+* **SESSION**: Each connection established to the target system using Metasploit will have a session ID.
+    * Use this with post-exploitation modules that will connect to the target system using an existing connection.
+* Override any `set` parameter using the `set` command again with a different value.
+* Clear any parameter value using the `unset` command or clear all set parameters using `unset all`.
+* Use the `setg` command to set values that will be used for all modules.
+  * Sets the value so it can be used by default across different modules.
+  * Clear any value set using `unsetg`.
+1. Use the ms17_010_eternalblue exploitable.
+2. Set RHOSTS variable using the `setg` command instead of the `set` command.
+3. Use the `back` command to leave the exploit context.
+4. Use an auxiliary.
+   * This module is a scanner to discover MS17-010 vulnerabilities.
+5. `show options` command shows the RHOSTS parameter is already populated with the IP address of the target system.
 
 ## Using modules
 Once all module parameters are set, you can launch the module using the exploit command. Metasploit also supports the run command, which is an alias created for the exploit command as the word exploit did not make sense when using modules that were not exploits (port scanners, vulnerability scanners, etc.).
