@@ -317,7 +317,7 @@ ACME-TEST$:1008:aad3b435b51404eeaad3b435b51404ee:c6c85041ee383915bd541ce40b508ff
 ```
 5. What is the cleartext password of the jchambers user?
 > Use an online hash checker like crackstation.net.	
-Trustno1
+* Trustno1
 6. Where is the "secrets.txt"  file located? (Full path of the file)
 ```
 meterpreter > search -f secrets.txt
