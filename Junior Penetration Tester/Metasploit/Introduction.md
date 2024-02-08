@@ -209,14 +209,14 @@ post/
 ```
 
 ## Msfconsole
-* As previously mentioned, the console will be your main interface to the Metasploit Framework.
-* You can launch it using the msfconsole command on your AttackBox terminal or any system the Metasploit Framework is installed on.
-* Once launched, you will see the command line changes to msf6 (or msf5 depending on the installed version of Metasploit).
-* The Metasploit console (msfconsole) can be used just like a regular command-line shell, as you can see below.
-* The first command is ls which lists the contents of the folder from which Metasploit was launched using the msfconsole command.
-* It is followed by a ping sent to Google's DNS IP address (8.8.8.8).
-* As we operate from the AttackBox, which is Linux we had to add the -c 1 option, so only a single ping was sent.
-* Otherwise, the ping process would continue until it is stopped using CTRL+C.
+* Main interface to the Metasploit Framework.
+* Launch it using the `msfconsole` command on any system the Metasploit Framework is installed on.
+* Command line will change to `msf6`.
+* Metasploit console (msfconsole) can be used like a regular command-line shell.
+  * The first command is `ls` which lists the contents of the folder from which Metasploit was launched using the msfconsole command.
+  * Followed by a ping sent to Google's DNS IP address (8.8.8.8).
+    * Had to add the `-c 1` option so only a single ping was sent as OS is Linux.
+    * Ping process would otherwise continue until stopped using `CTRL+C`.
 ```
 msf6 > ls
 [*] exec: ls
@@ -235,14 +235,14 @@ PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 rtt min/avg/max/mdev = 1.335/1.335/1.335/0.000 ms
 msf6 >
 ```
-* It will support most Linux commands, including clear (to clear the terminal screen), but will not allow you to use some features of a regular command line (e.g. does not support output redirection), as seen below.
+* Msfconsole supports most Linux commands, including clear (to clear the terminal screen).
+* Will not allow some features of a regular command line to be used (e.g. does not support output redirection).
 ```
 msf6 > help > help.txt
 [-] No such command
 msf6 >
 ```
-* While on the subject, the help command can be used on its own or for a specific command.
-* Below is the help menu for the set command we will cover soon.
+* `Help` command can be used on its own or for a specific command.
 ```
 msf6 > help set
 Usage: set [option] [value]
@@ -255,7 +255,9 @@ Usage: set [option] [value]
 * If setting a PAYLOAD, this command can take an index from `show payloads'.
 ```
 msf6 >
-You can use the history command to see commands you have typed earlier.
+```
+* Use the `history` command to see commands typed earlier.
+```
 msf6 > history
 1  use exploit/multi/http/nostromo_code_exec
 2  set lhost 10.10.16.17
