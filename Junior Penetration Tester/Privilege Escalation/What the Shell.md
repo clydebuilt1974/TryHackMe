@@ -115,22 +115,28 @@ C:\Users\Administrator\Documents
 
 ## Shell Interactivity
 ### Interactive 
-* If you've used Powershell, Bash, Zsh, sh, or any other standard CLI environment then you will be used to interactive shells.
-* These allow you to interact with programs after executing them.
-* For example, take the SSH login prompt:
-* Here you can see that it's asking interactively that the user type either yes or no in order to continue the connection.
-* This is an interactive program, which requires an interactive shell in order to run.
+* Powershell, Bash, Zsh, sh, or any other standard CLI environment are interactive shells.
+  * Allow interaction with programs after executing them.
 
 ### Non-Interactive 
-* In a non-interactive shell you are limited to using programs which do not require user interaction in order to run properly.
-* Unfortunately, the majority of simple reverse and bind shells are non-interactive, which can make further exploitation trickier.
-* Let's see what happens when we try to run SSH in a non-interactive shell:
-* Notice that the whoami command (which is non-interactive) executes perfectly, but the ssh command (which is interactive) gives us no output at all.
-* As an interesting side note, the output of an interactive command does go somewhere, however, figuring out where is an exercise for you to attempt on your own.
-* Suffice to say that interactive programs do not work in non-interactive shells.
-* Additionally, in various places throughout this task you will see a command in the screenshots called listener.
-* This command is an alias unique to the attacking machine used for demonstrations, and is a shorthand way of typing sudo rlwrap nc -lvnp 443.
-* It will not work on any other machine unless the alias has been configured locally.
+* Limited to using programs that do not require user interaction to run properly.
+* Majority of simple reverse and bind shells are non-interactive.
+* Try to run SSH in a non-interactive shell.
+```
+muri@augury:~$ sudo rlwrap nc -lvnp 443
+listening on [any] 443 ...
+connect to [127.0.0.1] from (UNKNOWN) [127.0.0.1] 37104
+```
+* `whoami` command (which is non-interactive) executes perfectly
+```
+whoami
+muri
+```
+* ssh command (which is interactive) gives no output at all.
+```
+ssh muri@localhost
+```
+* Interactive programs do not work in non-interactive shells.
 
 ## Netcat
 * Netcat is the most basic tool in a pentester's toolkit when it comes to any kind of networking. 
