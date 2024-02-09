@@ -127,37 +127,35 @@ muri@augury:~$ sudo rlwrap nc -lvnp 443
 listening on [any] 443 ...
 connect to [127.0.0.1] from (UNKNOWN) [127.0.0.1] 37104
 ```
-* `whoami` command (which is non-interactive) executes perfectly
+* whoami (which is non-interactive) executes perfectly
 ```
 whoami
 muri
 ```
-* ssh command (which is interactive) gives no output at all.
+* ssh (which is interactive) gives no output at all.
 ```
 ssh muri@localhost
 ```
 * Interactive programs do not work in non-interactive shells.
 
 ## Netcat
-* Netcat is the most basic tool in a pentester's toolkit when it comes to any kind of networking. 
 ### Reverse Shells
-* There are many ways to execute a shell, so we'll start by looking at listeners.
-* The syntax for starting a netcat listener using Linux is this: nc -lvnp <port-number>
-* -l is used to tell netcat that this will be a listener.
-* -v is used to request a verbose output.
-* -n tells netcat not to resolve host names or use DNS.
-* -p indicates that the port specification will follow.
-* Realistically you could use any port you like, as long as there isn't already a service using it.
-* Be aware that if you choose to use a port below 1024, you will need to use sudo when starting your listener.
-* It's often a good idea to use a well-known port number (80, 443 or 53 being good choices) as this is more likely to get past outbound firewall rules on the target.
-* A working example of this would be: sudo nc -lvnp 443
-* We can then connect back to this with any number of payloads, depending on the environment on the target.
+* Syntax for starting a netcat listener using Linux.
+`nc -lvnp <port-number>`
+  * **`-l`** this will be a listener.
+  * **`-v`** request a verbose output.
+  * **`-n`** do not to resolve host names or use DNS.
+  * **`-p`** port specification will follow.
+* Use any port you as long as there is not already a service using it.
+  * Use `sudo` when starting the listener if a port below 1024 is chosen.
+  * Good idea to use a well-known port number (80, 443 or 53) as this is more likely to get past outbound firewall rules on the target.
+* Can then connect back to this with any number of payloads.
 
 ### Bind Shells
-* If we are looking to obtain a bind shell on a target then we can assume that there is already a listener waiting for us on a chosen port of the target; all we need to do is connect to it.
-* The syntax for this is relatively straight forward: nc <target-ip> <chosen-port>
-Here we are using netcat to make an outbound connection to the target on our chosen port.
-What's important here is that you understand how to connect to a listening port using netcat.
+* Can assume that there is already a listener waiting on a chosen port of the target if trying to obtain a bind shell.
+* Syntax is straight forward.
+`nc <target-ip> <chosen-port>`
+* Netcat will make an outbound connection to the target on the listening port.
 
 ### Netcat Shell Stabilisation
 * Ok, so we've caught or connected to a netcat shell, what next?
