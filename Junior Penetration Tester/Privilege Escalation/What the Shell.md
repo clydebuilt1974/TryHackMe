@@ -16,20 +16,17 @@
 * [SecLists repo](https://github.com/danielmiessler/SecLists) contains very useful code for obtaining shells.
 
 ### Netcat
-* Netcat is the traditional "Swiss Army Knife" of networking.
-* It can be used to receive reverse shells and connect to remote ports attached to bind shells on a target system.
-* Netcat shells are very unstable (easy to lose) by default, but can be improved.
+* 'Swiss Army Knife' of networking.
+* Receive reverse shells.
+* Connect to remote ports attached to bind shells on a target system.
+* Netcat shells are very unstable (easy to lose) by default.
 
 ### Socat
-* Socat is like netcat on steroids.
-* It can do all of the same things, and many more.
-* Socat shells are usually more stable than netcat shells out of the box.
-* However, there are two big catches:
-* The syntax is more difficult.
-* Netcat is installed on virtually every Linux distribution by default.
+* Netcat on steroids.
+* Shells are usually more stable than netcat shells.
+* Syntax is more difficult.
 * Socat is very rarely installed by default.
-* There are workarounds to both of these problems.
-* Both Socat and Netcat have .exe versions for use on Windows.
+* Socat and Netcat have .exe versions for use on Windows.
 
 ### Metasploit -- multi/handler
 * The exploit/multi/handler module of the Metasploit framework is used to receive reverse shells.
