@@ -29,14 +29,15 @@
 * Socat and Netcat have .exe versions for use on Windows.
 
 ### Metasploit -- multi/handler
-* The exploit/multi/handler module of the Metasploit framework is used to receive reverse shells.
-* Due to being part of the Metasploit framework, multi/handler provides a fully-fledged way to obtain stable shells, with a wide variety of further options to improve the caught shell.
-* It's also the only way to interact with a meterpreter shell, and is the easiest way to handle staged payloads.
+* `exploit/multi/handler` module of the Metasploit framework is used to receive reverse shells.
+* Provides a fully-fledged way to obtain stable shells.
+* Only way to interact with a meterpreter shell.
+* Easiest way to handle staged payloads.
 
 ### Msfvenom
-* Like multi/handler, msfvenom is technically part of the Metasploit Framework.
-* However, it is shipped as a standalone tool.
-* Msfvenom is used to generate reverse and bind shell payloads on the fly.
+* Technically part of the Metasploit Framework.
+* Shipped as a standalone tool.
+* Used to generate reverse and bind shell payloads on the fly.
 
 ## Types of Shell
 ### Reverse shells
