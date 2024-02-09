@@ -1,10 +1,11 @@
 # What the Shell?
 ## What is a shell?
-* In the simplest possible terms, shells are what we use when interfacing with a Command Line environment (CLI).
-* The common bash or sh programs in Linux are examples of shells, as are cmd.exe and Powershell on Windows.
-* When targeting remote systems it is sometimes possible to force an application running on the server (such as a web server to execute arbitrary code.
-* When this happens, we want to use this initial access to obtain a shell running on the target.
-* We can force the remote server to either send us command line access to the server (a reverse shell), or to open up a port on the server which we can connect to in order to execute further commands (a bind shell).
+* Shells are used when interfacing with a Command Line environment (CLI).
+  * bash, sh, cmd.exe, Powershell.
+* Sometimes possible to force an application running on a remote server to execute arbitrary code.
+  * Use this initial access to obtain a shell.
+    * Send command line access to the remote server (a reverse shell).
+    * Open up a port on the remote server to connect to and execute further commands (a bind shell).
 
 ## Tools
 * In general terms, we need malicious shellcode, as well as a way of interfacing with the resulting shell.
