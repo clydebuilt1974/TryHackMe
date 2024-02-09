@@ -8,12 +8,12 @@
     * Open up a port on the remote server to connect to and execute further commands (a bind shell).
 
 ## Tools
-* In general terms, we need malicious shellcode, as well as a way of interfacing with the resulting shell.
-* Aside from the tools covered below, there are some repositories of shells in many different languages:
-* One of the most prominent of these is Payloads all the Things.
-* The PentestMonkey Reverse Shell Cheatsheet is also commonly used.
-* In addition to these online resources, Kali Linux also comes pre-installed with a variety of webshells located at /usr/share/webshells.
-* The SecLists repo, though primarily used for wordlists, also contains some very useful code for obtaining shells.
+* Need malicious shellcode and a way of interfacing with the resulting shell.
+* Repositories of shells are available.
+  * [Payloads all the Things](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md).
+  * PentestMonkey [Reverse Shell Cheatsheet](https://web.archive.org/web/20200901140719/http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet).
+* Kali Linux comes pre-installed with a variety of webshells located at `/usr/share/webshells`.
+* [SecLists repo](https://github.com/danielmiessler/SecLists) contains very useful code for obtaining shells.
 
 ### Netcat
 * Netcat is the traditional "Swiss Army Knife" of networking.
