@@ -85,44 +85,32 @@ cat /etc/passwd | grep home
 * Rarely has stored information such as passwords or usernames.
 
 #### `ifconfig`
-The target system may be a pivoting point to another network. 
-The ifconfig command will give us information about the network interfaces of the system. 
-The example below shows the target system has three interfaces (eth0, tun0, and tun1). 
-Our attacking machine can reach the eth0 interface but can not directly access the two other networks.
+* Gives information about the network interfaces of the system.
+* Target system may be a pivoting point to another network.
+  * Target may have three interfaces (eth0, tun0, and tun1).
+  * Attacker can reach the eth0 interface but can not directly access the two other networks.
+  * Confirm using `ip route` command to see which network routes exist. 
 
-This can be confirmed using the ip route command to see which network routes exist. 
+#### `netstat`
+* Worth looking into existing communications.
+* Used with several different options to gather information on existing connections.
+  * `netstat -a`: shows all listening ports and established connections.
+  * `netstat -at` or `netstat -au` can also be used to list TCP or UDP protocols respectively.
+  * `netstat -l`: list ports in 'listening' mode.
+    * These ports are open and ready to accept incoming connections.
+    * Use with `t` option to list only ports that are listening using the TCP protocol.
+  * `netstat -s`: list network usage statistics by protocol.
+    * Use with `-t` or `-u` options to limit the output to a specific protocol.
+  * `netstat -tp`: list connections with the service name and PID information.
+    * Use with `-l` to list listening ports.
+    * `PID/Program name` column will be empty if the process is owned by another user.
+  * `netstat -i`: Shows interface statistics.
+* `netstat -ano` usage is seen most often.
+  * `-a`: Display all sockets
+  * `-n`: Do not resolve names
+  * `-o`: Display timers
 
-
-netstat
-Following an initial check for existing interfaces and network routes, it is worth looking into existing communications. 
-The netstat command can be used with several different options to gather information on existing connections.
-netstat -a: shows all listening ports and established connections.
-netstat -at or netstat -au can also be used to list TCP or UDP protocols respectively.
-netstat -l: list ports in “listening” mode. 
-These ports are open and ready to accept incoming connections. 
-This can be used with the “t” option to list only ports that are listening using the TCP protocol (below)
-
-
-netstat -s: list network usage statistics by protocol (below) 
-This can also be used with the -t or -u options to limit the output to a specific protocol.
-
-netstat -tp: list connections with the service name and PID information.
-
-This can also be used with the -l option to list listening ports (below)
-
-We can see the “PID/Program name” column is empty as this process is owned by another user.
-Below is the same command run with root privileges and reveals this information as 2641/nc (netcat)
-
-
-netstat -i: Shows interface statistics. 
-We see below that “eth0” and “tun0” are more active than “tun1”.
-
-The netstat usage you will probably see most often in blog posts, write-ups, and courses is netstat -ano which could be broken down as follows:
--a: Display all sockets
--n: Do not resolve names
--o: Display timers
-
-find Command
+#### `find` Command
 Searching the target system for important information and potential privilege escalation vectors can be fruitful. 
 The built-in “find” command is useful and worth keeping in your arsenal.
 Below are some useful examples for the “find” command.
