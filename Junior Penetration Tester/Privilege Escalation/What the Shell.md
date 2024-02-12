@@ -447,25 +447,25 @@ Saved as: shell.exe
 * Meterpreter shells must be caught in Metasploit.
 
 ## Payload Naming Conventions
-* When working with msfvenom, it's important to understand how the naming system works.
-* The basic convention is as follows: <OS>/<arch>/<payload>
-* For example: linux/x86/shell_reverse_tcp
+* Basic msfvenom naming convention.
+```
+<OS>/<arch>/<payload>
+```
+```
+linux/x86/shell_reverse_tcp
+```
 * This would generate a stageless reverse shell for an x86 Linux target.
-* The exception to this convention is Windows 32bit targets.
-* For these, the arch is not specified.
-* E.g.: windows/shell_reverse_tcp
-* For a 64bit Windows target, the arch would be specified as normal (x64).
-* In the above examples the payload used was shell_reverse_tcp.
-* This indicates that it was a stageless payload.
-* Stageless payloads are denoted with underscores (_).
-* The staged equivalent to this payload would be: shell/reverse_tcp
-* As staged payloads are denoted with another forward slash (/).
-* This rule also applies to Meterpreter payloads.
-* A Windows 64bit staged Meterpreter payload would look like this: windows/x64/meterpreter/reverse_tcp
-* A Linux 32bit stageless Meterpreter payload would look like this: linux/x86/meterpreter_reverse_tcp
-* Aside from the msfconsole man page, the other important thing to note when working with msfvenom is: msfvenom --list payloads
-* This can be used to list all available payloads, which can then be piped into grep to search for a specific set of payloads.
-* This gives us a full set of Linux meterpreter payloads for 32bit targets.
+* The exception to this is Windows 32bit targets.
+  * Arch is not specified.
+```
+windows/shell_reverse_tcp
+```
+* Arch specified as normal For 64bit Windows target.
+* Stageless payloads denoted with underscores `_`.
+* Staged payloads denoted with another forward slash `/`.
+* Rule also applies to Meterpreter payloads.
+* `msfvenom --list payloads` used to list all available payloads.
+  * Can then be piped into `grep` to search for a specific set of payloads.
 
 ## Metasploit multi/handler
 * Multi/Handler is a superb tool for catching reverse shells.
