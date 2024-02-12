@@ -49,41 +49,42 @@
   * `ps axjf`: View process tree.
 
 #### `ps aux`
-The aux option will show processes for all users (a), display the user that launched the process (u), and show processes that are not attached to a terminal (x).
-Looking at the ps aux command output, we can have a better understanding of the system and potential vulnerabilities.
-env
-The env command will show environmental variables.
+* Shows processes for all users (a).
+* Displays the user that launched the process (u).
+* Shows processes that are not attached to a terminal (x).
+* Output gives a better understanding of the system and potential vulnerabilities.
 
-The PATH variable may have a compiler or a scripting language (e.g. Python) that could be used to run code on the target system or leveraged for privilege escalation.
-sudo -l
-The target system may be configured to allow users to run some (or all) commands with root privileges. 
-The sudo -l command can be used to list all commands your user can run using sudo.
-ls
-One of the common commands used in Linux is probably ls.
-While looking for potential privilege escalation vectors, please remember to always use the ls command with the -la parameter. 
-The example below shows how the “secret.txt” file can easily be missed using the ls or ls -l commands.
+#### `env`
+* Show environmental variables.
+* `PATH` variable may have a compiler or a scripting language (e.g. Python) that could be used to run code on the target system or leveraged for privilege escalation.
 
-Id
-The id command will provide a general overview of the user’s privilege level and group memberships.
-It is worth remembering that the id command can also be used to obtain the same information for another user as seen below.
+#### `sudo -l`
+* The target system may be configured to allow users to run some (or all) commands with root privileges.
+* Used to list all commands the current user can run using sudo.
 
+#### `ls`
+* Always use `ls -la` while looking for potential privilege escalation vectors.
 
-/etc/passwd
-Reading the /etc/passwd file can be an easy way to discover users on the system.
+#### `Id`
+* Provides a general overview of the user’s privilege level and group memberships.
+* Can be used to obtain the same information for another user.
 
+#### `/etc/passwd`
+* Reading the `/etc/passwd` file with 'cat' can be an easy way to discover users on the system.
+* Output can be easily cut and converted to a useful list for brute-force attacks.
+```
+cat /etc/passwd | cut -d ":" -f 1
+``` 
+* Grep for 'home' as real users will most likely have their folders under this directory.
+```
+cat /etc/passwd | grep home
+```
 
+#### `history`
+* Looking at earlier commands with the `history` command can give some idea about the target system.
+* Rarely has stored information such as passwords or usernames.
 
-While the output can be long and a bit intimidating, it can easily be cut and converted to a useful list for brute-force attacks. 
-
-
-
-Remember that this will return all users, some of which are system or service users that would not be very useful. 
-Another approach could be to grep for “home” as real users will most likely have their folders under the “home” directory. 
-
-
-history
-Looking at earlier commands with the history command can give us some idea about the target system and, albeit rarely, have stored information such as passwords or usernames.
-ifconfig
+#### `ifconfig`
 The target system may be a pivoting point to another network. 
 The ifconfig command will give us information about the network interfaces of the system. 
 The example below shows the target system has three interfaces (eth0, tun0, and tun1). 
