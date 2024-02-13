@@ -797,7 +797,7 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 * `hostname` : ip-10-10-91-89
 * `name -a` : Linux ip-10-10-91-89 3.10.0-1160.el7.x86_64 #1 SMP Mon Oct 19 16:18:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
 * `cat /proc/version` : Linux version 3.10.0-1160.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Mon Oct 19 16:18:59 UTC 2020
-* `sudo -l` : Sorry, user leonard may not run sudo on ip-10-10-91-89.
+* `sudo -l` : user leonard may not run sudo on ip-10-10-91-89.
 * `id` : uid=1000(leonard) gid=1000(leonard) groups=1000(leonard) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 * ```
   history 
@@ -822,7 +822,6 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
    19  ls
    20  cd rootflag/
    21  su missy
-```
 * No results using `find` to search for "flag".
 ```
 find / -name flag 2>/dev/null
