@@ -1,5 +1,4 @@
-# Linux Privilege Escalation
-## What is Privilege Escalation?
+# What is Privilege Escalation?
 * Going from a lower permission account to a higher permission one.
 * Exploitation of a vulnerability, design flaw, or configuration oversight in an OS or application to gain unauthorised access to resources that are usually restricted from the users.
 
@@ -13,30 +12,30 @@
  * Changing the privilege of existing (or new) users.
  * Execute any administrative command.
 
-## Enumeration
+# Enumeration
 * First step to take once access is gained to any system.
   * May have accessed the system by exploiting a critical vulnerability that resulted in root-level access or just found a way to send commands using a low privileged account.
 * Enumeration is as important during the post-compromise phase as it is before.
 
-### `hostname`
+## `hostname`
 * `hostname` command return the hostname of the target machine.
 * Can provide information about the target system’s role within the corporate network.
   * SQL-PROD-01 for a production SQL server.
 
-### `uname -a`
+## `uname -a`
 * Prints system information giving additional detail about the kernel used by the system.
 * Useful when searching for any potential kernel vulnerabilities that could lead to privilege escalation.
 
-### `/proc/version`
+## `/proc/version`
 * Proc filesystem (procfs) provides information about the target system processes.
 * Essential Linux tool to have in the arsenal.
 * `cat /proc/version` may give information on the kernel version and additional data such as whether a compiler (e.g. GCC) is installed.
 
-### `/etc/issue`
+## `/etc/issue`
 * Systems can be identified by reading the `/etc/issue` file using `cat`.
 * Usually contains some information about the OS.
 
-### `ps`
+## `ps`
 * Effective way to see the running processes on a Linux system.
 * Shows processes for the current shell.
 * Output of the `ps` (Process Status).
@@ -48,28 +47,28 @@
   * `ps -A`: View all running processes.
   * `ps axjf`: View process tree.
 
-#### `ps aux`
+### `ps aux`
 * Shows processes for all users (a).
 * Displays the user that launched the process (u).
 * Shows processes that are not attached to a terminal (x).
 * Output gives a better understanding of the system and potential vulnerabilities.
 
-### `env`
+## `env`
 * Show environmental variables.
 * `PATH` variable may have a compiler or a scripting language (e.g. Python) that could be used to run code on the target system or leveraged for privilege escalation.
 
-### `sudo -l`
+## `sudo -l`
 * The target system may be configured to allow users to run some (or all) commands with root privileges.
 * Used to list all commands the current user can run using sudo.
 
-### `ls`
+## `ls`
 * Always use `ls -la` while looking for potential privilege escalation vectors.
 
-### `Id`
+## `Id`
 * Provides a general overview of the user’s privilege level and group memberships.
 * Can be used to obtain the same information for another user.
 
-### `/etc/passwd`
+## `/etc/passwd`
 * Reading the `/etc/passwd` file with 'cat' can be an easy way to discover users on the system.
 * Output can be easily cut and converted to a useful list for brute-force attacks.
 ```
@@ -79,18 +78,18 @@ cat /etc/passwd | cut -d ":" -f 1
 ```
 cat /etc/passwd | grep home
 ```
-### `history`
+## `history`
 * Looking at earlier commands with the `history` command can give some idea about the target system.
 * Rarely has stored information such as passwords or usernames.
 
-### `ifconfig`
+## `ifconfig`
 * Gives information about the network interfaces of the system.
 * Target system may be a pivoting point to another network.
   * Target may have three interfaces (eth0, tun0, and tun1).
   * Attacker can reach the eth0 interface but can not directly access the two other networks.
   * Confirm using `ip route` command to see which network routes exist. 
 
-### `netstat`
+## `netstat`
 * Worth looking into existing communications.
 * Used with several different options to gather information on existing connections.
   * `netstat -a`: shows all listening ports and established connections.
@@ -109,7 +108,7 @@ cat /etc/passwd | grep home
   * `-n`: Do not resolve names
   * `-o`: Display timers
 
-### `find`
+## `find`
 * Searching the target system for important information and potential privilege escalation vectors can be fruitful.
 
 | `Find` Parameters | Purpose
@@ -146,7 +145,7 @@ cat /etc/passwd | grep home
 find / -perm -u=s -type f 2>/dev/null
 ``` 
 
-## Automated Enumeration Tools
+# Automated Enumeration Tools
 * Tools should only be used to save time knowing they may miss some privilege escalation vectors.
 * Target system’s environment will influence the tool to use.
   * E.g. cannot run a tool written in Python if it is not installed on the target system.
@@ -156,7 +155,7 @@ find / -perm -u=s -type f 2>/dev/null
 * [Linux Smart Enumeration](https://github.com/diego-treitos/linux-smart-enumeration).
 * [Linux Priv Checker](https://github.com/linted/linuxprivchecker).
 
-## Privilege Escalation: Kernel Exploits
+# Privilege Escalation: Kernel Exploits
 * Privilege escalation ideally leads to root privileges.
   * May be achieved by exploiting an existing vulnerability or by accessing another user account that has more privileges, information, or access.
 * Privilege escalation process will rely on misconfigurations and lax permissions unless a single vulnerability leads to a root shell.
@@ -170,14 +169,14 @@ find / -perm -u=s -type f 2>/dev/null
 * Failed kernel exploits can lead to a system crash.
   * Ensure this potential outcome is acceptable within the scope of the penetration testing engagement before attempting a kernel exploit.
 
-### Research sources
+## Research sources
 * Use Google to search for existing exploit code based on enumeration findings.
 * [https://www.linuxkernelcves.com/cves](https://www.linuxkernelcves.com/cves) can be useful.
 * Use a script like LES (Linux Exploit Suggester).
   * Can generate false positives (report a kernel vulnerability that does not affect the target system).
   * Can generate false negatives (not report any kernel vulnerabilities although the kernel is vulnerable).
 
-### Hints/Notes
+## Hints/Notes
 * Be specific about the kernel version when searching for exploits on Google, Exploit-db, or searchsploit.
 * Understand how the exploit code works BEFORE launching it.
 * Some exploit codes can make changes on the OS that would make them insecure in further use or make irreversible changes to the system.
@@ -226,7 +225,7 @@ gcc ofs.c -o ofs
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 
-## Privilege Escalation: Sudo
+# Privilege Escalation: Sudo
 * System administrators may need to give regular users some flexibility on their privileges.
 * Check current root privileges using `sudo -l` command.
 * [GTFOBins](https://gtfobins.github.io/) provides information on how a user with sudo rights on a program can abuse it.
@@ -279,7 +278,7 @@ sudo LD_PRELOAD=/home/user/ldpreload/shell.so find
 ```
 5. This will result in a shell spawn with root privileges.
 
-## Privilege Escalation: SUID
+# Privilege Escalation: SUID
 * Linux files can have read, write, and execute permissions.
   * Given to users within their privilege levels.
   * SUID (Set-user Identification) allow files to be executed with permission level of the file owner.
@@ -361,7 +360,7 @@ hacker:$1$THM$WnbwlliCqxFRQepUTCkUT1:0:0:root:/root:/bin/bash
 ``` 
 * Switch to the new user and hopefully gain root privileges. 
 
-## Privilege Escalation: Capabilities
+# Privilege Escalation: Capabilities
 * "Capabilities" are another method system admins can use to increase the privilege level of a process or binary.
   * Manage privileged at a more granular level.
   * Change the capabilities of an individual binary.
@@ -405,7 +404,7 @@ ls -l /home/karen/vim
 # id
 uid=0(root) gid=1001(karen) groups=1001(karen)
 ```
-## Privilege Escalation: Cron Jobs
+# Privilege Escalation: Cron Jobs
 * Cron jobs are used to run scripts or binaries at specific times.
 * Run with privilege of their owner by default.
 * If a scheduled task that runs with root privileges can be changed (ideally to a shell) then this is a privilege escalation vector.
@@ -606,7 +605,7 @@ whoami
 root
 /root$
 ```
-## Privilege Escalation: PATH
+# Privilege Escalation: PATH
 * Can potentially hijack an application to run a script if a folder that the current user has write access to is located in the PATH.
 * PATH is an environmental variable that tells the OS where to look for executables.
 * Linux will search in folders defined in PATH for any command not built into the shell or not defined with an absolute path.
@@ -628,7 +627,8 @@ find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u
 export PATH=/tmp:$PATH
 ```
 6. Is there a script or app that can be executed that will be affected by this vulnerability?
-### Challenge
+
+## Challenge
 1. What folders are located under $PATH?
 ```
 echo %PATH
@@ -719,7 +719,7 @@ root
 id
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
-## Privilege Escalation: NFS
+# Privilege Escalation: NFS
 * Shared folders and remote management interfaces (SSH / Telnet) can help gain root access to a target.
   * E.g. finding root SSH private key.
 * Misconfigured network shell may be another attack vector.
@@ -790,7 +790,7 @@ id
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 * Root shell achieved. 
-## Capstone Challenge
+# Capstone Challenge
 > You have gained SSH access to a large scientific facility. Try to elevate your privileges until you are Root.
 > Leave no privilege escalation vector unexplored, privilege escalation is often more an art than a science.
 
