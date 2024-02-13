@@ -805,3 +805,6 @@ uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
 * Root shell achieved. 
 ## Capstone Challenge
+> You have gained SSH access to a large scientific facility. Try to elevate your privileges until you are Root.
+> Leave no privilege escalation vector unexplored, privilege escalation is often more an art than a science.
+* 
