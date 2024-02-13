@@ -322,15 +322,9 @@ user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXl
 ```
 * Create empty files in SUID folder.
 ```
-touch ./Desktop/SUID/passwd.txt
+touch ./Desktop/SUID/passwd.txt ./Desktop/SUID/shadow.txt ./Desktop/SUID/passwords.txt
 ```
   * Copy user2 data from `/etc/passwd' into `passwd.txt` file.
-```
-touch ./Desktop/SUID/passwords.txt
-```
-```
-touch ./Desktop/SUID/shadow.txt
-```
   * Copy user2 data from `/etc/shadow' into `shadow.txt` file.
 * `unshadow` tool creates a file crackable by John the Ripper.
 ```
