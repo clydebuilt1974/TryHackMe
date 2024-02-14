@@ -68,8 +68,13 @@ runas /savecred /user:admin cmd.exe
 type C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\web.config | findstr connectionString
 ```
 ## Retrieve Credentials from Software: PuTTY
-
- 
+* PuTTY is SSH client commonly found on Windows systems.
+* Users can store sessions where proxy configurations may include cleartext authentication credentials.
+* Retrieve stored proxy credentials from the registry.
+```
+reg query HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\ /f "Proxy" /s
+```
+* Any software that stores passwords (browsers, email clients, FTP clients, SSH clients VNC software) may have methods to recover passwords saved by the user.
 
 # Other Quick Wins
 
