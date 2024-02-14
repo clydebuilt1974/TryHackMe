@@ -88,6 +88,22 @@ type C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\web.config | findstr
 ```
 reg query HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\ /f "Proxy" /s
 ```
+* Sample output.
+```
+HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\My%20ssh%20server
+    ProxyExcludeList    REG_SZ
+    ProxyDNS    REG_DWORD    0x1
+    ProxyLocalhost    REG_DWORD    0x0
+    ProxyMethod    REG_DWORD    0x0
+    ProxyHost    REG_SZ    proxy
+    ProxyPort    REG_DWORD    0x50
+    ProxyUsername    REG_SZ    thom.smith
+    ProxyPassword    REG_SZ    CoolPass2021
+    ProxyTelnetCommand    REG_SZ    connect %host %port\n
+    ProxyLogToTerm    REG_DWORD    0x1
+
+End of search: 10 match(es) found.
+```
 * Any software that stores passwords (browsers, email clients, FTP clients, SSH clients VNC software) may have methods to recover passwords saved by the user.
 
 # Other Quick Wins
