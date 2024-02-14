@@ -107,7 +107,10 @@ End of search: 10 match(es) found.
 * Any software that stores passwords (browsers, email clients, FTP clients, SSH clients VNC software) may have methods to recover passwords saved by the user.
 
 # Other Quick Wins
+* 
+## Sheduled Tasks
 
+## AlwaysInstallElevated
 
 # Abusing Service Misconfigurations
 
