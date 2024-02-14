@@ -59,8 +59,8 @@ runas /savecred /user:admin cmd.exe
 * Configuration stored in `web.config` file.
   * This may store database passwords or configured authentication mechanisms.
 * Possible `web.config` locations.
-  * C:\inetpub\wwwroot\web.config
-  * C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\web.config
+  * `C:\inetpub\wwwroot\web.config`
+  * `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\web.config`
 * Find database connection string in the file.
 ```
 type C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Config\web.config | findstr connectionString
