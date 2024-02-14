@@ -109,7 +109,7 @@ End of search: 10 match(es) found.
 # Other Quick Wins
 * Some misconfigurations can allow higher privileged user access to be obtained.
 
-## Sheduled Tasks
+## Scheduled Tasks
 * May find a scheduled task that either lost its binary or is using a binary that can be modified.
 * Use `schtasks` to list sheduled tasks.
 * Detailed information can be retrieved about any of the services.
