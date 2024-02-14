@@ -38,13 +38,11 @@
 * User may include a password directly in a command.
 * Retrieve history using `cmd.exe`.
 ```
-type %userprofile%
-\AppData\Roaming\Microsoft\Windows\PowerShell\PSreadline\ConsoleHost_history.txt
+%userprofile%\AppData\Roaming\Microsoft\Windows\PowerShell\PSreadline\ConsoleHost_history.txt
 ```
 * Retrieve history using PowerShell.
 ```
-type $ENV:userprofile
-\AppData\Roaming\Microsoft\Windows\PowerShell\PSreadline\ConsoleHost_history.txt
+$ENV:userprofile\AppData\Roaming\Microsoft\Windows\PowerShell\PSreadline\ConsoleHost_history.txt
 ```
 ## Saved Windows Credentials
 * Windows allows other credentials to be used.
