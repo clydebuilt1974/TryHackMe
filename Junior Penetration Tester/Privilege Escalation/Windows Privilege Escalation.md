@@ -458,9 +458,9 @@ SERVICE_NAME: thmservice
         PID                : 3328
         FLAGS              :
 ```
-* Shell recieved bak to attacker with SYSTEM privileges.
+* Shell recieved back to attacker with SYSTEM privileges.
 ```
-onnection from 10.10.29.166 49894 received!
+Connection from 10.10.29.166 49894 received!
 Microsoft Windows [Version 10.0.17763.1821]
 (c) 2018 Microsoft Corporation. All rights reserved.
 
@@ -469,7 +469,20 @@ whoami
 nt authority\system
 ```
 # Abusing Dangerous Privileges
+## Windows Privileges
+* `whoami /priv` checks user's assigned privileges.
+* [Full list of available Windows privileges](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants).
+* Comprehensive list of exploitable privileges on [Priv2Admin](https://github.com/gtworek/Priv2Admin) Github project.
+## SeBackup / SeRestore Privileges
+* Allows users to read and write to any file in the system.
+  * Ignores any DACL in place.
+* Rationale is to allow certain users to perform backups without requireing full admin rights.
+* Attacker can trivially escalate privileges with these privileges.
+* Copy SAM and SYSTEM registry hives to extract Administrator's password hash example.
+* 
+## SeTakeOwnership
 
+## SeImpersonate / SeAssignPrimaryToken
 
 # Abusing Vulnerable Software
 
