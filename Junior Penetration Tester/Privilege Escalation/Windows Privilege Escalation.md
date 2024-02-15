@@ -680,9 +680,26 @@ nt authority\system
 # Abusing Vulnerable Software
 ## Unpatched Software
 * Can present various privilege escalation opportunities.
+* `wmic` lists installed software.
+  * May not return all installed programs.
+```
+wmic product get name.version,vendor
+```
+* Search for existing exploits on installed software.
+  * [exploit-db](https://www.exploit-db.com/).
+  * [packet storm](https://packetstormsecurity.com/).
 ### Druva inSync 6.6.3 Case Study
-
-
+* Target is vulnerable as it runs Remote Procedure Call (RPC) server on TCP/6064 with SYSTEM privileges from localhost only.
+  * RPC is mechanism that allows a process to expose functions (procedures) over a network allowing other machines to call them.
+* Druva InSync exposed a procedure that allows anyone to request execution of any command.
+* Original exploit published [here](https://packetstormsecurity.com/files/160404/Druva-inSync-Windows-Client-6.6.3-Privilege-Escalation.html).
+* Understand how to talk to TCP/6064.
+1. Hello Packet -> RPC server.
+2. Remote Procedure ID -> RPC Server.
+   * Execute vulnerable procedure 5.
+4. Command Length -> RPC Server.
+5. Command String -> RPC Server.
+* 
 # Tools of the Trade
 
 
