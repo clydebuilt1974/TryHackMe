@@ -1,6 +1,5 @@
 # Windows Privilege Escalation
-* Using given access to a host with "user A".
-* Abuse a weakness to gain access to "user B" on the system.
+* Use given access to a host with "user A" to abuse a weakness to gain access to "user B" on the system.
 * May have to escalate into other unprivileged users before gaining administrative privileges.
 * May find credentials in unsecured text files / spreadsheets.
 * May have to abuse a weakness.
