@@ -5,3 +5,4 @@
 ## 5. [Network Security](Network%20Security/README.md)
 ## 6. [Vulnerability Research](Vulnerability%20Research/README.md)
 ## 7. [Metasploit](Metasploit/README.md)
+## 8. [Privilege Escalation](Privilege%20Escalation/README.md)
