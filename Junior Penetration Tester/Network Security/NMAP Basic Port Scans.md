@@ -72,7 +72,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.40 seconds
     * Useful when testing whether ports open in consistent manner.
     * E.g. when a target boots up.
 
-## TCP SYN Scan
+## TCP SYN (Stealth) Scan
 * Run using `-sS`.
   * Unprivileged users limited to TCP connect scans.
 * Default scan mode for a privileged (root or sudoer).
