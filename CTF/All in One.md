@@ -573,3 +573,18 @@ elyana@10.10.199.13's password:
 Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
 [snip ...]
 ```
+* Recovered "user.txt" flag: `VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259`.
+  * Decoded Base64 string in CyberChef.
+* Elyana user has "sudo -l" devolved privileges.
+```
+id
+uid=1000(elyana) gid=1000(elyana) groups=1000(elyana),4(adm),27(sudo),108(lxd)
+
+sudo -l
+Matching Defaults entries for elyana on elyana:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User elyana may run the following commands on elyana:
+    (ALL) NOPASSWD: /usr/bin/socat
+```
