@@ -133,7 +133,7 @@ wpscan --url http://TARGET_IP/Wordpress > wpscan.txt
 ### vsftpd 3.0.3
 * No public exploits listed on Exploit db.
 ### OpenSSH 7.6p1.
-* Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/4521080)
+* Vulnerable to CVE-2018-15473 - username enumeration (https://www.exploit-db.com/exploits/452108).
 * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) not listed on Exploit db.
 ### Apache 2.4.29
 * No public exploits on Exploit db.
