@@ -42,7 +42,7 @@ No exact OS matches for host (test conditions non-ideal).
 ```
 #### Nessus scanning
 * 4 x medium severity.
-  * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) has exploit.
+  * SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795) has public exploit.
 * 2 x Low severity.
   * No public exploits.
 
