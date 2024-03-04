@@ -362,3 +362,5 @@ Nmap d0nE: 1 |P addr3SS (1 hoSt up) $CaNnEd !n 21.80 s3c0Ndz
 | `-oG` | save output in grepable format
 | `-oX`  | save output in XML format
 | `-oA` | save output in normal, XML and Grepable formats
+
+* [Nmap cheat sheet](https://cdn.comparitech.com/wp-content/uploads/2019/06/Nmap-Cheat-Sheet.pdf).
