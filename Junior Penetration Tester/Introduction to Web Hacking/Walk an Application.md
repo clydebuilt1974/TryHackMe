@@ -1,7 +1,7 @@
 # Walking An Application
 ## Why Explore a Website?
-* A tester’s role when reviewing a website or web application is to discover features that could potentially be vulnerable.
-* Then ttempt to exploit them to assess whether or not they are.
+* Discover features that could potentially be vulnerable.
+* Attempt to exploit them to assess whether or not they are.
 * Vulnerable features are usually parts of the website that require some interactivity with the user.
 * Finding interactive portions of the website can be as easy as spotting a login form to manually reviewing the website's JavaScript.
 * An excellent place to start is with a browser exploring the website and noting down the individual pages/areas/features with a summary for each one.
