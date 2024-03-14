@@ -6,12 +6,11 @@
 * Finding interactive portions of the website can be as easy as spotting a login form to manually reviewing the website's JavaScript.
 * An excellent place to start is with a browser exploring the website and noting down the individual pages/areas/features with a summary for each one.
 ## What is Page Source?
-* The human readable code returned to the browser/client from the web server each time a request is made.
-* Returned code is made up of: 
+* Human readable code returned to the browser/client from the web server each time a request is made.
   * HTML (HyperText Markup Language).
   * CSS (Cascading Style Sheets).
   * JavaScript.
-* Viewing page source can help discover more information about a web application.
+* Can help discover more information about a web application.
 ### How to view the Page Source
 * Right-click on the page while viewing a website to display an option on the menu that says View Page Source.
 * Most browsers support putting view-source: in front of the URL: `view-source:https://www.google.com/`
