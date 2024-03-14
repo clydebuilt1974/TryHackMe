@@ -1,24 +1,26 @@
 # Authentication Bypass
 ## Username Enumeration
-* Creating a list of valid usernames is a helpful exercise to complete when trying to find authentication vulnerabilities.
-* Website error messages are a great resource for collating this information to build a list of valid usernames. 
+* Creating a list of valid usernames is helpful exercise when trying to find authentication vulnerabilities.
+* Website error messages are great resource for collating information to build list of valid usernames. 
 
-> 1. Go to the fake IT Support website’s signup page.
-> 2. Use the form to create a new user account.
-> 3. Enter the username 'admin' and fill in the other form fields with fake information.
-> 4. This produces an 'An account with this username already exists' error.
-> 5. Use the existence of the error message to produce a list of valid usernames already signed up on the system by using ffuf:
-> 6. `ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists"`
->     * `-w` selects the wordlist file.
->     * `-X` specifies the request method.
->       * This will be a `GET` request by default, but it is a `POST` request in this example.
->     * `-d` specifies the data that will be sent (`username`, `email`, `password`, and `cpassword`).
->        * `username` is set to value of `FUZZ`.
->          * `FUZZ` keyword signifies where the contents from the wordlist will be inserted in the request.
->     * `-H` adds additional headers to the request.
->       * `Content-Type` is set so the web server knows that form data is being sent.
->     * `-u` specifies the URL that requests are being made to.
->     * `-mr` is the text on the page to validate that a valid username has been found.
+1. Go to the fake IT Support website’s signup page.
+2. Use the form to create a new user account.
+3. Enter the username 'admin' and fill in the other form fields with fake information.
+4. This produces an 'An account with this username already exists' error.
+5. Use the existence of the error message to produce a list of valid usernames already signed up on the system by using ffuf.
+```
+ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists"
+```
+   * `-w` selects wordlist file.
+   * `-X` specifies request method.
+     * GET request by default.
+   * `-d` specifies data to be sent.
+     * `username` set to value of "FUZZ".
+     * "FUZZ" keyword signifies where contents from wordlist will be inserted in request.
+  * `-H` adds additional headers to the request.
+    * `Content-Type` is set so the web server knows that form data is being sent.
+  * `-u` specifies URL that requests are made to.
+  * `-mr` is text on the page to validate that a valid username has been found.
 
 ## Brute Force
 * Automated process that tries a list of commonly used passwords against either a single username or a list of usernames.
