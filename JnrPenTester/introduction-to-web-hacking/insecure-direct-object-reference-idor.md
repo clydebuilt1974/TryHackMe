@@ -1,0 +1,42 @@
+# Insecure Direct Object Reference (IDOR)
+
+* A form of access control vulnerability.
+* Occurs when too much trust has been placed on the input data:
+  * A web server receives user supplied input to retrieve objects.
+  * The data is not validated on the server-side to confirm the requested object(s) belongs to the user requesting it.
+
+1. Someone has signed up for an online service and wants to change their profile information.
+2. The link to change their profile information goes to http://online-service.thm/profile?user\_id=1305.
+3. The user\_id value is manually changed to 1000 in the browser: http://online-service.thm/profile?user\_id=1000.
+4. To the user’s surprise they can now see another user's information.
+5. They’ve discovered an IDOR vulnerability!
+6. There should ideally be a check on the website to confirm that the user information belongs to the user logged requesting it.
+
+### **Finding IDORs in Encoded IDs** <a href="#ixiy2o58q34c" id="ixiy2o58q34c"></a>
+
+* Web developers often take raw data and encode it before passing data from page to page either by POST data, query strings, or cookies.
+* Encoding ensures that the receiving web server will be able to understand the contents.
+* This changes binary data into an ASCII string commonly using the a-z, A-Z, 0-9 and = character for padding.
+* Most common encoding technique on the web is base64 encoding and can usually be pretty easy to spot.
+  * Websites like[ https://www.base64decode.org](https://www.base64decode.org/) can be used to decode the string.
+  * Decoded string can then be edited, re-encoded, and then the web request submitted to see if there is a change in the response:
+
+### **Finding IDORs in Hashed IDs** <a href="#id-73ipjb4o8qjk" id="id-73ipjb4o8qjk"></a>
+
+* Hashed IDs may follow a predictable pattern such as being the hashed version of the integer value.
+  * Id number 123 would become 202cb962ac59075b964b07152d234b70 if md5 hashing were in use.
+* Always worthwhile putting any discovered hashes through a web service such as[ https://crackstation.net/](https://crackstation.net/).
+  * This has a database of billions of hash to value results) to see if it can find any matches.
+
+### **Finding IDORs in Unpredictable IDs** <a href="#vverwznqmize" id="vverwznqmize"></a>
+
+* Excellent method of IDOR detection is to create two user accounts and swap the Id numbers between them if the Id cannot be detected using the above methods.
+  * If the other users' content can be viewed using their Id number while still being logged in with a different account (or not logged in at all) then a valid IDOR vulnerability has been found.
+
+### **Where are IDORs located?** <a href="#id-2dx2p7yzc12t" id="id-2dx2p7yzc12t"></a>
+
+* The target vulnerable endpoint may not always be something seen in the address bar.
+* It could be content in the browser loaded in via an AJAX request or something that was found referenced in a JavaScript file.
+* Endpoints may have an unreferenced parameter that may have been of some use during development and got pushed to production.
+  * Parameter mining attack may discover a parameter called user\_id that can be used to display other users' information.
+    * E.g. /user/details?user\_id=123.
