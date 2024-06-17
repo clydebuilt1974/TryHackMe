@@ -1,0 +1,140 @@
+# Content Discovery
+
+* Things that are not immediately presented to a user.
+* Things that weren't intended for public access.
+  * Could be pages or portals intended for staff usage, older versions of the website, backup files, configuration files, administration panels, etc.
+
+## **Manual Discovery Methods** <a href="#id-37kdhvquq4ns" id="id-37kdhvquq4ns"></a>
+
+#### **Robots.txt** <a href="#id-5yf4j9ynn65x" id="id-5yf4j9ynn65x"></a>
+
+* Document that tells search engines which pages they are and aren't allowed to show on their results.
+* May ban specific search engines from crawling the website altogether.
+* Common practice is to restrict certain website areas so they aren't displayed in search engine results.
+* These pages may be areas such as administration portals or files meant for the website's customers.
+* Gives penetration testers a great list of locations on the website that the owners don't want to be discovered.
+
+#### **Favicon** <a href="#id-6xdkdkcfbc82" id="id-6xdkdkcfbc82"></a>
+
+* Small icon displayed in the browser's address bar or tab used for branding a website.
+* Sometimes a favicon that is part of the installation gets leftover When frameworks are used to build a website.
+* Can give a clue on what framework is in use If the website developer doesn't replace this with a custom one.
+* [OWASP hosts a database of common framework icons](https://wiki.owasp.org/index.php/OWASP\_favicon\_database) that can be used to check against the target's favicon.
+* External resources can be used to discover more about the framework stack once it is known.
+
+1. Open firefox and enter the url[ https://static-labs.tryhackme.cloud/sites/favicon/](https://static-labs.tryhackme.cloud/sites/favicon/)
+   * Notice an icon that confirms this site is using a favicon.
+2. View the page source to see that line 6 contains a link to the images/favicon.ico file.
+3. Run curl `https://static-labs.tryhackme.cloud/sites/favicon/images/favicon.ico | md5sum` on a Linux attack machine.
+4. This can also run this on Windows in Powershell using `curl https://static-labs.tryhackme.cloud/sites/favicon/images/favicon.ico -UseBasicParsing -o favicon.ico then Get-FileHash .\favicon.ico -Algorithm MD5`.
+5. This will download the favicon and get its md5 hash value which can then be looked up on the OWASP framework icon database.
+
+#### **Sitemap.xml** <a href="#id-6jlyhbw6iin6" id="id-6jlyhbw6iin6"></a>
+
+* Provides a list of every file the website owner wishes to be listed on a search engine.
+* May contain areas of the website that are more difficult to navigate to or even list some old web pages that the current site no longer uses but are still working behind the scenes.
+
+#### **HTTP Headers** <a href="#pk78iblycnjr" id="pk78iblycnjr"></a>
+
+* Web server returns various HTTP headers when requests are made to the server.
+* Headers may contain useful information such as:
+  * Web server software.
+  * Programming/scripting language in use.
+
+1. Run the curl command below against the test web server:&#x20;
+
+`curl http://MACHINE_IP -v`
+
+* `-v` switch enables verbose mode, which will output the headers.
+
+1. Result shows that the web server is NGINX version 1.18.0 and runs PHP version 7.4.3:
+   * < Server: nginx/1.18.0 (Ubuntu)
+   * < X-Powered-By: PHP/7.4.3
+2. Vulnerable versions of the software could be identified using this information.
+
+#### **Framework Stack** <a href="#wg1durbt07jp" id="wg1durbt07jp"></a>
+
+* The framework's website can be located once the framework of a website, either from the above favicon example or by looking for clues in the page source such as comments, copyright notices or credits has been found.
+* More can then be learned about the software and other information, possibly leading to more content that can be discovered.
+
+1. Looking at the page source of the fake IT Support website, a comment is displayed at the end of every page with a page load time and also a link to the framework's website, which is[ https://static-labs.tryhackme.cloud/sites/thm-web-framework](https://static-labs.tryhackme.cloud/sites/thm-web-framework).
+2. Viewing the documentation page of that website gives the path of the framework's administration portal.
+
+#### **OSINT** <a href="#l2cs3iij9r90" id="l2cs3iij9r90"></a>
+
+* AKA Google Hacking / Dorking
+* Many external resources are available that can help in discovering information about a target website.
+* Often referred to as OSINT or (Open-Source Intelligence) as they are freely available tools that collect information.
+* Google hacking / Dorking utilises Google's advanced search engine features.
+  * site:tryhackme.com admin would only return results from the tryhackme.com website that contain the word admin in its content.
+* Multiple filters can be combined:
+
+| **Filter** | **Example**        | **Description**                                               |
+| ---------- | ------------------ | ------------------------------------------------------------- |
+| site       | site:tryhackme.com | Returns results only from the specified website address.      |
+| inurl      | inurl:admin        | Returns results that have the specified word in the URL.      |
+| filetype   | filetype:pdf       | Returns results that are a particular file extension.         |
+| intitle    | intitle:admin      | Returns results that contain the specified word in the title. |
+
+* More information about google hacking can be found[ here](https://en.wikipedia.org/wiki/Google\_hacking).
+
+#### [**Wappalyzer**](https://www.wappalyzer.com/) <a href="#id-57ewb78h793e" id="id-57ewb78h793e"></a>
+
+* Online tool and browser extension.
+* Helps identify what technologies a website uses:
+  * Frameworks.
+  * Content Management Systems (CMS).
+  * Payment processors.
+  * Can also find version numbers.
+
+#### [**Wayback Machine**](https://archive.org/web/) <a href="#id-6xf8oqxicoao" id="id-6xf8oqxicoao"></a>
+
+* Historical archive of websites that dates back to the late 90s.
+* Search a domain name to display all the times the service scraped the web page and saved the contents.
+* Can help uncover old pages that may still be active on the current website.
+
+#### **GitHub** <a href="#gp3e7vn4ubke" id="gp3e7vn4ubke"></a>
+
+* Git must first be understood to understand GitHub:
+  * Git is a version control system that tracks changes to files in a project.
+  * Working in a team is easier because everyone can see what each team member is editing and what changes they made to files.
+  * When users have finished making their changes, they commit them with a message and then push them back to a central location (repository) for the other users to then pull those changes to their local machines.
+* GitHub is an Internet hosted version of Git.
+* Repositories can either be set to public or private and have various access controls.
+* Use GitHub's search feature to look for company names or website names to try and locate repositories belonging to your target.
+* There may be access to source code, passwords or other content that hadn't yet been found.
+
+#### **S3 Buckets** <a href="#v53wal49wje9" id="v53wal49wje9"></a>
+
+* Storage service provided by Amazon AWS.
+* Allows people to save files and even static website content in the cloud accessible over HTTP and HTTPS.
+* Owner of the files can set access permissions to either make files public, private and even writable.
+* Access permissions may be incorrectly set and inadvertently allow access to files that shouldn't be available to the public.
+* Format of S3 buckets is http(s)://{name}.s3.amazonaws.com where {name} is decided by the owner:
+  * tryhackme-assets.s3.amazonaws.com.
+* These can be discovered in many ways, such as finding the URLs in the website's page source, GitHub repositories, or even automating the process.
+* Common automation method is by using the company name followed by common terms such as {name}-assets, {name}-www, {name}-public, or {name}-private.
+
+### **Automated Discovery** <a href="#cmnetrdsg6hs" id="cmnetrdsg6hs"></a>
+
+* Process of using tools to discover content rather than doing it manually.
+* Automation is used as the tool usually makes hundreds, thousands or even millions of requests to a web server.
+  * Each request checks whether a file or directory exists on a website.
+  * This gives the tester access to resources they didn't previously know existed.
+  * Process is made possible by using wordlists.
+
+### **Wordlists** <a href="#brilury9db6t" id="brilury9db6t"></a>
+
+* Text files that contain a long list of commonly used words:
+  * Password wordlist would include the most frequently used passwords.
+  * Content wordlist would require a list containing the most commonly used directory and file names.
+* [Excellent wordlists resource](https://github.com/danielmiessler/SecLists).
+
+### **Sample Automated Discovery Tools** <a href="#dbfitei8qkcd" id="dbfitei8qkcd"></a>
+
+1. Target the fake IT Support website using ffuf:
+   * `ffuf -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt -u http://MACHINE_IP/FUZZ`
+2. Target the website using dirb:
+   * `dirb http://MACHINE_IP/ /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt`
+3. Target it using gobuster:
+   * `gobuster dir --url http://MACHINE_IP/ -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt`
