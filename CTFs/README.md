@@ -1,10 +1,6 @@
 # All in One
 
-## All in One
-
-### Information Gathering
-
-* N/A
+## Information Gathering
 
 ```
 mkdir ~/Documents/AllinOne && cd ~/Documents/AllinOne
